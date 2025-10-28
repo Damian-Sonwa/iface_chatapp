@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -7,7 +7,7 @@ import { CheckCircle, Crown, Sparkles } from 'lucide-react';
 import { useSubscription } from '@/hooks/useSubscription';
 
 export default function SubscriptionSuccess() {
-  const router = useRouter();
+  const navigate = useNavigate();
   const { refreshSubscription, subscription } = useSubscription();
   const [loading, setLoading] = useState(true);
 
@@ -22,7 +22,7 @@ export default function SubscriptionSuccess() {
   }, [refreshSubscription]);
 
   const handleContinue = () => {
-    router.push('/dashboard');
+    navigate('/dashboard');
   };
 
   if (loading) {

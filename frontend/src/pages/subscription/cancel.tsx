@@ -1,17 +1,17 @@
-import { useRouter } from 'next/router';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { XCircle, ArrowLeft, Crown } from 'lucide-react';
 
 export default function SubscriptionCancel() {
-  const router = useRouter();
+  const navigate = useNavigate();
 
   const handleGoBack = () => {
-    router.push('/subscription');
+    navigate('/');
   };
 
   const handleTryAgain = () => {
-    router.push('/subscription');
+    navigate('/upgrade');
   };
 
   return (
