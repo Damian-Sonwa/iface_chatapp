@@ -1,7 +1,8 @@
 [build]
+  base = "frontend"
   command = "npm ci && npm run build"
-  publish = "frontend/dist"
-  functions = "backend"
+  publish = "dist"
+  functions = "../backend"
 
 [context.production.environment]
   NODE_VERSION = "18"
