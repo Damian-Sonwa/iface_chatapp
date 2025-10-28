@@ -74,3 +74,14 @@ __pycache__
 
 *.storage/
 .vercel
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/
+
+# System files
+*.log
+*.tmp
