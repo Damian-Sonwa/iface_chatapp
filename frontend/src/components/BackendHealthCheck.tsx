@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { ServerCrash, ServerCheck } from 'lucide-react';
+import { ServerCrash, Server } from 'lucide-react';
 
 export function BackendHealthCheck() {
   const [isHealthy, setIsHealthy] = useState<boolean | null>(null);
@@ -28,7 +28,7 @@ export function BackendHealthCheck() {
 
   return isHealthy ? (
     <Alert className="border-green-500 bg-green-50">
-      <ServerCheck className="h-4 w-4 text-green-600" />
+      <Server className="h-4 w-4 text-green-600" />
       <AlertDescription className="text-green-800">
         Backend is online and responding
       </AlertDescription>
