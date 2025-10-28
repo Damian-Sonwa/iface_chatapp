@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Calendar, Clock, TrendingUp, Heart, Activity, Thermometer, Droplets, User, Bell, Settings } from 'lucide-react';
+import BannerAd from "@/components/BannerAd";
 
 const Index = () => {
   return (
@@ -270,6 +271,9 @@ const Index = () => {
           </CardContent>
         </Card>
       </main>
+      
+      {/* Ad Banner at bottom */}
+      <BannerAd adSlot="5261243188" className="fixed bottom-0 left-0 right-0" />
     </div>
   );
 };
