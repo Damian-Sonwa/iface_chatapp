@@ -338,7 +338,7 @@ const Sidebar = ({ rooms, privateChats, users, activeChat, chatType, onChatSelec
             whileTap={{ scale: 0.98 }}
             className={`w-full py-2 px-3 rounded-xl text-sm font-medium transition backdrop-blur-sm border flex items-center justify-start gap-2 ${
               activePanel === 'friends'
-                ? 'bg-[#FF7A00] text-white border-orange-400/50 shadow-lg shadow-orange-500/30'
+                ? 'bg-purple-600 text-white border-purple-400/50 shadow-lg shadow-purple-500/30'
                 : 'bg-white/10 border-white/20 text-gray-300 hover:bg-white/20'
             }`}
           >
@@ -352,7 +352,7 @@ const Sidebar = ({ rooms, privateChats, users, activeChat, chatType, onChatSelec
             whileTap={{ scale: 0.98 }}
             className={`w-full py-2 px-3 rounded-xl text-sm font-medium transition backdrop-blur-sm border flex items-center justify-start gap-2 ${
               activePanel === 'invites'
-                ? 'bg-[#FF7A00] text-white border-orange-400/50 shadow-lg shadow-orange-500/30'
+                ? 'bg-purple-600 text-white border-purple-400/50 shadow-lg shadow-purple-500/30'
                 : 'bg-white/10 border-white/20 text-gray-300 hover:bg-white/20'
             }`}
           >
@@ -366,7 +366,7 @@ const Sidebar = ({ rooms, privateChats, users, activeChat, chatType, onChatSelec
             whileTap={{ scale: 0.98 }}
             className={`w-full py-2 px-3 rounded-xl text-sm font-medium transition backdrop-blur-sm border flex items-center justify-start gap-2 ${
               activePanel === 'moments'
-                ? 'bg-[#FF7A00] text-white border-orange-400/50 shadow-lg shadow-orange-500/30'
+                ? 'bg-purple-600 text-white border-purple-400/50 shadow-lg shadow-purple-500/30'
                 : 'bg-white/10 border-white/20 text-gray-300 hover:bg-white/20'
             }`}
           >
@@ -379,7 +379,7 @@ const Sidebar = ({ rooms, privateChats, users, activeChat, chatType, onChatSelec
           whileTap={{ scale: 0.98 }}
             className={`w-full py-2 px-3 rounded-xl text-sm font-medium transition backdrop-blur-sm border flex items-center justify-start gap-2 ${
             activePanel === 'assistant'
-              ? 'bg-[#FF7A00] text-white border-orange-400/50 shadow-lg shadow-orange-500/30'
+              ? 'bg-purple-600 text-white border-purple-400/50 shadow-lg shadow-purple-500/30'
               : 'bg-white/10 border-white/20 text-gray-300 hover:bg-white/20'
           }`}
         >

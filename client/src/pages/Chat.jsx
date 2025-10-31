@@ -463,9 +463,9 @@ const Chat = () => {
                 <div className="flex items-center gap-3">
                   <motion.div 
                     whileHover={{ scale: 1.1 }}
-                    className="w-10 h-10 rounded-full bg-gradient-to-br from-orange-500/30 to-orange-400/30 backdrop-blur-sm border border-orange-400/50 flex items-center justify-center text-orange-200 font-semibold relative overflow-hidden shadow-lg shadow-orange-500/20"
+                    className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500/30 to-purple-400/30 backdrop-blur-sm border border-purple-400/50 flex items-center justify-center text-purple-200 font-semibold relative overflow-hidden shadow-lg shadow-purple-500/20"
                   >
-                    <div className="absolute inset-0 bg-gradient-to-br from-orange-400/20 to-orange-300/20 animate-pulse" />
+                    <div className="absolute inset-0 bg-gradient-to-br from-purple-400/20 to-purple-300/20 animate-pulse" />
                     <span className="relative z-10">
                       {chatType === 'room' 
                         ? activeChat.name?.charAt(0).toUpperCase()
@@ -512,7 +512,7 @@ const Chat = () => {
                         onClick={() => setShowSummarize(true)}
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.95 }}
-                        className="p-2.5 rounded-xl bg-white/10 dark:bg-gray-800/50 backdrop-blur-sm border border-gray-200 dark:border-gray-700 hover:border-orange-500 transition text-gray-700 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400 shadow-lg"
+                        className="p-2.5 rounded-xl bg-white/10 dark:bg-gray-800/50 backdrop-blur-sm border border-gray-200 dark:border-gray-700 hover:border-purple-500 transition text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 shadow-lg"
                         title="AI Summarize"
                       >
                         <Sparkles className="w-5 h-5" />
@@ -523,7 +523,7 @@ const Chat = () => {
                         onClick={() => setShowPoll(true)}
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.95 }}
-                        className="p-2.5 rounded-xl bg-white/10 dark:bg-gray-800/50 backdrop-blur-sm border border-gray-200 dark:border-gray-700 hover:border-orange-500 transition text-gray-700 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400 shadow-lg"
+                        className="p-2.5 rounded-xl bg-white/10 dark:bg-gray-800/50 backdrop-blur-sm border border-gray-200 dark:border-gray-700 hover:border-purple-500 transition text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 shadow-lg"
                         title="Create Poll"
                       >
                         + Poll
@@ -543,7 +543,7 @@ const Chat = () => {
                       whileTap={{ scale: 0.95 }}
                       className={`p-2.5 rounded-xl backdrop-blur-sm border transition shadow-lg ${
                         autoTranslateEnabled[activeChat?._id]
-                          ? 'bg-orange-500/30 border-orange-400/50 text-orange-200'
+                          ? 'bg-purple-500/30 border-purple-400/50 text-purple-200'
                           : 'bg-white/10 border-white/20 text-gray-300 hover:bg-white/20 hover:text-white'
                       }`}
                       title="Auto-translate"
@@ -583,7 +583,7 @@ const Chat = () => {
                         onClick={() => navigate('/admin')}
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.95 }}
-                        className="p-2.5 rounded-xl bg-white/10 dark:bg-gray-800/50 backdrop-blur-sm border border-gray-200 dark:border-gray-700 hover:border-orange-500 transition text-gray-700 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400 shadow-lg"
+                        className="p-2.5 rounded-xl bg-white/10 dark:bg-gray-800/50 backdrop-blur-sm border border-gray-200 dark:border-gray-700 hover:border-purple-500 transition text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 shadow-lg"
                         title="Admin Dashboard"
                       >
                         <Settings className="w-5 h-5" />
@@ -611,9 +611,9 @@ const Chat = () => {
                   const element = document.querySelector(`[data-message-id="${msg._id || msg.id}"]`);
                   if (element) {
                     element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    element.classList.add('ring-2', 'ring-orange-500');
+                    element.classList.add('ring-2', 'ring-purple-500');
                     setTimeout(() => {
-                      element.classList.remove('ring-2', 'ring-orange-500');
+                      element.classList.remove('ring-2', 'ring-purple-500');
                     }, 2000);
                   }
                 }}
