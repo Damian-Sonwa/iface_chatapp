@@ -21,7 +21,7 @@ const PinnedMessagesBar = ({ pinnedMessages, onClose, onMessageClick }) => {
           </div>
           <button
             onClick={onClose}
-            className="p-1 hover:bg-orange-200 dark:hover:bg-orange-800 rounded transition"
+            className="p-1 hover:bg-purple-200 dark:hover:bg-purple-800 rounded transition"
           >
             <X className="w-4 h-4" />
           </button>
