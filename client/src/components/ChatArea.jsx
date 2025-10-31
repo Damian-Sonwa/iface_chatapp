@@ -64,10 +64,10 @@ const ChatArea = ({ messages, typingUsers, currentUser, activeChat, chatType, on
         style={{ zIndex: 0 }}
         animate={{
           background: [
-            'radial-gradient(circle at 20% 50%, rgba(255, 122, 0, 0.05) 0%, transparent 50%)',
-            'radial-gradient(circle at 80% 50%, rgba(255, 169, 77, 0.05) 0%, transparent 50%)',
-            'radial-gradient(circle at 50% 20%, rgba(255, 122, 0, 0.05) 0%, transparent 50%)',
-            'radial-gradient(circle at 20% 50%, rgba(255, 122, 0, 0.05) 0%, transparent 50%)',
+            'radial-gradient(circle at 20% 50%, rgba(139, 92, 246, 0.05) 0%, transparent 50%)',
+            'radial-gradient(circle at 80% 50%, rgba(99, 102, 241, 0.05) 0%, transparent 50%)',
+            'radial-gradient(circle at 50% 20%, rgba(147, 51, 234, 0.05) 0%, transparent 50%)',
+            'radial-gradient(circle at 20% 50%, rgba(139, 92, 246, 0.05) 0%, transparent 50%)',
           ]
         }}
         transition={{
@@ -155,9 +155,9 @@ const ChatArea = ({ messages, typingUsers, currentUser, activeChat, chatType, on
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
                     transition={{ delay: 0.2, type: 'spring' }}
-                    className="w-9 h-9 rounded-full bg-gradient-to-br from-orange-100 to-orange-200 dark:from-orange-900/30 dark:to-orange-800/30 backdrop-blur-sm border border-orange-300 dark:border-orange-700 flex items-center justify-center text-orange-600 dark:text-orange-400 font-semibold text-sm flex-shrink-0 relative overflow-hidden"
+                    className="w-9 h-9 rounded-full bg-gradient-to-br from-purple-100 to-purple-200 dark:from-purple-900/30 dark:to-purple-800/30 backdrop-blur-sm border border-purple-300 dark:border-purple-700 flex items-center justify-center text-purple-600 dark:text-purple-400 font-semibold text-sm flex-shrink-0 relative overflow-hidden"
                   >
-                    <div className="absolute inset-0 bg-gradient-to-br from-orange-200/50 to-orange-300/50 dark:from-orange-800/20 dark:to-orange-700/20 animate-pulse" />
+                    <div className="absolute inset-0 bg-gradient-to-br from-purple-200/50 to-purple-300/50 dark:from-purple-800/20 dark:to-purple-700/20 animate-pulse" />
                     <span className="relative z-10">
                       {message.sender?.username?.charAt(0).toUpperCase() || 'U'}
                     </span>
@@ -182,7 +182,7 @@ const ChatArea = ({ messages, typingUsers, currentUser, activeChat, chatType, on
                     <motion.div
                       initial={{ opacity: 0, x: own ? 10 : -10 }}
                       animate={{ opacity: 1, x: 0 }}
-                      className="mb-2 px-3 py-2 rounded-lg bg-gray-50 dark:bg-gray-700/50 backdrop-blur-sm border-l-2 border-orange-500/50 max-w-full"
+                      className="mb-2 px-3 py-2 rounded-lg bg-gray-50 dark:bg-gray-700/50 backdrop-blur-sm border-l-2 border-purple-500/50 max-w-full"
                     >
                       <div className="text-xs text-gray-600 dark:text-gray-400 flex items-center gap-1.5 mb-0.5">
                         <ReplyIcon className="w-3 h-3" />
@@ -199,12 +199,12 @@ const ChatArea = ({ messages, typingUsers, currentUser, activeChat, chatType, on
                     whileHover={{ scale: 1.01 }}
                     className={`relative rounded-2xl px-4 py-2.5 shadow-xl transition-all duration-300 ${
                       own
-                        ? 'bg-gradient-to-br from-orange-500 to-orange-600 text-white rounded-tr-sm'
+                        ? 'bg-gradient-to-br from-purple-500 to-purple-600 text-white rounded-tr-sm'
                         : 'bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-tl-sm border border-gray-200 dark:border-gray-600'
                     } ${message.isPending ? 'opacity-60' : ''} ${message.deleted ? 'opacity-40' : ''}`}
                     style={{
                       boxShadow: own 
-                        ? '0 8px 32px rgba(255, 122, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.1) inset'
+                        ? '0 8px 32px rgba(139, 92, 246, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.1) inset'
                         : '0 4px 16px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(0, 0, 0, 0.05) inset'
                     }}
                   >
@@ -402,7 +402,7 @@ const ChatArea = ({ messages, typingUsers, currentUser, activeChat, chatType, on
                 {[0, 150, 300].map((delay) => (
                   <motion.div
                     key={delay}
-                    className="w-2 h-2 bg-orange-500 rounded-full"
+                    className="w-2 h-2 bg-purple-500 rounded-full"
                     animate={{ y: [0, -8, 0] }}
                     transition={{
                       duration: 0.6,
