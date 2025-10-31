@@ -42,19 +42,29 @@ export const AuthProvider = ({ children }) => {
   };
 
   const login = async (email, password) => {
-    const response = await api.post('/auth/login', { email, password });
-    localStorage.setItem('token', response.data.token);
-    setUser(response.data.user);
-    connectSocket(response.data.token);
-    return response.data;
+    try {
+      const response = await api.post('/auth/login', { email, password });
+      localStorage.setItem('token', response.data.token);
+      setUser(response.data.user);
+      connectSocket(response.data.token);
+      return response.data;
+    } catch (error) {
+      console.error('Login error:', error);
+      throw error;
+    }
   };
 
   const register = async (username, email, password, phoneNumber) => {
-    const response = await api.post('/auth/register', { username, email, password, phoneNumber });
-    localStorage.setItem('token', response.data.token);
-    setUser(response.data.user);
-    connectSocket(response.data.token);
-    return response.data;
+    try {
+      const response = await api.post('/auth/register', { username, email, password, phoneNumber });
+      localStorage.setItem('token', response.data.token);
+      setUser(response.data.user);
+      connectSocket(response.data.token);
+      return response.data;
+    } catch (error) {
+      console.error('Register error:', error);
+      throw error;
+    }
   };
 
   const logout = () => {

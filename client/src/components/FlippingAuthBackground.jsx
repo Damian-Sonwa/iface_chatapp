@@ -30,7 +30,7 @@ const FlippingAuthBackground = ({ intervalMs = 5000 }) => {
           style={{ backgroundImage: `url('${IMAGES[index]}')` }}
         />
       </AnimatePresence>
-      <div className="absolute inset-0 bg-black/60" />
+      <div className="absolute inset-0 bg-black/70" />
     </div>
   );
 };
