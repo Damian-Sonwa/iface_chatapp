@@ -283,11 +283,15 @@ const MessageInput = ({ onSend, onTypingStart, onTypingStop, replyingTo, onCance
       uploadPromises.push(
         api.post('/upload/file', formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
-        }).then(response => ({
-          url: `http://localhost:5000${response.data.file.url}`,
-          filename: response.data.file.filename,
-          mimetype: response.data.file.mimetype
-        })).catch(() => null)
+        }).then(response => {
+          const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+          const baseUrl = API_URL.replace('/api', '');
+          return {
+            url: `${baseUrl}${response.data.file.url}`,
+            filename: response.data.file.filename,
+            mimetype: response.data.file.mimetype
+          };
+        }).catch(() => null)
       );
     });
 
@@ -300,11 +304,15 @@ const MessageInput = ({ onSend, onTypingStart, onTypingStop, replyingTo, onCance
       uploadPromises.push(
         api.post('/upload/file', audioFormData, {
           headers: { 'Content-Type': 'multipart/form-data' },
-        }).then(response => ({
-          url: `http://localhost:5000${response.data.file.url}`,
-          filename: response.data.file.filename,
-          mimetype: 'audio/webm'
-        })).catch(() => null)
+        }).then(response => {
+          const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+          const baseUrl = API_URL.replace('/api', '');
+          return {
+            url: `${baseUrl}${response.data.file.url}`,
+            filename: response.data.file.filename,
+            mimetype: 'audio/webm'
+          };
+        }).catch(() => null)
       );
     }
 

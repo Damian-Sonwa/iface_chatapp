@@ -7,6 +7,7 @@
   NODE_VERSION = "18"
   # Point this to your deployed server API (update before deploy)
   VITE_API_URL = "https://your-api.example.com/api"
+  VITE_SOCKET_URL = "https://your-api.example.com"
 
 [[redirects]]
   from = "/*"
