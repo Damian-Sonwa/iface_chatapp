@@ -30,7 +30,17 @@ Value: [COPY THIS FROM JWT_SECRET_KEY.md FILE]
 ```
 Click "Save"
 
-#### 3️⃣ NODE_ENV (Optional)
+#### 3️⃣ OPENAI_API_KEY (For AI Features)
+Click "Add Environment Variable":
+```
+Key:   OPENAI_API_KEY
+Value: [Get this from JWT_SECRET_KEY.md file]
+```
+Click "Save"
+
+⚠️ **Important:** Get the actual OpenAI API key from the `JWT_SECRET_KEY.md` file in your project.
+
+#### 4️⃣ NODE_ENV (Optional)
 Click "Add Environment Variable":
 ```
 Key:   NODE_ENV  
@@ -123,6 +133,7 @@ mongodb+srv://madudamian25_db_user:Godofjustice%40001@cluster0.c2havli.mongodb.n
 **Required Environment Variables:**
 - ✅ MONGO_URI
 - ✅ JWT_SECRET
+- ✅ OPENAI_API_KEY (enables AI features)
 - ⚠️ NODE_ENV (optional)
 
 ---
