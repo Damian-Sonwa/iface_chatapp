@@ -11,7 +11,7 @@ import NotificationBell from '../components/NotificationBell';
 import UserProfile from '../components/UserProfile';
 import SummarizeModal from '../components/SummarizeModal';
 import SuggestReplies from '../components/SuggestReplies';
-import { LogOut, Moon, Sun, Search, MoreVertical, User, Sparkles, Languages, Settings } from 'lucide-react';
+import { LogOut, Moon, Sun, Search, MoreVertical, User, Sparkles, Languages, Settings, Menu, X } from 'lucide-react';
 import { applyTheme, getVibeTheme, vibes } from '../utils/themes';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -55,6 +55,7 @@ const Chat = () => {
   const [showSuggestions, setShowSuggestions] = useState(null);
   const [reactionTrigger, setReactionTrigger] = useState(null);
   const [showPoll, setShowPoll] = useState(false);
+  const [showMobileSidebar, setShowMobileSidebar] = useState(false);
   const socket = getSocket();
 
   useEffect(() => {
@@ -369,6 +370,7 @@ const Chat = () => {
   return (
     <div className="flex h-screen relative overflow-hidden">
       {darkMode ? <StarryBackground /> : <FloralBackground />}
+      {/* Desktop Sidebar */}
       <Sidebar
         rooms={rooms}
         privateChats={privateChats}
@@ -383,6 +385,51 @@ const Chat = () => {
         friendRequestsCount={0}
         invitesCount={0}
       />
+      
+      {/* Mobile Sidebar Overlay */}
+      {showMobileSidebar && (
+        <div className="md:hidden fixed inset-0 z-50 flex">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowMobileSidebar(false)} />
+          <div className="relative z-10 w-64 border-r border-white/10 bg-gradient-to-b from-[#FFF4E5] to-white dark:from-gray-900 dark:to-gray-900 flex flex-col">
+            <div className="p-4 border-b border-white/10 flex items-center justify-between">
+              <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100">Chaturway</h2>
+              <button onClick={() => setShowMobileSidebar(false)} className="p-2 rounded-lg hover:bg-white/20 text-gray-900 dark:text-gray-100">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto">
+              <Sidebar
+                rooms={rooms}
+                privateChats={privateChats}
+                users={users}
+                activeChat={activeChat}
+                chatType={chatType}
+                onChatSelect={(chat, type) => {
+                  handleChatSelect(chat, type);
+                  setShowMobileSidebar(false);
+                }}
+                onStartChat={handleStartChat}
+                onCreateRoom={fetchRooms}
+                onOpenPanel={(panel) => {
+                  setActivePanel(panel);
+                  setShowMobileSidebar(false);
+                }}
+                activePanel={activePanel}
+                friendRequestsCount={0}
+                invitesCount={0}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+      
+      {/* Mobile Menu Button */}
+      <button 
+        onClick={() => setShowMobileSidebar(true)}
+        className="md:hidden fixed top-4 left-4 z-40 p-3 bg-white/90 dark:bg-gray-800/90 backdrop-blur-xl border border-white/20 dark:border-gray-700 rounded-xl shadow-lg hover:bg-white dark:hover:bg-gray-700 transition"
+      >
+        <Menu className="w-6 h-6 text-gray-900 dark:text-gray-100" />
+      </button>
 
       <div className="flex-1 flex flex-col relative z-10">
         <MomentsBar onOpenComposer={() => setShowMomentsComposer(true)} onOpenViewer={(moments, id) => setViewer({ open: true, moments, id })} />
