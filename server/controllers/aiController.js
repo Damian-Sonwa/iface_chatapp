@@ -3,13 +3,13 @@ const Summary = require('../models/Summary');
 const Room = require('../models/Room');
 const OpenAI = require('openai');
 
-// Initialize OpenAI client
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
-});
-
-// Check if OpenAI API key is available
-if (!process.env.OPENAI_API_KEY) {
+// Initialize OpenAI client only if API key is available
+let openai = null;
+if (process.env.OPENAI_API_KEY) {
+  openai = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY
+  });
+} else {
   console.warn('⚠️  OPENAI_API_KEY not found. AI features will be disabled.');
 }
 
