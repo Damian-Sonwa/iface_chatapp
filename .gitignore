@@ -3,6 +3,7 @@ node_modules/
 *.log
 .DS_Store
 dist/
+JWT_SECRET_KEY.md
 
 
 
