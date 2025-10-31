@@ -573,8 +573,12 @@ const Chat = () => {
                       onClick={() => setDarkMode(!darkMode)}
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.95 }}
-                      className="p-2.5 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 transition text-gray-300 hover:text-white shadow-lg"
-                      title="Toggle theme"
+                      className={`p-2.5 rounded-xl backdrop-blur-sm border shadow-lg transition ${
+                        darkMode 
+                          ? 'bg-purple-500/20 border-purple-400/50 text-purple-200 hover:bg-purple-500/30' 
+                          : 'bg-yellow-500/20 border-yellow-400/50 text-yellow-200 hover:bg-yellow-500/30'
+                      }`}
+                      title={darkMode ? "Switch to light mode" : "Switch to dark mode"}
                     >
                       {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
                     </motion.button>
