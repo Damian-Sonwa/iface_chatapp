@@ -63,18 +63,30 @@ const io = new Server(server, {
 
 // Middleware
 
+console.log('🌍 CORS Configuration:');
+console.log(`   NODE_ENV: ${process.env.NODE_ENV || 'not set'}`);
+console.log(`   Allowed origins:`, allowedOrigins);
+
 app.use(cors({
   origin: (origin, callback) => {
     // Allow requests with no origin (mobile apps, Postman, etc.)
-    if (!origin) return callback(null, true);
+    if (!origin) {
+      console.log('   ✅ Allowing request with no origin');
+      return callback(null, true);
+    }
+    
+    console.log(`   🔍 CORS check for origin: ${origin}`);
     
     if (allowedOrigins.includes(origin)) {
+      console.log('   ✅ Allowing: origin in allowed list');
       callback(null, true);
     } else {
       // Allow any origin in production for now (you can restrict this later)
       if (process.env.NODE_ENV === 'production') {
+        console.log('   ✅ Allowing: production environment');
         callback(null, true);
       } else {
+        console.log('   ❌ Blocking: not in allowed list and not production');
         callback(new Error('Not allowed by CORS'));
       }
     }
