@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import api from '../utils/api';
 
@@ -6,13 +6,22 @@ const PollModal = ({ open, onClose, roomId, onCreated }) => {
   const [question, setQuestion] = useState('');
   const [options, setOptions] = useState(['', '']);
   const [loading, setLoading] = useState(false);
+  
+  // Reset form when modal closes
+  useEffect(() => {
+    if (!open) {
+      setQuestion('');
+      setOptions(['', '']);
+    }
+  }, [open]);
+  
   if (!open) return null;
 
   const create = async () => {
     if (!question.trim() || options.filter(o => o.trim()).length < 2) return;
     setLoading(true);
     try {
-      const res = await api.post('/polls', { roomId, question, options });
+      const res = await api.post('/polls', { roomId, question, options: options.filter(o => o.trim()) });
       onCreated?.(res.data.poll);
       onClose?.();
     } catch {

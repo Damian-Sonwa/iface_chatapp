@@ -28,6 +28,7 @@ import Moments from './Moments';
 import FlippingAvatars from '../components/FlippingAvatars';
 import ReactionBurst from '../components/ReactionBurst';
 import PollModal from '../components/PollModal';
+import PollDisplay from '../components/PollDisplay';
 
 const Chat = () => {
   const { user, logout } = useAuth();
@@ -56,6 +57,7 @@ const Chat = () => {
   const [reactionTrigger, setReactionTrigger] = useState(null);
   const [showPoll, setShowPoll] = useState(false);
   const [showMobileSidebar, setShowMobileSidebar] = useState(false);
+  const [polls, setPolls] = useState([]);
   const socket = getSocket();
 
   useEffect(() => {
@@ -137,6 +139,14 @@ const Chat = () => {
       }));
     });
 
+    socket.on('poll:created', ({ poll }) => {
+      setPolls(prev => [poll, ...prev]);
+    });
+
+    socket.on('poll:updated', ({ poll }) => {
+      setPolls(prev => prev.map(p => p._id === poll._id ? poll : p));
+    });
+
     socket.on('typing:start', ({ userId, username }) => {
       setTypingUsers(prev => {
         if (prev.find(u => u.userId === userId)) return prev;
@@ -179,6 +189,8 @@ const Chat = () => {
       socket.off('message:deleted');
       socket.off('message:reacted');
       socket.off('message:expired');
+      socket.off('poll:created');
+      socket.off('poll:updated');
       socket.off('typing:start');
       socket.off('typing:stop');
       socket.off('user:online');
@@ -292,6 +304,14 @@ const Chat = () => {
         setPinnedMessages(response.data.messages);
       } catch (error) {
         console.error('Error fetching pinned messages:', error);
+      }
+      
+      // Fetch polls
+      try {
+        const pollResponse = await api.get(`/polls/${chat._id}`);
+        setPolls(pollResponse.data.polls || []);
+      } catch (error) {
+        console.error('Error fetching polls:', error);
       }
     } else {
       await fetchMessages(null, chat._id);
@@ -624,6 +644,22 @@ const Chat = () => {
               />
             )}
 
+            {/* Display Polls */}
+            {polls.length > 0 && (
+              <div className="px-4 md:px-6 py-4 space-y-3">
+                {polls.map(poll => (
+                  <PollDisplay
+                    key={poll._id}
+                    poll={poll}
+                    currentUser={user}
+                    onVote={(updatedPoll) => {
+                      setPolls(prev => prev.map(p => p._id === updatedPoll._id ? updatedPoll : p));
+                    }}
+                  />
+                ))}
+              </div>
+            )}
+
             <ChatArea
               messages={messages}
               typingUsers={typingUsers}
@@ -690,7 +726,19 @@ const Chat = () => {
           </div>
         )}
         <MomentsComposer open={showMomentsComposer} onClose={() => setShowMomentsComposer(false)} onPosted={() => setShowMomentsComposer(false)} initialText={initialMomentText} />
-        <PollModal open={showPoll} onClose={() => setShowPoll(false)} roomId={chatType==='room'?activeChat?._id:null} onCreated={()=>setShowPoll(false)} />
+        <PollModal 
+          open={showPoll} 
+          onClose={() => setShowPoll(false)} 
+          roomId={chatType==='room'?activeChat?._id:null} 
+          onCreated={(poll) => {
+            setShowPoll(false);
+            setPolls(prev => [poll, ...prev]);
+            // Broadcast to room via socket
+            if (socket && activeChat && chatType === 'room') {
+              socket.emit('poll:created', { roomId: activeChat._id, poll });
+            }
+          }}
+        />
         <MomentsViewer open={viewer.open} moments={viewer.moments} initialId={viewer.id} onClose={() => setViewer(v => ({ ...v, open: false }))} />
         <ReactionBurst trigger={reactionTrigger} />
       </div>

@@ -16,6 +16,7 @@ const Message = require('./models/Message');
 const Room = require('./models/Room');
 const PrivateChat = require('./models/PrivateChat');
 const User = require('./models/User');
+const Poll = require('./models/Poll');
 const jwt = require('jsonwebtoken');
 const { getLinkPreview } = require('./utils/linkPreview');
 const { extractMentionedUsernames } = require('./utils/mentionParser');
@@ -498,6 +499,16 @@ io.on('connection', async (socket) => {
     if (otherUserId) {
       socket.join(`user:${otherUserId}`);
     }
+  });
+
+  // Handle poll creation
+  socket.on('poll:created', ({ roomId, poll }) => {
+    socket.to(`room:${roomId}`).emit('poll:created', { poll });
+  });
+
+  // Handle poll vote
+  socket.on('poll:voted', ({ roomId, poll }) => {
+    socket.to(`room:${roomId}`).emit('poll:updated', { poll });
   });
 
   // Handle disconnect
