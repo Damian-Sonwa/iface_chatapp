@@ -57,7 +57,7 @@ const SuggestReplies = ({ messageText, onSelect, onClose }) => {
       className="bg-white dark:bg-gray-800 rounded-lg p-3 shadow-xl border border-gray-200 dark:border-gray-700 min-w-[250px]"
     >
       <div className="flex items-center gap-2 mb-3">
-        <Sparkles className="w-4 h-4 text-orange-500" />
+        <Sparkles className="w-4 h-4 text-purple-500" />
         <span className="text-xs font-semibold text-gray-700 dark:text-gray-300">Suggested Replies</span>
       </div>
 
@@ -71,7 +71,7 @@ const SuggestReplies = ({ messageText, onSelect, onClose }) => {
               onSelect?.(suggestion);
               onClose?.();
             }}
-            className="w-full text-left px-3 py-2 bg-gray-50 dark:bg-gray-700 hover:bg-orange-50 dark:hover:bg-orange-900/20 rounded-lg text-sm text-gray-800 dark:text-gray-200 transition border border-transparent hover:border-orange-300 dark:hover:border-orange-700"
+            className="w-full text-left px-3 py-2 bg-gray-50 dark:bg-gray-700 hover:bg-purple-50 dark:hover:bg-purple-900/20 rounded-lg text-sm text-gray-800 dark:text-gray-200 transition border border-transparent hover:border-purple-300 dark:hover:border-purple-700"
           >
             {suggestion}
           </motion.button>

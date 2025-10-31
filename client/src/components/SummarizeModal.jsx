@@ -41,8 +41,8 @@ const SummarizeModal = ({ isOpen, onClose, roomId }) => {
       >
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-orange-100 dark:bg-orange-900/30 rounded-lg">
-              <Sparkles className="w-6 h-6 text-orange-600 dark:text-orange-400" />
+            <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
+              <Sparkles className="w-6 h-6 text-purple-600 dark:text-purple-400" />
             </div>
             <h2 className="text-2xl font-bold">AI Summary</h2>
           </div>
@@ -66,7 +66,7 @@ const SummarizeModal = ({ isOpen, onClose, roomId }) => {
                 max="200"
                 value={messageCount}
                 onChange={(e) => setMessageCount(e.target.value)}
-                className="w-full px-4 py-2 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                className="w-full px-4 py-2 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500"
               />
             </div>
 
@@ -79,7 +79,7 @@ const SummarizeModal = ({ isOpen, onClose, roomId }) => {
             <button
               onClick={handleSummarize}
               disabled={loading}
-              className="w-full px-4 py-3 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="w-full px-4 py-3 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               {loading ? (
                 <>
@@ -100,7 +100,7 @@ const SummarizeModal = ({ isOpen, onClose, roomId }) => {
           </div>
         ) : (
           <div className="space-y-4">
-            <div className="p-4 bg-orange-50 dark:bg-orange-900/20 rounded-lg border border-orange-200 dark:border-orange-800">
+            <div className="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-800">
               <p className="text-gray-800 dark:text-gray-200 whitespace-pre-wrap">
                 {summary}
               </p>

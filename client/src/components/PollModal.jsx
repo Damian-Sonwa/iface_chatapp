@@ -32,7 +32,7 @@ const PollModal = ({ open, onClose, roomId, onCreated }) => {
         ))}
         <div className="flex gap-2 mt-2">
           <button onClick={()=>setOptions([...options,''])} className="px-3 py-2 rounded-lg bg-gray-100 dark:bg-gray-800">Add option</button>
-          <button onClick={create} disabled={loading} className="ml-auto px-4 py-2 rounded-lg bg-orange-500 text-white hover:bg-orange-600">{loading?'Creating...':'Create'}</button>
+          <button onClick={create} disabled={loading} className="ml-auto px-4 py-2 rounded-lg bg-purple-500 text-white hover:bg-purple-600">{loading?'Creating...':'Create'}</button>
         </div>
       </motion.div>
     </div>
