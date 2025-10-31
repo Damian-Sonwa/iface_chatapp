@@ -36,7 +36,7 @@ const Invites = () => {
   };
 
   return (
-    <div className="rounded-2xl p-6 md:p-8 border border-gray-200 dark:border-gray-700 bg-gradient-to-br from-white via-orange-50/40 to-white dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <div className="rounded-2xl p-6 md:p-8 border border-gray-200 dark:border-gray-700 bg-gradient-to-br from-white via-purple-50/40 to-white dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       <div className="flex items-center gap-3 mb-4">
         <LinkIcon className="w-5 h-5 text-purple-500" />
         <h2 className="text-xl font-semibold">Invite Friends</h2>
