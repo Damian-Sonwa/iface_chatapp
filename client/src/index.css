@@ -1,0 +1,155 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Orange Theme */
+    --background: 255 255 255; /* #FFFFFF */
+    --foreground: 34 34 34; /* #222222 */
+    --card: 255 244 229; /* #FFF4E5 */
+    --card-foreground: 34 34 34;
+    --popover: 255 255 255;
+    --popover-foreground: 34 34 34;
+    --primary: 255 122 0; /* #FF7A00 */
+    --primary-foreground: 255 255 255;
+    --secondary: 255 169 77; /* #FFA94D */
+    --secondary-foreground: 34 34 34;
+    --muted: 238 238 238; /* #EEE */
+    --muted-foreground: 85 85 85; /* #555555 */
+    --accent: 255 122 0;
+    --accent-foreground: 255 255 255;
+    --destructive: 220 38 38;
+    --destructive-foreground: 255 255 255;
+    --border: 238 238 238;
+    --input: 238 238 238;
+    --ring: 255 122 0;
+    --radius: 0.75rem;
+    
+    /* Font Variables */
+    --font-primary: 'Poppins', sans-serif;
+    --font-secondary: 'Inter', sans-serif;
+  }
+
+  .dark {
+    /* Orange Dark Theme */
+    --background: 17 24 39; /* Dark gray */
+    --foreground: 255 255 255;
+    --card: 31 41 55; /* Slightly lighter gray */
+    --card-foreground: 255 255 255;
+    --popover: 31 41 55;
+    --popover-foreground: 255 255 255;
+    --primary: 255 122 0; /* #FF7A00 */
+    --primary-foreground: 255 255 255;
+    --secondary: 255 169 77; /* #FFA94D */
+    --secondary-foreground: 34 34 34;
+    --muted: 55 65 81;
+    --muted-foreground: 156 163 175;
+    --accent: 255 122 0;
+    --accent-foreground: 255 255 255;
+    --destructive: 220 38 38;
+    --destructive-foreground: 255 255 255;
+    --border: 55 65 81;
+    --input: 55 65 81;
+    --ring: 255 122 0;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-primary);
+    font-weight: 400;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-primary);
+  }
+}
+
+/* Glassmorphism */
+.glass {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.dark .glass {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Smooth scrolling */
+* {
+  scroll-behavior: smooth;
+}
+
+/* Custom scrollbar with orange theme */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+  backdrop-filter: blur(10px);
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 122, 0, 0.5);
+  border-radius: 4px;
+  border: 1px solid rgba(255, 122, 0, 0.3);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 122, 0, 0.7);
+}
+
+/* Glow effects */
+.glow-orange {
+  box-shadow: 0 0 20px rgba(255, 122, 0, 0.5);
+}
+
+.glow-orange-light {
+  box-shadow: 0 0 15px rgba(255, 169, 77, 0.4);
+}
+
+/* Animation delays for staggered effects */
+.animate-delay-100 {
+  animation-delay: 100ms;
+}
+
+.animate-delay-200 {
+  animation-delay: 200ms;
+}
+
+.animate-delay-300 {
+  animation-delay: 300ms;
+}
+
+/* Text weights */
+.text-normal {
+  font-weight: 400;
+}
+
+.text-medium {
+  font-weight: 500;
+}
+
+.text-semibold {
+  font-weight: 600;
+}
+
+.text-bold {
+  font-weight: 700;
+}

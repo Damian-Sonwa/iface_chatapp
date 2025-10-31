@@ -1,0 +1,17 @@
+[build]
+  base = "client"
+  command = "npm ci && npm run build"
+  publish = "client/dist"
+
+[build.environment]
+  NODE_VERSION = "18"
+  # Point this to your deployed server API (update before deploy)
+  VITE_API_URL = "https://your-api.example.com/api"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+
+
