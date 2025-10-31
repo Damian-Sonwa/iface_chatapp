@@ -70,7 +70,7 @@ const Sidebar = ({ rooms, privateChats, users, activeChat, chatType, onChatSelec
   }, [searchQuery, view]);
 
   return (
-    <div className="hidden md:flex w-64 border-r border-white/10 bg-gradient-to-b from-[#FFF4E5] to-white dark:from-gray-900 dark:to-gray-900 flex flex-col relative z-10">
+    <div className="hidden md:flex w-64 border-r border-white/10 bg-gradient-to-b from-purple-50/30 to-white dark:from-gray-900 dark:to-gray-900 flex flex-col relative z-10">
       <div className="p-4 border-b border-white/10">
         <div className="flex gap-2 mb-4">
           <motion.button

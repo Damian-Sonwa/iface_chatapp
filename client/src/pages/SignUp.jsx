@@ -57,12 +57,12 @@ const SignUp = () => {
               <input type="password" value={password} onChange={(e)=>setPassword(e.target.value)} className="w-full pl-10 pr-3 py-2 rounded-lg bg-white/80 dark:bg-gray-700/70 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 placeholder-gray-400" placeholder="••••••••" />
             </div>
           </div>
-          <button type="submit" disabled={loading} className="w-full py-2 rounded-lg bg-orange-500 text-white hover:bg-orange-600 disabled:opacity-60 flex items-center justify-center gap-2 shadow-lg shadow-orange-500/30">
+          <button type="submit" disabled={loading} className="w-full py-2 rounded-lg bg-purple-500 text-white hover:bg-purple-600 disabled:opacity-60 flex items-center justify-center gap-2 shadow-lg shadow-purple-500/30">
             {loading ? <><Loader2 className="w-4 h-4 animate-spin" /> Creating...</> : 'Sign Up'}
           </button>
         </form>
         <div className="mt-4 text-sm text-gray-600 dark:text-gray-300">
-          Already have an account? <Link to="/login" className="text-orange-500 hover:text-orange-600">Log in</Link>
+          Already have an account? <Link to="/login" className="text-purple-500 hover:text-purple-600">Log in</Link>
         </div>
       </div>
     </div>

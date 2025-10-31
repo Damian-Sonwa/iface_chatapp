@@ -2,7 +2,7 @@ import Sidebar from './Sidebar';
 
 const SideShell = ({ children }) => {
   return (
-    <div className="flex h-screen bg-gradient-to-br from-white via-orange-50/30 to-white dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 relative overflow-hidden">
+    <div className="flex h-screen bg-gradient-to-br from-white via-purple-50/30 to-white dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 relative overflow-hidden">
       <Sidebar
         rooms={[]}
         privateChats={[]}

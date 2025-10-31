@@ -392,7 +392,7 @@ const Chat = () => {
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowMobileSidebar(false)} />
           <div className="relative z-10 w-64 border-r border-white/10 bg-gradient-to-b from-[#FFF4E5] to-white dark:from-gray-900 dark:to-gray-900 flex flex-col">
             <div className="p-4 border-b border-white/10 flex items-center justify-between">
-              <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100">Chaturway</h2>
+              <h2 className="text-lg font-bold text-purple-600 dark:text-purple-400">Chaturway</h2>
               <button onClick={() => setShowMobileSidebar(false)} className="p-2 rounded-lg hover:bg-white/20 text-gray-900 dark:text-gray-100">
                 <X className="w-5 h-5" />
               </button>
@@ -426,9 +426,9 @@ const Chat = () => {
       {/* Mobile Menu Button */}
       <button 
         onClick={() => setShowMobileSidebar(true)}
-        className="md:hidden fixed top-4 left-4 z-40 p-3 bg-white/90 dark:bg-gray-800/90 backdrop-blur-xl border border-white/20 dark:border-gray-700 rounded-xl shadow-lg hover:bg-white dark:hover:bg-gray-700 transition"
+        className="md:hidden fixed top-4 left-4 z-40 p-3 bg-white/90 dark:bg-gray-800/90 backdrop-blur-xl border border-purple-200 dark:border-purple-700 rounded-xl shadow-lg shadow-purple-500/20 hover:bg-white dark:hover:bg-gray-700 transition"
       >
-        <Menu className="w-6 h-6 text-gray-900 dark:text-gray-100" />
+        <Menu className="w-6 h-6 text-purple-600 dark:text-purple-400" />
       </button>
 
       <div className="flex-1 flex flex-col relative z-10">

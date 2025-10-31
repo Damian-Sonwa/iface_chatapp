@@ -6,26 +6,26 @@
 
 @layer base {
   :root {
-    /* Orange Theme */
+    /* Modern Blue-Purple Gradient Theme */
     --background: 255 255 255; /* #FFFFFF */
     --foreground: 34 34 34; /* #222222 */
-    --card: 255 244 229; /* #FFF4E5 */
+    --card: 240 247 255; /* #F0F7FF - Soft blue */
     --card-foreground: 34 34 34;
     --popover: 255 255 255;
     --popover-foreground: 34 34 34;
-    --primary: 255 122 0; /* #FF7A00 */
+    --primary: 139 92 246; /* #8B5CF6 - Vibrant purple */
     --primary-foreground: 255 255 255;
-    --secondary: 255 169 77; /* #FFA94D */
-    --secondary-foreground: 34 34 34;
+    --secondary: 99 102 241; /* #6366F1 - Indigo */
+    --secondary-foreground: 255 255 255;
     --muted: 238 238 238; /* #EEE */
     --muted-foreground: 85 85 85; /* #555555 */
-    --accent: 255 122 0;
+    --accent: 139 92 246; /* #8B5CF6 */
     --accent-foreground: 255 255 255;
-    --destructive: 220 38 38;
+    --destructive: 239 68 68; /* #EF4444 - Red */
     --destructive-foreground: 255 255 255;
     --border: 238 238 238;
     --input: 238 238 238;
-    --ring: 255 122 0;
+    --ring: 139 92 246;
     --radius: 0.75rem;
     
     /* Font Variables */
@@ -34,26 +34,26 @@
   }
 
   .dark {
-    /* Orange Dark Theme */
-    --background: 17 24 39; /* Dark gray */
-    --foreground: 255 255 255;
-    --card: 31 41 55; /* Slightly lighter gray */
-    --card-foreground: 255 255 255;
-    --popover: 31 41 55;
-    --popover-foreground: 255 255 255;
-    --primary: 255 122 0; /* #FF7A00 */
+    /* Modern Blue-Purple Dark Theme */
+    --background: 15 23 42; /* #0F172A - Slate-900 */
+    --foreground: 248 250 252; /* #F8FAFC - Slate-50 */
+    --card: 30 41 59; /* #1E293B - Slate-800 */
+    --card-foreground: 248 250 252;
+    --popover: 30 41 59;
+    --popover-foreground: 248 250 252;
+    --primary: 147 51 234; /* #9333EA - Purple-600 */
     --primary-foreground: 255 255 255;
-    --secondary: 255 169 77; /* #FFA94D */
-    --secondary-foreground: 34 34 34;
-    --muted: 55 65 81;
-    --muted-foreground: 156 163 175;
-    --accent: 255 122 0;
+    --secondary: 99 102 241; /* #6366F1 - Indigo-500 */
+    --secondary-foreground: 255 255 255;
+    --muted: 51 65 85; /* #334155 - Slate-700 */
+    --muted-foreground: 203 213 225; /* #CBD5E1 - Slate-300 */
+    --accent: 147 51 234; /* #9333EA */
     --accent-foreground: 255 255 255;
-    --destructive: 220 38 38;
+    --destructive: 239 68 68; /* #EF4444 */
     --destructive-foreground: 255 255 255;
-    --border: 55 65 81;
-    --input: 55 65 81;
-    --ring: 255 122 0;
+    --border: 51 65 85; /* #334155 */
+    --input: 51 65 85;
+    --ring: 147 51 234;
   }
 }
 
@@ -106,22 +106,22 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 122, 0, 0.5);
+  background: rgba(139, 92, 246, 0.5);
   border-radius: 4px;
-  border: 1px solid rgba(255, 122, 0, 0.3);
+  border: 1px solid rgba(139, 92, 246, 0.3);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 122, 0, 0.7);
+  background: rgba(147, 51, 234, 0.7);
 }
 
 /* Glow effects */
-.glow-orange {
-  box-shadow: 0 0 20px rgba(255, 122, 0, 0.5);
+.glow-purple {
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
 }
 
-.glow-orange-light {
-  box-shadow: 0 0 15px rgba(255, 169, 77, 0.4);
+.glow-purple-light {
+  box-shadow: 0 0 15px rgba(99, 102, 241, 0.4);
 }
 
 /* Animation delays for staggered effects */

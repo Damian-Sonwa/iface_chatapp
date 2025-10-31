@@ -3,17 +3,17 @@ export const themes = {
   default: {
     name: 'Default',
     colors: {
-      primary: '24 95% 53%', // Orange
-      secondary: '220 14% 96%',
-      accent: '24 95% 53%',
+      primary: '271 81% 56%', // Purple
+      secondary: '239 84% 67%',
+      accent: '259 94% 51%',
       background: '0 0% 100%',
       foreground: '30 10% 10%'
     },
     dark: {
-      primary: '24 95% 53%',
-      secondary: '220 14% 25%',
-      accent: '24 95% 53%',
-      background: '220 14% 18%',
+      primary: '271 81% 56%',
+      secondary: '239 84% 67%',
+      accent: '259 94% 51%',
+      background: '222 47% 11%',
       foreground: '0 0% 98%'
     }
   },
