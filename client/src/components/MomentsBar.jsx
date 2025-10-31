@@ -24,7 +24,7 @@ const MomentsBar = ({ onOpenComposer, onOpenViewer }) => {
             key={m._id}
             onClick={() => onOpenViewer(moments, m._id)}
             whileHover={{ rotate: 1, scale: 1.02 }}
-            className="flex-shrink-0 w-40 h-24 rounded-xl border border-orange-300/60 bg-gradient-to-br from-white/60 to-orange-50/40 dark:from-gray-700/50 dark:to-orange-900/10 shadow-sm overflow-hidden relative"
+            className="flex-shrink-0 w-40 h-24 rounded-xl border border-purple-300/60 bg-gradient-to-br from-white/60 to-purple-50/40 dark:from-gray-700/50 dark:to-purple-900/10 shadow-sm overflow-hidden relative"
           >
             <motion.div
               className="absolute inset-0"

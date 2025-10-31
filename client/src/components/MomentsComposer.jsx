@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import api from '../utils/api';
 
 const gradients = [
-  'linear-gradient(135deg,#FF7A00,#FFF4E5)',
+  'linear-gradient(135deg,#8B5CF6,#E9D5FF)',
   'linear-gradient(135deg,#ff9a9e,#fad0c4)',
   'linear-gradient(135deg,#a18cd1,#fbc2eb)',
   'linear-gradient(135deg,#f6d365,#fda085)'
@@ -102,9 +102,9 @@ const MomentsComposer = ({ open, onClose, onPosted, initialText = '' }) => {
         </div>
         <div className="p-4 space-y-3 overflow-y-auto">
           <div className="flex gap-2">
-            <button onClick={() => setTab('text')} className={`px-3 py-1.5 rounded-lg border ${tab==='text'?'bg-orange-500 text-white border-orange-600':'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700'}`}><Type className="w-4 h-4 inline mr-1" /> Text</button>
-            <button onClick={() => setTab('upload')} className={`px-3 py-1.5 rounded-lg border ${tab==='upload'?'bg-orange-500 text-white border-orange-600':'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700'}`}><Upload className="w-4 h-4 inline mr-1" /> Upload</button>
-            <button onClick={() => setTab('capture')} className={`px-3 py-1.5 rounded-lg border ${tab==='capture'?'bg-orange-500 text-white border-orange-600':'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700'}`}><Camera className="w-4 h-4 inline mr-1" /> Capture</button>
+            <button onClick={() => setTab('text')} className={`px-3 py-1.5 rounded-lg border ${tab==='text'?'bg-purple-500 text-white border-purple-600':'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700'}`}><Type className="w-4 h-4 inline mr-1" /> Text</button>
+            <button onClick={() => setTab('upload')} className={`px-3 py-1.5 rounded-lg border ${tab==='upload'?'bg-purple-500 text-white border-purple-600':'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700'}`}><Upload className="w-4 h-4 inline mr-1" /> Upload</button>
+            <button onClick={() => setTab('capture')} className={`px-3 py-1.5 rounded-lg border ${tab==='capture'?'bg-purple-500 text-white border-purple-600':'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700'}`}><Camera className="w-4 h-4 inline mr-1" /> Capture</button>
           </div>
 
           {tab === 'text' && (
@@ -114,7 +114,7 @@ const MomentsComposer = ({ open, onClose, onPosted, initialText = '' }) => {
               </div>
               <div className="flex gap-2">
                 {gradients.map(g => (
-                  <button key={g} onClick={() => setGradient(g)} className={`w-10 h-10 rounded-lg border ${gradient===g?'border-orange-600':'border-gray-300 dark:border-gray-700'}`} style={{ background: g }} />
+                  <button key={g} onClick={() => setGradient(g)} className={`w-10 h-10 rounded-lg border ${gradient===g?'border-purple-600':'border-gray-300 dark:border-gray-700'}`} style={{ background: g }} />
                 ))}
               </div>
               <div className="flex items-center gap-2">
@@ -125,7 +125,7 @@ const MomentsComposer = ({ open, onClose, onPosted, initialText = '' }) => {
                   <option value="private">Only Me</option>
                 </select>
               </div>
-              <motion.button onClick={postText} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} disabled={posting || !text.trim()} className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 disabled:opacity-60">Post</motion.button>
+              <motion.button onClick={postText} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} disabled={posting || !text.trim()} className="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 disabled:opacity-60">Post</motion.button>
             </div>
           )}
 
@@ -140,7 +140,7 @@ const MomentsComposer = ({ open, onClose, onPosted, initialText = '' }) => {
                   <option value="private">Only Me</option>
                 </select>
               </div>
-              <motion.button onClick={postFile} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} disabled={posting || !file} className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 disabled:opacity-60">Upload</motion.button>
+              <motion.button onClick={postFile} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} disabled={posting || !file} className="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 disabled:opacity-60">Upload</motion.button>
             </div>
           )}
 
@@ -157,7 +157,7 @@ const MomentsComposer = ({ open, onClose, onPosted, initialText = '' }) => {
                   <option value="private">Only Me</option>
                 </select>
               </div>
-              <motion.button onClick={captureAndPost} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} disabled={posting} className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 disabled:opacity-60">Capture & Post</motion.button>
+              <motion.button onClick={captureAndPost} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} disabled={posting} className="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 disabled:opacity-60">Capture & Post</motion.button>
             </div>
           )}
         </div>

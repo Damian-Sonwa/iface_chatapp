@@ -30,13 +30,13 @@ const MomentsViewer = ({ open, moments, initialId, onClose }) => {
       <div className="relative w-full max-w-3xl h-[70vh] bg-gradient-to-br from-white/10 to-gray-900/10 backdrop-blur-xl rounded-2xl overflow-hidden border border-white/20" onClick={(e)=>e.stopPropagation()}>
         <button onClick={onClose} className="absolute top-3 right-3 p-2 bg-white/10 rounded-lg border border-white/20 text-white"><X className="w-5 h-5" /></button>
         <div className="absolute top-0 left-0 right-0 h-1 bg-white/30">
-          <motion.div initial={{ width: 0 }} animate={{ width: '100%' }} transition={{ duration: 5 }} className="h-full bg-orange-500" />
+          <motion.div initial={{ width: 0 }} animate={{ width: '100%' }} transition={{ duration: 5 }} className="h-full bg-purple-500" />
         </div>
         <div className="w-full h-full flex items-center justify-center">
           <AnimatePresence mode="wait">
             <motion.div key={current._id} initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.96 }} className="w-full h-full flex items-center justify-center">
               {current.type === 'text' ? (
-                <div className="w-full h-full flex items-center justify-center p-8 text-2xl font-semibold text-white" style={{ background: current.gradient || 'linear-gradient(135deg,#FF7A00,#FFF4E5)' }}>
+                <div className="w-full h-full flex items-center justify-center p-8 text-2xl font-semibold text-white" style={{ background: current.gradient || 'linear-gradient(135deg,#8B5CF6,#E9D5FF)' }}>
                   {current.text}
                 </div>
               ) : (

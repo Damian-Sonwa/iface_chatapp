@@ -30,11 +30,11 @@ const StatusBar = ({ users = [] }) => {
             title={s.username}
           >
             <div className="relative">
-              <div className="w-14 h-14 rounded-full ring-2 ring-orange-400/70 ring-offset-2 ring-offset-transparent overflow-hidden">
+              <div className="w-14 h-14 rounded-full ring-2 ring-purple-400/70 ring-offset-2 ring-offset-transparent overflow-hidden">
                 {s.photo ? (
                   <img src={s.photo} alt={s.username} className="w-full h-full object-cover" />
                 ) : (
-                  <div className="w-full h-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center text-orange-600 dark:text-orange-400 font-semibold">
+                  <div className="w-full h-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center text-purple-600 dark:text-purple-400 font-semibold">
                     {s.username?.charAt(0).toUpperCase()}
                   </div>
                 )}

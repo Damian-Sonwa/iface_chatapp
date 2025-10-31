@@ -176,7 +176,7 @@ const UserProfile = ({ user, onClose, onUpdate }) => {
           <div className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm">
             <div className="flex items-center justify-between mb-3">
               <h3 className="font-semibold">Status</h3>
-              <button onClick={() => setShowCamera(true)} className="px-3 py-1.5 bg-orange-500 text-white rounded-lg hover:bg-orange-600 flex items-center gap-2">
+              <button onClick={() => setShowCamera(true)} className="px-3 py-1.5 bg-purple-500 text-white rounded-lg hover:bg-purple-600 flex items-center gap-2">
                 <Camera className="w-4 h-4" /> Update
               </button>
             </div>
@@ -196,7 +196,7 @@ const UserProfile = ({ user, onClose, onUpdate }) => {
           </div>
           <div className="flex justify-center mb-4">
             <div className="relative">
-              <div className="w-24 h-24 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center text-orange-600 dark:text-orange-400 font-semibold text-3xl relative group overflow-hidden">
+              <div className="w-24 h-24 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center text-purple-600 dark:text-purple-400 font-semibold text-3xl relative group overflow-hidden">
                 {avatarPreview ? (
                   <img src={avatarPreview} alt={user?.username} className="w-full h-full object-cover" />
                 ) : (
@@ -233,7 +233,7 @@ const UserProfile = ({ user, onClose, onUpdate }) => {
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                className="w-full px-3 py-2 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500"
               />
             ) : (
               <div className="px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-lg">
@@ -251,7 +251,7 @@ const UserProfile = ({ user, onClose, onUpdate }) => {
                 value={bio}
                 onChange={(e) => setBio(e.target.value)}
                 maxLength={150}
-                className="w-full px-3 py-2 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500 resize-none"
+                className="w-full px-3 py-2 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none"
                 rows={3}
               />
             ) : (
@@ -289,7 +289,7 @@ const UserProfile = ({ user, onClose, onUpdate }) => {
                     onClick={() => setVibe(vibeName)}
                     className={`p-3 rounded-lg border-2 transition ${
                       vibe === vibeName
-                        ? 'border-orange-500 bg-orange-50 dark:bg-orange-900/20'
+                        ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20'
                         : 'border-gray-200 dark:border-gray-700 hover:border-gray-400'
                     }`}
                   >
@@ -315,7 +315,7 @@ const UserProfile = ({ user, onClose, onUpdate }) => {
               <select
                 value={theme}
                 onChange={(e) => setTheme(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                className="w-full px-3 py-2 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500"
               >
                 {Object.entries(themes).map(([themeName, config]) => (
                   <option key={themeName} value={themeName}>
@@ -353,7 +353,7 @@ const UserProfile = ({ user, onClose, onUpdate }) => {
               <select
                 value={preferredLanguage}
                 onChange={(e) => setPreferredLanguage(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                className="w-full px-3 py-2 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500"
               >
                 <option value="en">English</option>
                 <option value="es">Spanish</option>
@@ -387,7 +387,7 @@ const UserProfile = ({ user, onClose, onUpdate }) => {
                 <button
                   onClick={handleSave}
                   disabled={loading || !username.trim()}
-                  className="flex-1 px-4 py-2 rounded-lg bg-orange-500 text-white hover:bg-orange-600 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  className="flex-1 px-4 py-2 rounded-lg bg-purple-500 text-white hover:bg-purple-600 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   {loading ? (
                     <>
@@ -416,7 +416,7 @@ const UserProfile = ({ user, onClose, onUpdate }) => {
                     preferredLanguage
                   });
                 }}
-                className="flex-1 px-4 py-2 rounded-lg bg-orange-500 text-white hover:bg-orange-600 transition flex items-center justify-center gap-2"
+                className="flex-1 px-4 py-2 rounded-lg bg-purple-500 text-white hover:bg-purple-600 transition flex items-center justify-center gap-2"
               >
                 <Edit className="w-4 h-4" />
                 Edit Profile
