@@ -40,7 +40,17 @@ Click "Save"
 
 ⚠️ **Important:** Get the actual OpenAI API key from the `JWT_SECRET_KEY.md` file in your project.
 
-#### 4️⃣ NODE_ENV (Optional)
+#### 4️⃣ CLIENT_URL (Important for CORS)
+Click "Add Environment Variable":
+```
+Key:   CLIENT_URL
+Value: https://your-netlify-app.netlify.app
+```
+Click "Save"
+
+⚠️ **Important:** Replace with your actual Netlify URL after deploying frontend!
+
+#### 5️⃣ NODE_ENV (Optional)
 Click "Add Environment Variable":
 ```
 Key:   NODE_ENV  
