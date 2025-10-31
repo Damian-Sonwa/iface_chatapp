@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Mail, Lock, Loader2 } from 'lucide-react';
 import FlippingAuthBackground from '../components/FlippingAuthBackground';
+import AuthHeader from '../components/AuthHeader';
 import api from '../utils/api';
 
 const Login = () => {
@@ -47,6 +48,8 @@ const Login = () => {
   return (
     <div className="relative min-h-screen flex items-center justify-center p-4 overflow-hidden">
       <FlippingAuthBackground />
+      {/* Auth Header */}
+      <AuthHeader />
       {/* Auth card */}
       <div className="w-full max-w-md rounded-2xl p-6 bg-white/10 dark:bg-gray-900/20 backdrop-blur-2xl border border-white/20 dark:border-white/10 shadow-2xl shadow-black/20 ring-1 ring-white/10">
         {inviteInfo && (

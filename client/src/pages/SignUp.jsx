@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { Mail, Lock, User, Loader2 } from 'lucide-react';
 import api from '../utils/api';
 import FlippingAuthBackground from '../components/FlippingAuthBackground';
+import AuthHeader from '../components/AuthHeader';
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -30,6 +31,8 @@ const SignUp = () => {
   return (
     <div className="relative min-h-screen flex items-center justify-center p-4 overflow-hidden">
       <FlippingAuthBackground />
+      {/* Auth Header */}
+      <AuthHeader />
       <div className="w-full max-w-md rounded-2xl p-6 bg-white/10 dark:bg-gray-900/20 backdrop-blur-2xl border border-white/20 dark:border-white/10 shadow-2xl shadow-black/20 ring-1 ring-white/10">
         <h1 className="text-2xl font-bold mb-6 text-gray-900 dark:text-gray-100">Create account</h1>
         {error && (

@@ -46,7 +46,8 @@ export const AuthProvider = ({ children }) => {
       const response = await api.post('/auth/login', { email, password });
       localStorage.setItem('token', response.data.token);
       setUser(response.data.user);
-      connectSocket(response.data.token);
+      // Connect socket asynchronously to avoid blocking navigation
+      setTimeout(() => connectSocket(response.data.token), 0);
       return response.data;
     } catch (error) {
       console.error('Login error:', error);
@@ -59,7 +60,8 @@ export const AuthProvider = ({ children }) => {
       const response = await api.post('/auth/register', { username, email, password, phoneNumber });
       localStorage.setItem('token', response.data.token);
       setUser(response.data.user);
-      connectSocket(response.data.token);
+      // Connect socket asynchronously to avoid blocking navigation
+      setTimeout(() => connectSocket(response.data.token), 0);
       return response.data;
     } catch (error) {
       console.error('Register error:', error);
