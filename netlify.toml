@@ -5,9 +5,9 @@
 
 [build.environment]
   NODE_VERSION = "18"
-  # Point this to your deployed server API (update before deploy)
-  VITE_API_URL = "https://your-api.example.com/api"
-  VITE_SOCKET_URL = "https://your-api.example.com"
+  # Point this to your deployed server API
+  VITE_API_URL = "https://chaturway-app.onrender.com/api"
+  VITE_SOCKET_URL = "https://chaturway-app.onrender.com"
 
 [[redirects]]
   from = "/*"
