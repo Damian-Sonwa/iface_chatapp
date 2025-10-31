@@ -69,8 +69,8 @@ const TwoFactorModal = ({ isOpen, onClose, onVerify, method, email, phoneNumber 
       >
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-orange-100 dark:bg-orange-900/30 rounded-lg">
-              <Shield className="w-6 h-6 text-orange-600 dark:text-orange-400" />
+            <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
+              <Shield className="w-6 h-6 text-purple-600 dark:text-purple-400" />
             </div>
             <h2 className="text-2xl font-bold">Two-Factor Authentication</h2>
           </div>
@@ -112,7 +112,7 @@ const TwoFactorModal = ({ isOpen, onClose, onVerify, method, email, phoneNumber 
                 onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))}
                 placeholder="000000"
                 autoFocus
-                className="w-full px-4 py-3 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500 text-gray-900 dark:text-gray-100 text-center text-2xl tracking-widest"
+                className="w-full px-4 py-3 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-900 dark:text-gray-100 text-center text-2xl tracking-widest"
               />
             </div>
 
@@ -120,7 +120,7 @@ const TwoFactorModal = ({ isOpen, onClose, onVerify, method, email, phoneNumber 
               <button
                 type="submit"
                 disabled={loading || code.length !== 6}
-                className="flex-1 py-3 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 font-semibold"
+                className="flex-1 py-3 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 font-semibold"
               >
                 {loading ? (
                   <>

@@ -25,7 +25,7 @@ const Moments = ({ onAdd }) => {
           onClick={onAdd}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.97 }}
-          className="px-3 py-2 rounded-xl bg-orange-500 text-white hover:bg-orange-600 flex items-center gap-2"
+          className="px-3 py-2 rounded-xl bg-purple-500 text-white hover:bg-purple-600 flex items-center gap-2"
         >
           <Plus className="w-4 h-4" />
           Add Moment
@@ -33,9 +33,9 @@ const Moments = ({ onAdd }) => {
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
         {moments.map((m) => (
-          <motion.div key={m._id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="rounded-xl overflow-hidden border border-orange-300/50 bg-white dark:bg-gray-800">
+          <motion.div key={m._id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="rounded-xl overflow-hidden border border-purple-300/50 bg-white dark:bg-gray-800">
             {m.type === 'text' ? (
-              <div className="h-40 flex items-center justify-center text-center p-4 text-gray-900 dark:text-gray-100" style={{ background: m.gradient || 'linear-gradient(135deg,#FF7A00,#FFF4E5)' }}>
+              <div className="h-40 flex items-center justify-center text-center p-4 text-gray-900 dark:text-gray-100" style={{ background: m.gradient || 'linear-gradient(135deg,#8B5CF6,#E9D5FF)' }}>
                 {m.text}
               </div>
             ) : (

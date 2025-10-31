@@ -51,7 +51,7 @@ export const MentionText = ({ parts }) => {
               key={idx}
               className={`font-semibold ${
                 part.isSelf
-                  ? 'text-orange-600 dark:text-orange-400'
+                  ? 'text-purple-600 dark:text-purple-400'
                   : 'text-blue-600 dark:text-blue-400'
               }`}
             >

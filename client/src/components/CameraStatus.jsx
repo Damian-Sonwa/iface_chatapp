@@ -105,11 +105,11 @@ const CameraStatus = ({ open, onClose, onUpdated }) => {
           />
           <div className="flex gap-2">
             {!capturedDataUrl ? (
-              <button onClick={capture} className="flex-1 py-2 rounded-lg bg-orange-500 text-white hover:bg-orange-600 flex items-center justify-center gap-2"><Camera className="w-4 h-4" />Capture</button>
+              <button onClick={capture} className="flex-1 py-2 rounded-lg bg-purple-500 text-white hover:bg-purple-600 flex items-center justify-center gap-2"><Camera className="w-4 h-4" />Capture</button>
             ) : (
               <>
                 <button onClick={retake} className="flex-1 py-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 flex items-center justify-center gap-2"><RefreshCw className="w-4 h-4" />Retake</button>
-                <button onClick={upload} disabled={uploading} className="flex-1 py-2 rounded-lg bg-orange-500 text-white hover:bg-orange-600 disabled:opacity-60 flex items-center justify-center gap-2">
+                <button onClick={upload} disabled={uploading} className="flex-1 py-2 rounded-lg bg-purple-500 text-white hover:bg-purple-600 disabled:opacity-60 flex items-center justify-center gap-2">
                   <Upload className="w-4 h-4" />{uploading ? 'Uploading...' : 'Post Status'}
                 </button>
               </>

@@ -109,7 +109,7 @@ const Admin = () => {
     return (
       <div className="flex items-center justify-center h-screen">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500 mx-auto mb-4"></div>
           <p>Loading dashboard...</p>
         </div>
       </div>
@@ -142,7 +142,7 @@ const Admin = () => {
               onClick={() => setActiveTab(tab.id)}
               className={`flex items-center gap-2 px-4 py-2 border-b-2 transition ${
                 activeTab === tab.id
-                  ? 'border-orange-500 text-orange-600 dark:text-orange-400'
+                  ? 'border-purple-500 text-purple-600 dark:text-purple-400'
                   : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
               }`}
             >
@@ -205,8 +205,8 @@ const Admin = () => {
                     {dashboard.stats.activeUsers}
                   </p>
                 </div>
-                <div className="p-3 bg-orange-100 dark:bg-orange-900/30 rounded-lg">
-                  <UserCheck className="w-6 h-6 text-orange-600 dark:text-orange-400" />
+                <div className="p-3 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
+                  <UserCheck className="w-6 h-6 text-purple-600 dark:text-purple-400" />
                 </div>
               </div>
             </motion.div>
@@ -263,7 +263,7 @@ const Admin = () => {
                     <tr key={u._id || u.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50">
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2">
-                          <div className="w-8 h-8 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center text-orange-600 dark:text-orange-400 font-semibold text-sm">
+                          <div className="w-8 h-8 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center text-purple-600 dark:text-purple-400 font-semibold text-sm">
                             {u.username?.charAt(0).toUpperCase()}
                           </div>
                           <span className="font-medium">{u.username}</span>

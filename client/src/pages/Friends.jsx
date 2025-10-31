@@ -121,7 +121,7 @@ const Friends = () => {
               onClick={() => setActiveTab(tab.id)}
               className={`flex items-center gap-2 px-4 py-2 border-b-2 transition ${
                 activeTab === tab.id
-                  ? 'border-orange-500 text-orange-600 dark:text-orange-400'
+                  ? 'border-purple-500 text-purple-600 dark:text-purple-400'
                   : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
               }`}
             >
@@ -159,7 +159,7 @@ const Friends = () => {
                         className="w-12 h-12 rounded-full object-cover"
                       />
                     ) : (
-                      <div className="w-12 h-12 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center text-orange-600 dark:text-orange-400 font-semibold">
+                      <div className="w-12 h-12 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center text-purple-600 dark:text-purple-400 font-semibold">
                         {friend.username?.charAt(0).toUpperCase()}
                       </div>
                     )}
@@ -179,7 +179,7 @@ const Friends = () => {
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => handleStartChat(friend._id || friend.id)}
-                      className="p-2 rounded-lg bg-orange-500 text-white hover:bg-orange-600 transition"
+                      className="p-2 rounded-lg bg-purple-500 text-white hover:bg-purple-600 transition"
                       title="Start Chat"
                     >
                       <MessageSquare className="w-5 h-5" />
@@ -214,7 +214,7 @@ const Friends = () => {
                         className="w-12 h-12 rounded-full object-cover"
                       />
                     ) : (
-                      <div className="w-12 h-12 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center text-orange-600 dark:text-orange-400 font-semibold">
+                      <div className="w-12 h-12 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center text-purple-600 dark:text-purple-400 font-semibold">
                         {request.from?.username?.charAt(0).toUpperCase()}
                       </div>
                     )}
@@ -274,7 +274,7 @@ const Friends = () => {
                 <button
                   onClick={handleSearch}
                   disabled={loading || !searchQuery.trim()}
-                  className="px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                  className="px-6 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                 >
                   {loading ? (
                     <>
@@ -312,7 +312,7 @@ const Friends = () => {
                             className="w-12 h-12 rounded-full object-cover"
                           />
                         ) : (
-                          <div className="w-12 h-12 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center text-orange-600 dark:text-orange-400 font-semibold">
+                          <div className="w-12 h-12 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center text-purple-600 dark:text-purple-400 font-semibold">
                             {result.username?.charAt(0).toUpperCase()}
                           </div>
                         )}
@@ -337,7 +337,7 @@ const Friends = () => {
                         ) : (
                           <button
                             onClick={() => handleSendRequest(result._id || result.id)}
-                            className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition flex items-center gap-2"
+                            className="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition flex items-center gap-2"
                           >
                             <UserPlus className="w-4 h-4" />
                             Add Friend

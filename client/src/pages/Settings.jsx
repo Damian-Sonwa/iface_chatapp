@@ -247,8 +247,8 @@ const Settings = () => {
                     whileTap={{ scale: 0.98 }}
                     className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl mb-1 transition-all ${
                       isActive
-                        ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/30'
-                        : 'text-gray-700 dark:text-gray-300 hover:bg-orange-50 dark:hover:bg-gray-700'
+                        ? 'bg-purple-500 text-white shadow-lg shadow-purple-500/30'
+                        : 'text-gray-700 dark:text-gray-300 hover:bg-purple-50 dark:hover:bg-gray-700'
                     }`}
                   >
                     <Icon className="w-5 h-5" />
@@ -285,7 +285,7 @@ const Settings = () => {
 
                     <div className="flex items-center gap-6 pb-6 border-b border-gray-200 dark:border-gray-700">
                       <div className="relative">
-                        <div className="w-24 h-24 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center text-orange-600 dark:text-orange-400 font-semibold text-3xl relative overflow-hidden group">
+                        <div className="w-24 h-24 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center text-purple-600 dark:text-purple-400 font-semibold text-3xl relative overflow-hidden group">
                           {user?.avatar ? (
                             <img src={user.avatar} alt={user.username} className="w-full h-full object-cover" />
                           ) : (
@@ -308,7 +308,7 @@ const Settings = () => {
                           onClick={() => setShowProfileEdit(true)}
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
-                          className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition shadow-lg shadow-orange-500/30 flex items-center gap-2"
+                          className="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition shadow-lg shadow-purple-500/30 flex items-center gap-2"
                           style={{ fontWeight: 500 }}
                         >
                           <Edit2 className="w-4 h-4" />
@@ -357,8 +357,8 @@ const Settings = () => {
                     <div className="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-6 border border-gray-200 dark:border-gray-600">
                       <div className="flex items-center justify-between mb-4">
                         <div className="flex items-center gap-3">
-                          <div className="p-2 bg-orange-100 dark:bg-orange-900/30 rounded-lg">
-                            <Shield className="w-6 h-6 text-orange-600 dark:text-orange-400" />
+                          <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
+                            <Shield className="w-6 h-6 text-purple-600 dark:text-purple-400" />
                           </div>
                           <div>
                             <h3 className="font-semibold text-gray-900 dark:text-gray-100" style={{ fontWeight: 600 }}>
@@ -419,11 +419,11 @@ const Settings = () => {
                                 disabled={!user?.email}
                                 className={`p-4 rounded-xl border-2 transition ${
                                   twoFactorMethod === 'email'
-                                    ? 'border-orange-500 bg-orange-50 dark:bg-orange-900/20'
+                                    ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20'
                                     : 'border-gray-200 dark:border-gray-600 hover:border-gray-400'
                                 } ${!user?.email ? 'opacity-50 cursor-not-allowed' : ''}`}
                               >
-                                <Mail className="w-6 h-6 mb-2 mx-auto text-orange-500" />
+                                <Mail className="w-6 h-6 mb-2 mx-auto text-purple-500" />
                                 <div className="font-medium text-gray-900 dark:text-gray-100" style={{ fontWeight: 500 }}>
                                   Email
                                 </div>
@@ -439,11 +439,11 @@ const Settings = () => {
                                 disabled={!user?.phoneNumber}
                                 className={`p-4 rounded-xl border-2 transition ${
                                   twoFactorMethod === 'phone'
-                                    ? 'border-orange-500 bg-orange-50 dark:bg-orange-900/20'
+                                    ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20'
                                     : 'border-gray-200 dark:border-gray-600 hover:border-gray-400'
                                 } ${!user?.phoneNumber ? 'opacity-50 cursor-not-allowed' : ''}`}
                               >
-                                <Phone className="w-6 h-6 mb-2 mx-auto text-orange-500" />
+                                <Phone className="w-6 h-6 mb-2 mx-auto text-purple-500" />
                                 <div className="font-medium text-gray-900 dark:text-gray-100" style={{ fontWeight: 500 }}>
                                   Phone
                                 </div>
@@ -459,7 +459,7 @@ const Settings = () => {
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
                             disabled={loading || (!user?.email && !user?.phoneNumber) || (twoFactorMethod === 'phone' && !user?.phoneNumber)}
-                            className="w-full py-3 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 font-semibold shadow-lg shadow-orange-500/30"
+                            className="w-full py-3 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 font-semibold shadow-lg shadow-purple-500/30"
                             style={{ fontWeight: 600 }}
                           >
                             <Shield className="w-5 h-5" />
@@ -498,7 +498,7 @@ const Settings = () => {
                               whileHover={{ scale: 1.02 }}
                               whileTap={{ scale: 0.98 }}
                               disabled={loading || verificationCode.length !== 6}
-                              className="flex-1 py-3 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 font-semibold shadow-lg shadow-orange-500/30"
+                              className="flex-1 py-3 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 font-semibold shadow-lg shadow-purple-500/30"
                               style={{ fontWeight: 600 }}
                             >
                               {loading ? (
@@ -598,7 +598,7 @@ const Settings = () => {
                       <motion.button
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
-                        className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition shadow-lg shadow-orange-500/30 flex items-center gap-2"
+                        className="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition shadow-lg shadow-purple-500/30 flex items-center gap-2"
                         style={{ fontWeight: 500 }}
                       >
                         <Lock className="w-4 h-4" />
@@ -639,11 +639,11 @@ const Settings = () => {
                               whileTap={{ scale: 0.95 }}
                               className={`p-4 rounded-xl border-2 transition ${
                                 isActive
-                                  ? 'border-orange-500 bg-orange-50 dark:bg-orange-900/20'
+                                  ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20'
                                   : 'border-gray-200 dark:border-gray-600 hover:border-gray-400'
                               }`}
                             >
-                              <Icon className="w-6 h-6 mb-2 mx-auto text-orange-500" />
+                              <Icon className="w-6 h-6 mb-2 mx-auto text-purple-500" />
                               <div className="font-medium text-gray-900 dark:text-gray-100" style={{ fontWeight: 500 }}>
                                 {option.label}
                               </div>
@@ -669,7 +669,7 @@ const Settings = () => {
                               whileTap={{ scale: 0.98 }}
                               className={`p-4 rounded-xl border-2 transition text-left ${
                                 isActive
-                                  ? 'border-orange-500 bg-orange-50 dark:bg-orange-900/20'
+                                  ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20'
                                   : 'border-gray-200 dark:border-gray-600 hover:border-gray-400'
                               }`}
                               style={{ fontFamily: font === 'Poppins' ? "'Poppins', sans-serif" : "'Inter', sans-serif" }}
@@ -693,7 +693,7 @@ const Settings = () => {
                       </h3>
                       <div className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-gray-600">
                         <div className="flex items-center gap-3 mb-4">
-                          <div className="w-10 h-10 rounded-full bg-orange-500 flex items-center justify-center text-white font-semibold">
+                          <div className="w-10 h-10 rounded-full bg-purple-500 flex items-center justify-center text-white font-semibold">
                             U
                           </div>
                           <div>
@@ -704,7 +704,7 @@ const Settings = () => {
                           </div>
                         </div>
                         <div className="space-y-2">
-                          <div className="bg-orange-500 text-white rounded-lg rounded-tr-sm px-4 py-2 max-w-[80%] ml-auto shadow-lg shadow-orange-500/30">
+                          <div className="bg-purple-500 text-white rounded-lg rounded-tr-sm px-4 py-2 max-w-[80%] ml-auto shadow-lg shadow-purple-500/30">
                             <p style={{ fontWeight: 400 }}>Your message here</p>
                           </div>
                           <div className="bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg rounded-tl-sm px-4 py-2 max-w-[80%] shadow-lg">
@@ -760,7 +760,7 @@ const Settings = () => {
                         return (
                           <div key={pref.label} className="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4 border border-gray-200 dark:border-gray-600 flex items-center justify-between">
                             <div className="flex items-center gap-3">
-                              <Icon className="w-5 h-5 text-orange-500" />
+                              <Icon className="w-5 h-5 text-purple-500" />
                               <span className="font-medium text-gray-900 dark:text-gray-100" style={{ fontWeight: 500 }}>
                                 {pref.label}
                               </span>
@@ -770,7 +770,7 @@ const Settings = () => {
                               onClick={handleToggle}
                               disabled={preferencesLoading}
                               className={`relative w-12 h-6 rounded-full transition ${
-                                preferences[prefKey] ? 'bg-orange-500' : 'bg-gray-300 dark:bg-gray-600'
+                                preferences[prefKey] ? 'bg-purple-500' : 'bg-gray-300 dark:bg-gray-600'
                               } ${preferencesLoading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
                             >
                               <motion.div
@@ -855,7 +855,7 @@ const Settings = () => {
                         <motion.button
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
-                          className="p-4 bg-gray-50 dark:bg-gray-700/50 rounded-xl border border-gray-200 dark:border-gray-600 hover:border-orange-500 transition text-left"
+                          className="p-4 bg-gray-50 dark:bg-gray-700/50 rounded-xl border border-gray-200 dark:border-gray-600 hover:border-purple-500 transition text-left"
                         >
                           <h4 className="font-semibold mb-1 text-gray-900 dark:text-gray-100" style={{ fontWeight: 600 }}>
                             Contact Support
@@ -866,7 +866,7 @@ const Settings = () => {
                         <motion.button
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
-                          className="p-4 bg-gray-50 dark:bg-gray-700/50 rounded-xl border border-gray-200 dark:border-gray-600 hover:border-orange-500 transition text-left"
+                          className="p-4 bg-gray-50 dark:bg-gray-700/50 rounded-xl border border-gray-200 dark:border-gray-600 hover:border-purple-500 transition text-left"
                         >
                           <h4 className="font-semibold mb-1 text-gray-900 dark:text-gray-100" style={{ fontWeight: 600 }}>
                             Terms & Privacy
