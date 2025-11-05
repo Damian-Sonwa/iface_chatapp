@@ -150,7 +150,7 @@ const HamburgerMenu = ({ darkMode, onToggleDarkMode, user }) => {
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
         onClick={() => setIsOpen(!isOpen)}
-        className="relative z-50 p-2 rounded-lg bg-white/10 dark:bg-black/20 backdrop-blur-xl border border-white/30 dark:border-white/10 hover:bg-white/20 dark:hover:bg-black/30 transition-all"
+        className="relative z-[10000] p-2 rounded-lg bg-white/10 dark:bg-black/20 backdrop-blur-xl border border-white/30 dark:border-white/10 hover:bg-white/20 dark:hover:bg-black/30 transition-all"
         aria-label="Menu"
       >
         <AnimatePresence mode="wait">
@@ -178,7 +178,7 @@ const HamburgerMenu = ({ darkMode, onToggleDarkMode, user }) => {
         </AnimatePresence>
       </motion.button>
 
-      {/* Overlay */}
+              {/* Overlay */}
       <AnimatePresence>
         {isOpen && (
           <>
@@ -187,7 +187,7 @@ const HamburgerMenu = ({ darkMode, onToggleDarkMode, user }) => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsOpen(false)}
-              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40"
+              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[9998]"
             />
 
             {/* Menu Panel */}
@@ -197,7 +197,7 @@ const HamburgerMenu = ({ darkMode, onToggleDarkMode, user }) => {
               animate={{ x: 0 }}
               exit={{ x: '-100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed left-0 top-0 bottom-0 w-80 max-w-[85vw] z-50 bg-gradient-to-br from-slate-900/95 via-purple-900/30 to-slate-900/95 backdrop-blur-xl border-r border-white/10 shadow-2xl overflow-y-auto"
+              className="fixed left-0 top-0 bottom-0 w-80 max-w-[85vw] z-[9999] bg-gradient-to-br from-slate-900/95 via-purple-900/30 to-slate-900/95 backdrop-blur-xl border-r border-white/10 shadow-2xl flex flex-col"
             >
               {/* Header */}
               <div className="p-6 border-b border-white/10">
@@ -236,8 +236,8 @@ const HamburgerMenu = ({ darkMode, onToggleDarkMode, user }) => {
                 </div>
               </div>
 
-              {/* Menu Sections */}
-              <div className="p-4 space-y-2">
+              {/* Menu Sections - Scrollable */}
+              <div className="flex-1 overflow-y-auto p-4 space-y-2">
                 {menuSections.map((section, sectionIndex) => {
                   const SectionIcon = section.icon;
                   return (
@@ -262,7 +262,7 @@ const HamburgerMenu = ({ darkMode, onToggleDarkMode, user }) => {
                             whileHover={{ scale: 1.02, x: 4 }}
                             whileTap={{ scale: 0.98 }}
                             onClick={() => handleMenuClick(item)}
-                            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-white/5 hover:bg-white/10 backdrop-blur-sm border border-white/10 hover:border-primaryFrom/30 transition-all group"
+                            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-white/5 hover:bg-white/10 backdrop-blur-sm border border-white/10 hover:border-primaryFrom/30 transition-all group mb-2"
                           >
                             <div className="p-2 rounded-lg bg-white/5 group-hover:bg-primaryFrom/20 transition-colors">
                               <ItemIcon className="w-5 h-5 text-gray-300 group-hover:text-primaryFrom transition-colors" />
@@ -276,15 +276,16 @@ const HamburgerMenu = ({ darkMode, onToggleDarkMode, user }) => {
                   );
                 })}
 
-                {/* Divider */}
-                <div className="my-4 border-t border-white/10" />
+              </div>
 
+              {/* Fixed Bottom Section */}
+              <div className="p-4 border-t border-white/10 bg-gradient-to-br from-slate-900/95 via-purple-900/30 to-slate-900/95">
                 {/* Theme Toggle */}
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={onToggleDarkMode}
-                  className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-white/5 hover:bg-white/10 backdrop-blur-sm border border-white/10 hover:border-primaryFrom/30 transition-all"
+                  className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-white/5 hover:bg-white/10 backdrop-blur-sm border border-white/10 hover:border-primaryFrom/30 transition-all mb-2"
                 >
                   <div className="p-2 rounded-lg bg-white/5">
                     {darkMode ? (
@@ -303,27 +304,28 @@ const HamburgerMenu = ({ darkMode, onToggleDarkMode, user }) => {
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={handleLogout}
-                  className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-red-500/10 hover:bg-red-500/20 backdrop-blur-sm border border-red-500/30 hover:border-red-500/50 transition-all mt-2"
+                  className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-red-500/10 hover:bg-red-500/20 backdrop-blur-sm border border-red-500/30 hover:border-red-500/50 transition-all"
                 >
                   <div className="p-2 rounded-lg bg-red-500/20">
                     <LogOut className="w-5 h-5 text-red-400" />
                   </div>
                   <span className="flex-1 text-left text-white font-medium">Logout</span>
                 </motion.button>
+
+                {/* Footer */}
+                <div className="mt-4 pt-4 border-t border-white/10">
+                  <p className="text-xs text-center text-gray-400">
+                    Chaturway v1.0
+                  </p>
+                </div>
               </div>
 
-              {/* Footer */}
-              <div className="p-4 mt-auto border-t border-white/10">
-                <p className="text-xs text-center text-gray-400">
-                  Chaturway v1.0
-                </p>
-              </div>
             </motion.div>
           </>
         )}
       </AnimatePresence>
 
-      {/* User Search Dropdown */}
+      {/* User Search Dropdown - Higher z-index to appear above menu */}
       {showUserSearch && (
         <UserSearchDropdown
           onSelectUser={(selectedUser) => {
