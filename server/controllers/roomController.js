@@ -8,6 +8,7 @@ exports.getAllRooms = async (req, res) => {
     const rooms = await Room.find()
       .populate('createdBy', 'username avatar')
       .populate('members', 'username avatar status')
+      .populate('techSkillId', 'name icon description')
       .sort({ createdAt: -1 });
 
     res.json({ rooms });
@@ -20,7 +21,7 @@ exports.getAllRooms = async (req, res) => {
 // Create room
 exports.createRoom = async (req, res) => {
   try {
-    const { name, description, isPrivate } = req.body;
+    const { name, description, isPrivate, techSkillId, requiresApproval } = req.body;
     const userId = req.userId;
 
     const room = await Room.create({
@@ -28,12 +29,15 @@ exports.createRoom = async (req, res) => {
       description: description || '',
       createdBy: userId,
       members: [userId],
-      isPrivate: isPrivate || false
+      isPrivate: isPrivate || false,
+      techSkillId: techSkillId || null,
+      requiresApproval: requiresApproval || false
     });
 
     const populatedRoom = await Room.findById(room._id)
       .populate('createdBy', 'username avatar')
-      .populate('members', 'username avatar status');
+      .populate('members', 'username avatar status')
+      .populate('techSkillId', 'name icon description');
 
     res.status(201).json({ room: populatedRoom });
   } catch (error) {

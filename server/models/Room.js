@@ -37,7 +37,16 @@ const roomSchema = new mongoose.Schema({
       ref: 'User'
     },
     mutedUntil: Date
-  }]
+  }],
+  techSkillId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'TechSkill',
+    default: null
+  },
+  requiresApproval: {
+    type: Boolean,
+    default: false
+  }
 }, {
   timestamps: true
 });

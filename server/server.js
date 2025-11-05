@@ -12,6 +12,8 @@ const uploadRoutes = require('./routes/upload');
 const messageRoutes = require('./routes/messages');
 const userRoutes = require('./routes/users');
 const adminRoutes = require('./routes/admin');
+const techSkillRoutes = require('./routes/techSkills');
+const groupJoinRequestRoutes = require('./routes/groupJoinRequests');
 const Message = require('./models/Message');
 const Room = require('./models/Room');
 const PrivateChat = require('./models/PrivateChat');
@@ -151,6 +153,8 @@ app.use('/api/friends', require('./routes/friends'));
 app.use('/api/invite', require('./routes/invite'));
 app.use('/api/moments', require('./routes/moments'));
 app.use('/api/polls', require('./routes/polls'));
+app.use('/api/tech-skills', techSkillRoutes);
+app.use('/api/group-join-requests', groupJoinRequestRoutes);
 
 // Socket.io authentication middleware
 io.use(async (socket, next) => {
