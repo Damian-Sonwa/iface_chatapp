@@ -204,11 +204,11 @@ exports.verifyAnswers = async (req, res) => {
       isVerified,
       correctCount,
       totalQuestions: questions.length,
-      threshold,
+      minCorrectAnswers: 5,
       room: joinedRoom,
       message: isVerified 
         ? (joinedRoom ? 'Congratulations! You are verified and have joined the group.' : 'Congratulations! You are verified and can now join the group.') 
-        : `Score: ${score}%. You need ${threshold}% to be verified. Please try again.`
+        : `You got ${correctCount} out of ${questions.length} correct. You need at least 5 correct answers to join. Please try again.`
     });
   } catch (error) {
     console.error('Verify answers error:', error);

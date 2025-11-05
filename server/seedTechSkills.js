@@ -13,6 +13,7 @@ const techSkills = [
     questionGenerator: 'experience',
     questionTemplate: 'What data analysis tools and techniques have you worked with?',
     questions: [
+      // Beginner - 10 questions
       {
         level: 'Beginner',
         questionText: 'What is a dataset?',
@@ -28,6 +29,63 @@ const techSkills = [
         questionType: 'multiple-choice'
       },
       {
+        level: 'Beginner',
+        questionText: 'What is Excel commonly used for?',
+        correctAnswer: 'Data analysis and spreadsheets',
+        options: ['Data analysis and spreadsheets', 'Writing code', 'Designing websites', 'Creating videos'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Beginner',
+        questionText: 'What does CSV stand for?',
+        correctAnswer: 'Comma Separated Values',
+        options: ['Comma Separated Values', 'Column Separated Variables', 'Computer Stored Values', 'Common Spreadsheet Values'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Beginner',
+        questionText: 'What is a bar chart used for?',
+        correctAnswer: 'Comparing categories',
+        options: ['Comparing categories', 'Showing trends over time', 'Displaying percentages', 'Showing relationships'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Beginner',
+        questionText: 'What is the mean in statistics?',
+        correctAnswer: 'Average of numbers',
+        options: ['Average of numbers', 'Middle value', 'Most common value', 'Highest value'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Beginner',
+        questionText: 'What is a data table?',
+        correctAnswer: 'Organized collection of data',
+        options: ['Organized collection of data', 'A graph', 'A formula', 'A calculation'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Beginner',
+        questionText: 'What is sorting in data analysis?',
+        correctAnswer: 'Arranging data in order',
+        options: ['Arranging data in order', 'Deleting data', 'Copying data', 'Formatting data'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Beginner',
+        questionText: 'What is filtering?',
+        correctAnswer: 'Showing only specific data',
+        options: ['Showing only specific data', 'Deleting all data', 'Merging data', 'Exporting data'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Beginner',
+        questionText: 'What is a chart?',
+        correctAnswer: 'Visual representation of data',
+        options: ['Visual representation of data', 'A database', 'A spreadsheet', 'A formula'],
+        questionType: 'multiple-choice'
+      },
+      // Intermediate - 10 questions
+      {
         level: 'Intermediate',
         questionText: 'What is the difference between SQL and NoSQL databases?',
         correctAnswer: 'SQL is relational, NoSQL is non-relational',
@@ -42,10 +100,130 @@ const techSkills = [
         questionType: 'multiple-choice'
       },
       {
+        level: 'Intermediate',
+        questionText: 'What is SQL used for?',
+        correctAnswer: 'Querying databases',
+        options: ['Querying databases', 'Designing websites', 'Writing code', 'Creating graphics'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is a JOIN in SQL?',
+        correctAnswer: 'Combining data from tables',
+        options: ['Combining data from tables', 'Deleting data', 'Sorting data', 'Filtering data'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is data normalization?',
+        correctAnswer: 'Organizing data efficiently',
+        options: ['Organizing data efficiently', 'Deleting duplicate data', 'Merging databases', 'Backing up data'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is a correlation?',
+        correctAnswer: 'Relationship between variables',
+        options: ['Relationship between variables', 'A type of chart', 'A database type', 'A calculation method'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is Python used for in data analysis?',
+        correctAnswer: 'Data manipulation and analysis',
+        options: ['Data manipulation and analysis', 'Web design', 'Graphics design', 'Video editing'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is a data warehouse?',
+        correctAnswer: 'Centralized data storage',
+        options: ['Centralized data storage', 'A single table', 'A chart', 'A report'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is EDA?',
+        correctAnswer: 'Exploratory Data Analysis',
+        options: ['Exploratory Data Analysis', 'External Data Access', 'Electronic Data Archive', 'Extended Data Analysis'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is a histogram?',
+        correctAnswer: 'Chart showing frequency distribution',
+        options: ['Chart showing frequency distribution', 'A bar chart', 'A line chart', 'A pie chart'],
+        questionType: 'multiple-choice'
+      },
+      // Professional - 10 questions
+      {
         level: 'Professional',
         questionText: 'What is the purpose of ETL in data analysis?',
         correctAnswer: 'Extract, Transform, Load data',
         options: ['Extract, Transform, Load data', 'Edit, Test, Launch', 'Encode, Transmit, Log', 'Encrypt, Transfer, Lock'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is machine learning in data analysis?',
+        correctAnswer: 'Predictive modeling using algorithms',
+        options: ['Predictive modeling using algorithms', 'Manual data entry', 'Data cleaning', 'Chart creation'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is big data?',
+        correctAnswer: 'Large and complex datasets',
+        options: ['Large and complex datasets', 'Small datasets', 'Single files', 'Simple tables'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is a neural network?',
+        correctAnswer: 'Machine learning algorithm',
+        options: ['Machine learning algorithm', 'A database', 'A chart type', 'A spreadsheet'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is data mining?',
+        correctAnswer: 'Discovering patterns in data',
+        options: ['Discovering patterns in data', 'Deleting data', 'Copying data', 'Moving data'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is Apache Spark?',
+        correctAnswer: 'Big data processing framework',
+        options: ['Big data processing framework', 'A database', 'A chart tool', 'A spreadsheet'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is data governance?',
+        correctAnswer: 'Managing data quality and security',
+        options: ['Managing data quality and security', 'Deleting old data', 'Creating charts', 'Exporting data'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is a data pipeline?',
+        correctAnswer: 'Automated data processing workflow',
+        options: ['Automated data processing workflow', 'A single query', 'A chart', 'A report'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is dimensional modeling?',
+        correctAnswer: 'Data warehouse design approach',
+        options: ['Data warehouse design approach', 'Chart design', 'Data entry', 'Report formatting'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is a data lake?',
+        correctAnswer: 'Storage for raw data in native format',
+        options: ['Storage for raw data in native format', 'A database', 'A processed dataset', 'A chart'],
         questionType: 'multiple-choice'
       }
     ]
@@ -57,6 +235,7 @@ const techSkills = [
     questionGenerator: 'technical',
     questionTemplate: 'What full-stack technologies and frameworks are you experienced with?',
     questions: [
+      // Beginner - 10 questions
       {
         level: 'Beginner',
         questionText: 'What does HTML stand for?',
@@ -72,6 +251,63 @@ const techSkills = [
         questionType: 'multiple-choice'
       },
       {
+        level: 'Beginner',
+        questionText: 'What is JavaScript?',
+        correctAnswer: 'Programming language for web',
+        options: ['Programming language for web', 'A database', 'A design tool', 'A server'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Beginner',
+        questionText: 'What is a function?',
+        correctAnswer: 'Reusable block of code',
+        options: ['Reusable block of code', 'A variable', 'A file', 'A folder'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Beginner',
+        questionText: 'What is a variable?',
+        correctAnswer: 'Container for storing data',
+        options: ['Container for storing data', 'A function', 'A loop', 'A condition'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Beginner',
+        questionText: 'What is an array?',
+        correctAnswer: 'List of items',
+        options: ['List of items', 'A single value', 'A function', 'A loop'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Beginner',
+        questionText: 'What is a loop?',
+        correctAnswer: 'Repeating code multiple times',
+        options: ['Repeating code multiple times', 'A variable', 'A function', 'A condition'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Beginner',
+        questionText: 'What is an object?',
+        correctAnswer: 'Collection of key-value pairs',
+        options: ['Collection of key-value pairs', 'A function', 'A loop', 'A variable'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Beginner',
+        questionText: 'What is a string?',
+        correctAnswer: 'Text data',
+        options: ['Text data', 'A number', 'A boolean', 'An array'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Beginner',
+        questionText: 'What is a number?',
+        correctAnswer: 'Numeric data',
+        options: ['Numeric data', 'Text', 'Boolean', 'Array'],
+        questionType: 'multiple-choice'
+      },
+      // Intermediate - 10 questions
+      {
         level: 'Intermediate',
         questionText: 'What is REST API?',
         correctAnswer: 'Representational State Transfer',
@@ -86,10 +322,130 @@ const techSkills = [
         questionType: 'multiple-choice'
       },
       {
+        level: 'Intermediate',
+        questionText: 'What is async/await?',
+        correctAnswer: 'Handling asynchronous operations',
+        options: ['Handling asynchronous operations', 'Synchronous code', 'Loops', 'Variables'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is a Promise?',
+        correctAnswer: 'Future value handler',
+        options: ['Future value handler', 'A function', 'A variable', 'A loop'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is RESTful API?',
+        correctAnswer: 'API design pattern',
+        options: ['API design pattern', 'A database', 'A framework', 'A language'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is middleware?',
+        correctAnswer: 'Code that runs between requests',
+        options: ['Code that runs between requests', 'A database', 'A frontend', 'A server'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is authentication?',
+        correctAnswer: 'Verifying user identity',
+        options: ['Verifying user identity', 'Storing data', 'Displaying data', 'Deleting data'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is authorization?',
+        correctAnswer: 'Granting permissions',
+        options: ['Granting permissions', 'Logging in', 'Logging out', 'Creating users'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is a database index?',
+        correctAnswer: 'Speed up data retrieval',
+        options: ['Speed up data retrieval', 'Store data', 'Delete data', 'Update data'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is caching?',
+        correctAnswer: 'Storing frequently accessed data',
+        options: ['Storing frequently accessed data', 'Deleting data', 'Processing data', 'Validating data'],
+        questionType: 'multiple-choice'
+      },
+      // Professional - 10 questions
+      {
         level: 'Professional',
         questionText: 'What is the purpose of microservices architecture?',
         correctAnswer: 'Building applications as independent services',
         options: ['Building applications as independent services', 'Making apps smaller', 'Reducing costs', 'Simplifying code'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is containerization?',
+        correctAnswer: 'Packaging apps with dependencies',
+        options: ['Packaging apps with dependencies', 'Writing code', 'Designing UI', 'Creating databases'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is load balancing?',
+        correctAnswer: 'Distributing traffic across servers',
+        options: ['Distributing traffic across servers', 'Storing data', 'Deleting data', 'Processing data'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is horizontal scaling?',
+        correctAnswer: 'Adding more servers',
+        options: ['Adding more servers', 'Upgrading hardware', 'Optimizing code', 'Deleting data'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is a database shard?',
+        correctAnswer: 'Partition of database',
+        options: ['Partition of database', 'A backup', 'A replica', 'A cache'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is event-driven architecture?',
+        correctAnswer: 'System responding to events',
+        options: ['System responding to events', 'Request-response', 'Batch processing', 'Synchronous processing'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is CQRS?',
+        correctAnswer: 'Separating read and write operations',
+        options: ['Separating read and write operations', 'Combining operations', 'Deleting operations', 'Skipping operations'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is API versioning?',
+        correctAnswer: 'Managing API changes over time',
+        options: ['Managing API changes over time', 'Creating new APIs', 'Deleting APIs', 'Merging APIs'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is database replication?',
+        correctAnswer: 'Copying data across multiple databases',
+        options: ['Copying data across multiple databases', 'Deleting data', 'Moving data', 'Encrypting data'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is a message queue?',
+        correctAnswer: 'Asynchronous communication between services',
+        options: ['Asynchronous communication between services', 'Synchronous communication', 'Database storage', 'File storage'],
         questionType: 'multiple-choice'
       }
     ]
