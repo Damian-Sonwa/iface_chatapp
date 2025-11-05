@@ -56,13 +56,13 @@ const TechSkillJoinModal = ({ skill, roomId, onClose, onSuccess }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Validate all required questions are answered
-    const unansweredRequired = questions.find((q, index) => 
-      q.required && (!answers[index] || answers[index].trim().length < 10)
+    // Validate all questions are answered
+    const unansweredQuestions = questions.filter(q => 
+      !answers[q._id] || !answers[q._id].trim()
     );
 
-    if (unansweredRequired) {
-      setError('Please answer all required questions with at least 10 characters.');
+    if (unansweredQuestions.length > 0) {
+      setError('Please answer all questions.');
       return;
     }
 
@@ -70,22 +70,34 @@ const TechSkillJoinModal = ({ skill, roomId, onClose, onSuccess }) => {
     setError('');
 
     try {
-      // Combine all answers into a single answer text
-      const combinedAnswer = questions.map((q, index) => {
-        if (!answers[index] || !answers[index].trim()) return null;
-        return `${q.text}\n\n${answers[index].trim()}`;
-      }).filter(Boolean).join('\n\n---\n\n');
+      // Format answers for API
+      const formattedAnswers = questions.map(q => ({
+        questionId: q._id,
+        answer: answers[q._id].trim()
+      }));
 
-      await api.post('/group-join-requests', {
-        roomId,
-        answer: combinedAnswer
+      // Verify answers
+      const verifyResponse = await api.post('/user-skill-profiles/verify', {
+        skillId: skill._id,
+        level: selectedLevel,
+        answers: formattedAnswers
       });
 
-      onSuccess();
-      alert('Join request submitted successfully! An admin will review your request.');
+      const { isVerified, score, message, profile } = verifyResponse.data;
+
+      if (isVerified) {
+        // If verified, join the group
+        const joinResponse = await api.post(`/user-skill-profiles/skill/${skill._id}/join-group`);
+        
+        onSuccess();
+        alert(`🎉 ${message}\nScore: ${score}%`);
+      } else {
+        // Not verified - show error with score
+        setError(`${message}\nScore: ${score}%`);
+      }
     } catch (err) {
-      console.error('Error submitting join request:', err);
-      setError(err.response?.data?.error || 'Failed to submit join request. Please try again.');
+      console.error('Error verifying answers:', err);
+      setError(err.response?.data?.error || 'Failed to verify answers. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -162,7 +174,7 @@ const TechSkillJoinModal = ({ skill, roomId, onClose, onSuccess }) => {
                 ) : (
                   questions.map((question, qIndex) => (
                     <div key={question._id} className="space-y-3 mb-6">
-                      <label className="block text-sm font-semibold text-gray-300">
+                      <label className="block text-base font-semibold text-white">
                         {qIndex + 1}. {question.questionText}
                         <span className="text-red-400 ml-1">*</span>
                       </label>
@@ -187,7 +199,7 @@ const TechSkillJoinModal = ({ skill, roomId, onClose, onSuccess }) => {
                                 }}
                                 className="w-4 h-4 text-purple-600 focus:ring-purple-500"
                               />
-                              <span className="text-white">{option}</span>
+                              <span className="text-white flex-1">{option}</span>
                             </label>
                           ))}
                         </div>
