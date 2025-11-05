@@ -551,39 +551,71 @@ const Chat = () => {
     }
   };
 
-  const handleTechSkillJoin = (room) => {
-    // Get the tech skill info from the room
-    if (room.techSkillId) {
-      setSelectedTechSkillRoom({
-        skill: room.techSkillId,
-        roomId: room._id
-      });
-      setShowTechSkillJoinModal(true);
-    } else {
-      // Fallback: try to get tech skill info from API
-      api.get(`/rooms/${room._id}`)
-        .then(response => {
-          const roomData = response.data.room;
-          if (roomData.techSkillId) {
-            setSelectedTechSkillRoom({
-              skill: roomData.techSkillId,
-              roomId: room._id
-            });
-            setShowTechSkillJoinModal(true);
+  const handleTechSkillJoin = async (room) => {
+    try {
+      let skill = room.techSkillId;
+      let roomId = room._id;
+
+      // If techSkillId is not populated, fetch it
+      if (!skill || typeof skill === 'string') {
+        const roomResponse = await api.get(`/rooms/${room._id}`);
+        skill = roomResponse.data.room?.techSkillId;
+        roomId = roomResponse.data.room?._id || room._id;
+      }
+
+      if (skill) {
+        // Check if user already has a verified profile
+        try {
+          const profileResponse = await api.get(`/user-skill-profiles/skill/${skill._id || skill}`);
+          const profile = profileResponse.data.profile;
+          
+          if (profile && profile.isVerified) {
+            // Already verified - join group directly
+            const joinResponse = await api.post(`/user-skill-profiles/skill/${skill._id || skill}/join-group`);
+            await fetchRooms();
+            alert('Successfully joined the group!');
+            if (joinResponse.data.room) {
+              handleChatSelect(joinResponse.data.room, 'room');
+            }
+            return;
           }
-        })
-        .catch(error => {
-          console.error('Error fetching room data:', error);
+        } catch (err) {
+          // No profile exists, continue to verification
+        }
+
+        // Show verification modal
+        setSelectedTechSkillRoom({
+          skill: skill,
+          roomId: roomId
         });
+        setShowTechSkillJoinModal(true);
+      }
+    } catch (error) {
+      console.error('Error handling tech skill join:', error);
+      alert('Failed to load skill information. Please try again.');
     }
   };
 
   const handleTechSkillJoinSuccess = async () => {
     setShowTechSkillJoinModal(false);
+    const skillRoom = selectedTechSkillRoom;
     setSelectedTechSkillRoom(null);
+    
     // Refresh rooms to update membership status
     await fetchRooms();
-    alert('Your join request has been submitted! An admin will review it.');
+    
+    // If we have room info, try to open the chat
+    if (skillRoom?.roomId) {
+      try {
+        const roomResponse = await api.get(`/rooms/${skillRoom.roomId}`);
+        const room = roomResponse.data.room;
+        if (room) {
+          handleChatSelect(room, 'room');
+        }
+      } catch (error) {
+        console.error('Error loading room after join:', error);
+      }
+    }
   };
 
   return (

@@ -52,17 +52,33 @@ exports.joinRoom = async (req, res) => {
     const { roomId } = req.params;
     const userId = req.userId;
 
-    const room = await Room.findById(roomId);
+    const room = await Room.findById(roomId).populate('techSkillId');
     if (!room) {
       return res.status(404).json({ error: 'Room not found' });
     }
 
-    // Check if room requires approval
-    if (room.requiresApproval || room.techSkillId) {
+    // Check if room requires skill verification
+    if (room.techSkillId) {
+      const UserSkillProfile = require('../models/UserSkillProfile');
+      const profile = await UserSkillProfile.findOne({ 
+        userId, 
+        skillId: room.techSkillId._id 
+      });
+      
+      if (!profile || !profile.isVerified) {
+        return res.status(403).json({ 
+          error: 'You must verify your skill level before joining this group.',
+          requiresVerification: true,
+          techSkillId: room.techSkillId._id
+        });
+      }
+    }
+
+    // Check if room requires approval (non-tech skill groups)
+    if (room.requiresApproval && !room.techSkillId) {
       return res.status(400).json({ 
         error: 'This room requires approval. Please submit a join request.',
-        requiresApproval: true,
-        techSkillId: room.techSkillId
+        requiresApproval: true
       });
     }
 

@@ -43,6 +43,30 @@ const TechSkillsMenu = ({ onClose, onJoinSuccess }) => {
 
   const handleSkillClick = async (skill) => {
     try {
+      // Check if user already has a verified profile
+      try {
+        const profileResponse = await api.get(`/user-skill-profiles/skill/${skill._id}`);
+        const profile = profileResponse.data.profile;
+        
+        if (profile && profile.isVerified) {
+          // Already verified - try to join group directly
+          try {
+            const joinResponse = await api.post(`/user-skill-profiles/skill/${skill._id}/join-group`);
+            if (joinResponse.data.room) {
+              alert('Successfully joined the group!');
+              if (onJoinSuccess) {
+                onJoinSuccess();
+              }
+              return;
+            }
+          } catch (joinError) {
+            // If join fails, show modal anyway
+          }
+        }
+      } catch (profileError) {
+        // No profile exists, continue to verification
+      }
+
       // Get rooms for this skill
       const roomsResponse = await api.get(`/tech-skills/${skill._id}/rooms`);
       const rooms = roomsResponse.data.rooms || [];

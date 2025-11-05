@@ -4,9 +4,9 @@ import { X, Send, AlertCircle, ChevronRight, User } from 'lucide-react';
 import api from '../utils/api';
 
 const skillLevels = [
-  { id: 'beginner', label: 'Beginner', description: 'Just starting out' },
-  { id: 'intermediate', label: 'Intermediate', description: 'Some experience' },
-  { id: 'advanced', label: 'Advanced', description: 'Expert level' }
+  { id: 'Beginner', label: 'Beginner', description: 'Just starting out' },
+  { id: 'Intermediate', label: 'Intermediate', description: 'Some experience' },
+  { id: 'Professional', label: 'Professional', description: 'Expert level' }
 ];
 
 const TechSkillJoinModal = ({ skill, roomId, onClose, onSuccess }) => {
@@ -26,81 +26,32 @@ const TechSkillJoinModal = ({ skill, roomId, onClose, onSuccess }) => {
   const fetchQuestions = async () => {
     try {
       setLoading(true);
-      // Get base question for the skill
-      const questionResponse = await api.get(`/tech-skills/${skill._id}/question`);
-      const baseQuestion = questionResponse.data.question;
+      setError('');
+      // Fetch questions for the selected level from backend
+      const response = await api.get(`/user-skill-profiles/skill/${skill._id}/questions/${selectedLevel}`);
+      const fetchedQuestions = response.data.questions || [];
+      
+      if (fetchedQuestions.length === 0) {
+        setError('No questions available for this level. Please contact support.');
+        return;
+      }
 
-      // Generate level-based questions
-      const levelQuestions = generateLevelQuestions(skill, selectedLevel, baseQuestion);
-      setQuestions(levelQuestions);
+      setQuestions(fetchedQuestions);
       
       // Initialize answers object
       const initialAnswers = {};
-      levelQuestions.forEach((q, index) => {
-        initialAnswers[index] = '';
+      fetchedQuestions.forEach((q) => {
+        initialAnswers[q._id] = '';
       });
       setAnswers(initialAnswers);
     } catch (error) {
       console.error('Error fetching questions:', error);
-      setError('Failed to load questions. Please try again.');
+      setError(error.response?.data?.error || 'Failed to load questions. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
-  const generateLevelQuestions = (skill, level, baseQuestion) => {
-    const questions = [];
-    
-    // Always include the base question
-    questions.push({
-      text: baseQuestion,
-      required: true
-    });
-
-    // Add level-specific questions
-    if (level === 'beginner') {
-      questions.push({
-        text: `What interests you most about ${skill.name}?`,
-        required: true
-      });
-      questions.push({
-        text: `What resources or courses have you used to learn ${skill.name}?`,
-        required: false
-      });
-    } else if (level === 'intermediate') {
-      questions.push({
-        text: `How many years of experience do you have with ${skill.name}?`,
-        required: true
-      });
-      questions.push({
-        text: `What projects have you worked on related to ${skill.name}?`,
-        required: true
-      });
-      questions.push({
-        text: `What specific ${skill.name} tools or technologies are you most comfortable with?`,
-        required: false
-      });
-    } else if (level === 'advanced') {
-      questions.push({
-        text: `Describe your professional experience with ${skill.name} in detail.`,
-        required: true
-      });
-      questions.push({
-        text: `What are the most challenging ${skill.name} problems you've solved?`,
-        required: true
-      });
-      questions.push({
-        text: `What certifications or advanced training do you have in ${skill.name}?`,
-        required: false
-      });
-      questions.push({
-        text: `How do you plan to contribute to this ${skill.name} community?`,
-        required: true
-      });
-    }
-
-    return questions;
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -169,10 +120,10 @@ const TechSkillJoinModal = ({ skill, roomId, onClose, onSuccess }) => {
 
           {/* Content */}
           <div className="flex-1 overflow-y-auto p-6">
-            {step === 1 ? (
+                {step === 1 ? (
               <div className="space-y-4">
                 <p className="text-gray-300 mb-6">
-                  Please select your skill level in {skill?.name}. This will help us generate appropriate questions for your join request.
+                  Please select your skill level in {skill?.name}. You'll need to answer questions to verify your level before joining the group.
                 </p>
                 {skillLevels.map((level, index) => (
                   <motion.button
@@ -206,34 +157,55 @@ const TechSkillJoinModal = ({ skill, roomId, onClose, onSuccess }) => {
                 {loading && questions.length === 0 ? (
                   <div className="text-center py-8">
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600 mx-auto mb-4"></div>
-                    <p className="text-gray-400">Generating questions...</p>
+                    <p className="text-gray-400">Loading questions...</p>
                   </div>
                 ) : (
-                  questions.map((question, index) => (
-                    <div key={index} className="space-y-2">
+                  questions.map((question, qIndex) => (
+                    <div key={question._id} className="space-y-3 mb-6">
                       <label className="block text-sm font-semibold text-gray-300">
-                        {question.text}
-                        {question.required && <span className="text-red-400 ml-1">*</span>}
+                        {qIndex + 1}. {question.questionText}
+                        <span className="text-red-400 ml-1">*</span>
                       </label>
-                      <textarea
-                        value={answers[index] || ''}
-                        onChange={(e) => {
-                          setAnswers(prev => ({
-                            ...prev,
-                            [index]: e.target.value
-                          }));
-                          setError('');
-                        }}
-                        placeholder={`Type your answer here...${question.required ? ' (minimum 10 characters)' : ' (optional)'}`}
-                        rows={4}
-                        required={question.required}
-                        minLength={question.required ? 10 : 0}
-                        className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 transition-all resize-none"
-                      />
-                      {question.required && (
-                        <p className="text-xs text-gray-400">
-                          {(answers[index] || '').length}/10 characters minimum
-                        </p>
+                      {question.questionType === 'multiple-choice' && question.options ? (
+                        <div className="space-y-2">
+                          {question.options.map((option, optIndex) => (
+                            <label
+                              key={optIndex}
+                              className="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-purple-500/30 cursor-pointer transition-all"
+                            >
+                              <input
+                                type="radio"
+                                name={`question-${question._id}`}
+                                value={option}
+                                checked={answers[question._id] === option}
+                                onChange={(e) => {
+                                  setAnswers(prev => ({
+                                    ...prev,
+                                    [question._id]: e.target.value
+                                  }));
+                                  setError('');
+                                }}
+                                className="w-4 h-4 text-purple-600 focus:ring-purple-500"
+                              />
+                              <span className="text-white">{option}</span>
+                            </label>
+                          ))}
+                        </div>
+                      ) : (
+                        <textarea
+                          value={answers[question._id] || ''}
+                          onChange={(e) => {
+                            setAnswers(prev => ({
+                              ...prev,
+                              [question._id]: e.target.value
+                            }));
+                            setError('');
+                          }}
+                          placeholder="Type your answer here..."
+                          rows={4}
+                          required
+                          className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 transition-all resize-none"
+                        />
                       )}
                     </div>
                   ))

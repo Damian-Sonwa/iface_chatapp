@@ -10,6 +10,7 @@ router.get('/', techSkillController.getAllTechSkills);
 router.get('/generators', techSkillController.getQuestionGenerators);
 router.get('/:id', techSkillController.getTechSkill);
 router.get('/:id/question', techSkillController.getQuestion);
+router.get('/:id/questions/:level', techSkillController.getQuestionsForLevel);
 router.get('/:id/rooms', techSkillController.getRoomsForTechSkill);
 router.post('/', techSkillController.createTechSkill);
 router.put('/:id', techSkillController.updateTechSkill);

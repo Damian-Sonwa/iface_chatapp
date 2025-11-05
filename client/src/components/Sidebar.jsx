@@ -163,12 +163,12 @@ const Sidebar = ({ rooms, privateChats, activeChat, chatType, onChatSelect, onOp
                 (m._id?.toString() || m.id?.toString() || m?.toString()) === currentUserId
               );
               
-              // Check if user needs to join (tech skill group and not a member)
-              const needsJoin = isTechSkillGroup && !isMember;
+              // Check if user needs to verify (tech skill group and not a member)
+              const needsVerification = isTechSkillGroup && !isMember;
 
               const handleClick = () => {
-                if (needsJoin && onTechSkillJoin) {
-                  // Show join form
+                if (needsVerification && onTechSkillJoin) {
+                  // Show verification/join form
                   onTechSkillJoin(conv);
                 } else {
                   // Open chat normally

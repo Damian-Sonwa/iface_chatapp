@@ -15,10 +15,42 @@ const techSkillSchema = new mongoose.Schema({
     type: String,
     default: '💻'
   },
+  iconUrl: {
+    type: String,
+    default: null
+  },
+  difficultyLevels: {
+    type: [String],
+    enum: ['Beginner', 'Intermediate', 'Professional'],
+    default: ['Beginner', 'Intermediate', 'Professional']
+  },
+  questions: [{
+    level: {
+      type: String,
+      enum: ['Beginner', 'Intermediate', 'Professional'],
+      required: true
+    },
+    questionText: {
+      type: String,
+      required: true
+    },
+    correctAnswer: {
+      type: String,
+      required: true
+    },
+    options: [{
+      type: String
+    }],
+    questionType: {
+      type: String,
+      enum: ['multiple-choice', 'text', 'code'],
+      default: 'multiple-choice'
+    }
+  }],
+  // Legacy fields for backward compatibility
   questionTemplate: {
     type: String,
-    required: true,
-    default: 'Why do you want to join this tech skill group?'
+    default: null
   },
   questionGenerator: {
     type: String,
@@ -41,6 +73,7 @@ const techSkillSchema = new mongoose.Schema({
 // Index for efficient queries
 techSkillSchema.index({ name: 1 });
 techSkillSchema.index({ isActive: 1 });
+techSkillSchema.index({ 'questions.level': 1 });
 
 module.exports = mongoose.model('TechSkill', techSkillSchema);
 

@@ -87,11 +87,11 @@ const HamburgerMenu = ({ darkMode, onToggleDarkMode, user }) => {
       ]
     },
     {
-      id: 'groups',
-      title: 'Tech Groups',
-      icon: Users,
+      id: 'tech-skills',
+      title: 'Tech / Digital Skills',
+      icon: Sparkles,
       items: [
-        { id: 'tech-skills', label: 'Join Tech Groups', icon: Sparkles, action: () => setShowTechSkills(true) },
+        { id: 'tech-skills', label: 'Explore Tech Skills', icon: Sparkles, action: () => setShowTechSkills(true) },
       ]
     },
     {

@@ -33,6 +33,34 @@ exports.getTechSkill = async (req, res) => {
   }
 };
 
+// Get questions for a specific skill and level
+exports.getQuestionsForLevel = async (req, res) => {
+  try {
+    const { id, level } = req.params;
+    
+    const skill = await TechSkill.findById(id);
+    if (!skill) {
+      return res.status(404).json({ error: 'Tech skill not found' });
+    }
+    
+    // Filter questions for the requested level
+    const questions = skill.questions.filter(q => q.level === level);
+    
+    // Return questions without correct answers for security
+    const questionsForUser = questions.map(q => ({
+      _id: q._id,
+      questionText: q.questionText,
+      options: q.options,
+      questionType: q.questionType
+    }));
+    
+    res.json({ questions: questionsForUser, skillName: skill.name });
+  } catch (error) {
+    console.error('Get questions for level error:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+};
+
 // Create tech skill (admin only)
 exports.createTechSkill = async (req, res) => {
   try {
