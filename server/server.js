@@ -43,6 +43,7 @@ if (!process.env.GOOGLE_API_KEY) {
 const allowedOrigins = [
   'http://localhost:5173',
   'http://localhost:3000',
+  'https://chaturway001.netlify.app',
   process.env.CLIENT_URL
 ].filter(Boolean); // Remove undefined values
 
@@ -533,7 +534,8 @@ const PORT = process.env.PORT || 5000;
 
 server.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`📡 Client URL: ${process.env.CLIENT_URL || 'http://localhost:5173'}`);
+  console.log(`📡 Client URL: ${process.env.CLIENT_URL || 'https://chaturway001.netlify.app'}`);
+  console.log(`🌐 Allowed origins: ${allowedOrigins.join(', ')}`);
   if (!dbConnected) {
     console.log('⚠️  Warning: MongoDB not connected. Server will retry connection every 10 seconds.');
     console.log('   Database features will be unavailable until connection is established.');
