@@ -197,7 +197,7 @@ const Sidebar = ({ rooms, privateChats, activeChat, chatType, onChatSelect, onOp
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="font-medium truncate text-gray-100">
-                      {conv.techSkillId?.name || conv.name}
+                      {conv.techSkillId?.name ? `${conv.techSkillId.name} Group` : (conv.name || 'Group Chat')}
                     </div>
                     <div className="text-xs text-gray-400 truncate">
                       {conv.lastMessage?.content || conv.description || conv.techSkillId?.description || 'No messages yet'}

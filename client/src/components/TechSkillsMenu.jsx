@@ -16,7 +16,8 @@ const iconMap = {
   '☁️': Cloud,
   '⛓️': Link2,
   '⚛️': Atom,
-  '🔧': Wrench
+  '🔧': Wrench,
+  '🧪': Code // For Software Testers - using Code icon as placeholder
 };
 
 const TechSkillsMenu = ({ onClose, onJoinSuccess }) => {
