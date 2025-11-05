@@ -12,7 +12,7 @@ import {
   Sun,
   Bell,
   Archive,
-  Block,
+  Ban,
   Shield,
   Sparkles,
   FileText,
@@ -80,7 +80,7 @@ const HamburgerMenu = ({ darkMode, onToggleDarkMode, user }) => {
         { id: 'friends', label: 'Friends', icon: Heart, action: () => navigate('/friends') },
         { id: 'invites', label: 'Invites', icon: UserPlus, action: () => navigate('/invites') },
         { id: 'moments', label: 'Moments', icon: Camera, action: () => navigate('/moments') },
-        { id: 'blocked', label: 'Blocked Users', icon: Block, action: () => navigate('/chat?filter=blocked') },
+        { id: 'blocked', label: 'Blocked Users', icon: Ban, action: () => navigate('/chat?filter=blocked') },
       ]
     },
     {

@@ -86,20 +86,14 @@ const Chat = () => {
     fetchPrivateChats();
     fetchUsers();
     fetchFriends();
-  }, [socket]);
 
-  // Listen for start conversation event from HamburgerMenu
-  useEffect(() => {
-    const handleStartConversation = (event) => {
-      const { user: selectedUser } = event.detail;
-      handleStartChat(selectedUser._id || selectedUser.id);
+    const markAsReadHandler = (messageId) => {
+      if (!socket || !activeChat) return;
+      socket.emit('message:read', { 
+        messageId, 
+        chatId: chatType === 'private' ? activeChat._id : null 
+      });
     };
-
-    window.addEventListener('startConversation', handleStartConversation);
-    return () => {
-      window.removeEventListener('startConversation', handleStartConversation);
-    };
-  }, []);
 
     socket.on('message:new', ({ message, chatId }) => {
       setMessages(prev => {
@@ -120,7 +114,7 @@ const Chat = () => {
       });
 
       if (chatId && activeChat?._id === chatId) {
-        markAsRead(message._id || message.id);
+        markAsReadHandler(message._id || message.id);
       }
     });
 
@@ -175,28 +169,43 @@ const Chat = () => {
       setTypingUsers(prev => prev.filter(u => u.userId !== userId));
     });
 
+    const updateUserStatusHandler = (userId, status) => {
+      setUsers(prev => prev.map(u => 
+        u.id === userId || u._id === userId ? { ...u, status } : u
+      ));
+      setRooms(prev => prev.map(room => ({
+        ...room,
+        members: room.members.map(m => 
+          (m._id === userId || m.id === userId) ? { ...m, status } : m
+        )
+      })));
+    };
+
     socket.on('user:online', ({ userId }) => {
-      updateUserStatus(userId, 'online');
+      updateUserStatusHandler(userId, 'online');
     });
 
     socket.on('user:offline', ({ userId }) => {
-      updateUserStatus(userId, 'offline');
+      updateUserStatusHandler(userId, 'offline');
     });
 
     const moodInterval = setInterval(() => {
       try {
-        const recent = messages.slice(-30).map(m => (m.content || '').toLowerCase()).join(' ');
-        const positive = ['great','awesome','love','nice','good','cool','🎉','😊'];
-        const negative = ['sad','angry','annoyed','bad','hate','tired','😢'];
-        let score = 0;
-        positive.forEach(w => { if (recent.includes(w)) score++; });
-        negative.forEach(w => { if (recent.includes(w)) score--; });
-        const isDark = document.documentElement.classList.contains('dark');
-        if (score >= 2) {
-          applyTheme('sunset', isDark);
-        } else if (score <= -2) {
-          applyTheme('ocean', isDark);
-        }
+        setMessages(currentMessages => {
+          const recent = currentMessages.slice(-30).map(m => (m.content || '').toLowerCase()).join(' ');
+          const positive = ['great','awesome','love','nice','good','cool','🎉','😊'];
+          const negative = ['sad','angry','annoyed','bad','hate','tired','😢'];
+          let score = 0;
+          positive.forEach(w => { if (recent.includes(w)) score++; });
+          negative.forEach(w => { if (recent.includes(w)) score--; });
+          const isDark = document.documentElement.classList.contains('dark');
+          if (score >= 2) {
+            applyTheme('sunset', isDark);
+          } else if (score <= -2) {
+            applyTheme('ocean', isDark);
+          }
+          return currentMessages;
+        });
       } catch {}
     }, 8000);
 
@@ -214,7 +223,7 @@ const Chat = () => {
       socket.off('user:offline');
       clearInterval(moodInterval);
     };
-  }, [socket, activeChat]);
+  }, [socket, activeChat, chatType]);
 
   // Handle navigation from Friends page
   useEffect(() => {
@@ -242,7 +251,7 @@ const Chat = () => {
     // Small delay to ensure privateChats are loaded
     const timer = setTimeout(loadChatFromNavigation, 300);
     return () => clearTimeout(timer);
-  }, [location.state, user]);
+  }, [location.state, user, navigate]);
 
   const fetchRooms = async () => {
     try {
