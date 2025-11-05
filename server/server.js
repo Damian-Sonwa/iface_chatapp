@@ -24,8 +24,9 @@ const { extractMentionedUsernames } = require('./utils/mentionParser');
 const JWT_SECRET = process.env.JWT_SECRET || 'yourSuperSecretKeyHere';
 
 // Validate required environment variables
-if (!process.env.MONGO_URI) {
-  console.error('❌ MONGO_URI missing — refusing to connect to any other database.');
+if (!process.env.MONGODB_URI && !process.env.MONGO_URI) {
+  console.error('❌ MONGODB_URI (or MONGO_URI) missing — refusing to connect to any other database.');
+  console.error('   Please set MONGODB_URI in your .env file.');
   process.exit(1);
 }
 
@@ -136,9 +137,10 @@ app.get('/health', (req, res) => {
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/auth/2fa', require('./routes/2fa'));
-app.use('/api/rooms', roomRoutes);
-app.use('/api/private', privateRoutes);
-app.use('/api', uploadRoutes);
+app.use('/api/conversations', require('./routes/conversations'));
+app.use('/api/rooms', roomRoutes); // Legacy routes for backward compatibility
+app.use('/api/private', privateRoutes); // Legacy routes for backward compatibility
+app.use('/api/upload', uploadRoutes);
 app.use('/api/messages', messageRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/admin', adminRoutes);

@@ -23,11 +23,21 @@ const userSchema = new mongoose.Schema({
     trim: true,
     match: [/^\+?[1-9]\d{1,14}$/, 'Please enter a valid phone number']
   },
-  password: {
+  passwordHash: {
     type: String,
     required: true,
     minlength: 6
   },
+  // Legacy field for backward compatibility
+  password: {
+    type: String,
+    default: null
+  },
+  avatarUrl: {
+    type: String,
+    default: null
+  },
+  // Legacy field for backward compatibility
   avatar: {
     type: String,
     default: null
@@ -72,10 +82,11 @@ const userSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
   }],
-  blockedBy: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
-  }],
+  settings: {
+    type: Map,
+    of: mongoose.Schema.Types.Mixed,
+    default: {}
+  },
   twoFactorEnabled: {
     type: Boolean,
     default: false

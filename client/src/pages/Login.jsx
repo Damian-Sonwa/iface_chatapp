@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Mail, Lock, Loader2 } from 'lucide-react';
+import { Mail, Lock, Loader2, Moon, Sun } from 'lucide-react';
 import FlippingAuthBackground from '../components/FlippingAuthBackground';
 import AuthHeader from '../components/AuthHeader';
 import api from '../utils/api';
+import { motion } from 'framer-motion';
 
 const Login = () => {
   const { login } = useAuth();
@@ -15,6 +16,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [inviteInfo, setInviteInfo] = useState(null);
+  const [darkMode, setDarkMode] = useState(localStorage.getItem('darkMode') === 'true');
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -30,6 +32,15 @@ const Login = () => {
       })();
     }
   }, [location.search]);
+
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+    localStorage.setItem('darkMode', darkMode.toString());
+  }, [darkMode]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -50,6 +61,24 @@ const Login = () => {
       <FlippingAuthBackground />
       {/* Auth Header */}
       <AuthHeader />
+      {/* Dark Mode Toggle */}
+      <motion.button
+        onClick={() => setDarkMode(!darkMode)}
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.9 }}
+        className="absolute top-8 right-8 z-30 p-3 rounded-full bg-white/10 dark:bg-black/20 backdrop-blur-xl border border-white/30 dark:border-white/10 shadow-2xl transition-all hover:bg-white/20 dark:hover:bg-black/30"
+        title="Toggle theme"
+      >
+        {darkMode ? <Sun className="w-6 h-6 text-yellow-300" /> : <Moon className="w-6 h-6 text-white" />}
+      </motion.button>
+      {/* Developer Footer */}
+      <div className="absolute bottom-6 left-0 right-0 z-20 flex justify-center">
+        <p className="text-white/40 text-xs font-light tracking-wider italic" style={{ fontFamily: 'serif' }}>
+          Developed by <span className="font-medium not-italic">damiancorecode</span>
+        </p>
+      </div>
       {/* Auth card */}
       <div className="w-full max-w-md rounded-2xl p-6 bg-white/10 dark:bg-gray-900/20 backdrop-blur-2xl border border-white/20 dark:border-white/10 shadow-2xl shadow-black/20 ring-1 ring-white/10">
         {inviteInfo && (
@@ -76,6 +105,11 @@ const Login = () => {
               <Lock className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
               <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full pl-10 pr-3 py-2 rounded-lg bg-white/80 dark:bg-gray-700/70 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 placeholder-gray-400" />
             </div>
+          </div>
+          <div className="text-right">
+            <button type="button" className="text-xs text-purple-400 hover:text-purple-300 underline">
+              Forgot password?
+            </button>
           </div>
           <button type="submit" disabled={loading} className="w-full py-2 rounded-lg bg-purple-500 text-white hover:bg-purple-600 disabled:opacity-60 flex items-center justify-center gap-2 shadow-lg shadow-purple-500/30">
             {loading ? <><Loader2 className="w-4 h-4 animate-spin" /> Signing in...</> : 'Sign In'}

@@ -1,7 +1,12 @@
 const mongoose = require('mongoose');
 
 const messageSchema = new mongoose.Schema({
-  sender: {
+  conversationId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Conversation',
+    required: true
+  },
+  senderId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true
@@ -11,6 +16,7 @@ const messageSchema = new mongoose.Schema({
     required: true,
     trim: true
   },
+  // Legacy fields for backward compatibility during migration
   room: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Room',
@@ -31,53 +37,35 @@ const messageSchema = new mongoose.Schema({
     filename: String,
     mimetype: String
   }],
-  reactions: [{
-    emoji: String,
-    users: [{
+  reactions: {
+    type: Map,
+    of: [{
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User'
-    }]
+    }],
+    default: new Map()
+  },
+  deliveredTo: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
   }],
   readBy: [{
-    user: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User'
-    },
-    readAt: {
-      type: Date,
-      default: Date.now
-    }
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
   }],
-  edited: {
-    type: Boolean,
-    default: false
-  },
   editedAt: {
     type: Date,
     default: null
-  },
-  deleted: {
-    type: Boolean,
-    default: false
   },
   deletedAt: {
     type: Date,
     default: null
   },
-  pinned: {
+  isPinned: {
     type: Boolean,
     default: false
   },
-  pinnedBy: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    default: null
-  },
-  pinnedAt: {
-    type: Date,
-    default: null
-  },
-  replyTo: {
+  replyToMessageId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Message',
     default: null
@@ -96,11 +84,24 @@ const messageSchema = new mongoose.Schema({
   expiresAt: {
     type: Date,
     default: null
+  },
+  isEncrypted: {
+    type: Boolean,
+    default: false // Placeholder for future encryption
+  },
+  lastModified: {
+    type: Date,
+    default: Date.now
   }
 }, {
   timestamps: true
 });
 
+// Indexes for efficient queries
+messageSchema.index({ conversationId: 1, createdAt: -1 });
+messageSchema.index({ senderId: 1, createdAt: -1 });
+messageSchema.index({ conversationId: 1, isPinned: 1 });
+// Legacy indexes for backward compatibility
 messageSchema.index({ room: 1, createdAt: -1 });
 messageSchema.index({ privateChat: 1, createdAt: -1 });
 

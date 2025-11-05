@@ -33,7 +33,8 @@ exports.register = async (req, res) => {
     const user = await User.create({
       username,
       email,
-      password: hashedPassword,
+      passwordHash: hashedPassword,
+      password: hashedPassword, // Legacy field for backward compatibility
       ...(cleanedPhone && { phoneNumber: cleanedPhone })
     });
 
@@ -45,7 +46,7 @@ exports.register = async (req, res) => {
     );
 
     res.status(201).json({
-      message: 'User registered successfully',
+      message: `Welcome to Chaturway, ${username}! 🎉 Your account has been created successfully. Please check your email to confirm your account.`,
       token,
       user: {
         id: user._id,
@@ -77,10 +78,17 @@ exports.login = async (req, res) => {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
-    // Verify password
-    const isValidPassword = await bcrypt.compare(password, user.password);
+    // Verify password (check passwordHash first, fallback to password for backward compatibility)
+    const passwordToCheck = user.passwordHash || user.password;
+    const isValidPassword = await bcrypt.compare(password, passwordToCheck);
     if (!isValidPassword) {
       return res.status(401).json({ error: 'Invalid credentials' });
+    }
+    
+    // Migrate password to passwordHash if needed
+    if (!user.passwordHash && user.password) {
+      user.passwordHash = user.password;
+      await user.save();
     }
 
     // Check if 2FA is enabled
@@ -176,7 +184,7 @@ exports.verifyToken = (req, res, next) => {
 // Get current user
 exports.getCurrentUser = async (req, res) => {
   try {
-    const user = await User.findById(req.userId).select('-password');
+    const user = await User.findById(req.userId).select('-passwordHash -password');
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }

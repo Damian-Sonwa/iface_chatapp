@@ -1,11 +1,13 @@
 const mongoose = require('mongoose');
 require('dotenv').config({ path: require('path').join(__dirname, '..', '.env') });
 
-const MONGO_URI = process.env.MONGO_URI;
+// Use MONGODB_URI as primary, fallback to MONGO_URI for compatibility
+const MONGO_URI = process.env.MONGODB_URI || process.env.MONGO_URI;
 
 // Strict enforcement: Only connect to the specified database
 if (!MONGO_URI) {
-  console.error('❌ MONGO_URI missing — refusing to connect to any other database.');
+  console.error('❌ MONGODB_URI (or MONGO_URI) missing — refusing to connect to any other database.');
+  console.error('   Please set MONGODB_URI in your .env file.');
   process.exit(1);
 }
 
@@ -79,7 +81,8 @@ const connectDB = async () => {
     console.log(`📊 Database: ${dbName}`);
     
     // Log connection details for verification
-    console.log(`🔗 Using MONGO_URI: ${MONGO_URI.includes('mongodb.net') ? 'MongoDB Atlas' : 'Local MongoDB'}`);
+    const envVarUsed = process.env.MONGODB_URI ? 'MONGODB_URI' : 'MONGO_URI';
+    console.log(`🔗 Using ${envVarUsed}: ${MONGO_URI.includes('mongodb.net') ? 'MongoDB Atlas' : 'Local MongoDB'}`);
   } catch (error) {
     console.error('\n❌ MongoDB connection error:', error.message);
     

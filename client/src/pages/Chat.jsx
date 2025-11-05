@@ -58,6 +58,7 @@ const Chat = () => {
   const [showPoll, setShowPoll] = useState(false);
   const [showMobileSidebar, setShowMobileSidebar] = useState(false);
   const [polls, setPolls] = useState([]);
+  const [friends, setFriends] = useState([]);
   const socket = getSocket();
 
   useEffect(() => {
@@ -83,6 +84,7 @@ const Chat = () => {
     fetchRooms();
     fetchPrivateChats();
     fetchUsers();
+    fetchFriends();
 
     socket.on('message:new', ({ message, chatId }) => {
       setMessages(prev => {
@@ -251,6 +253,15 @@ const Chat = () => {
       setUsers(response.data.users.filter(u => (u.id || u._id) !== (user.id || user._id)));
     } catch (error) {
       console.error('Fetch users error:', error);
+    }
+  };
+
+  const fetchFriends = async () => {
+    try {
+      const response = await api.get('/friends');
+      setFriends(response.data.friends || []);
+    } catch (error) {
+      console.error('Fetch friends error:', error);
     }
   };
 
@@ -453,7 +464,7 @@ const Chat = () => {
 
       <div className="flex-1 flex flex-col relative z-10">
         <MomentsBar onOpenComposer={() => setShowMomentsComposer(true)} onOpenViewer={(moments, id) => setViewer({ open: true, moments, id })} />
-        <FlippingAvatars />
+        {friends.length > 0 && <FlippingAvatars />}
         {activePanel === 'moments' ? (
           <div className="p-4 md:p-6">
             <Moments onAdd={() => setShowMomentsComposer(true)} />

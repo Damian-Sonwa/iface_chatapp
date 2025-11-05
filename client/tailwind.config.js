@@ -8,6 +8,13 @@ export default {
   theme: {
     extend: {
       colors: {
+        // Primary gradient: Deep purple → cyan
+        primaryFrom: '#6366f1',
+        primaryTo: '#06b6d4',
+        // Secondary gradient: Warm coral → pink
+        secondaryFrom: '#f97316',
+        secondaryTo: '#ec4899',
+        // Legacy color system for compatibility
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -42,6 +49,15 @@ export default {
           foreground: "hsl(var(--card-foreground))",
         },
       },
+      backdropBlur: {
+        sm: '4px',
+        md: '8px',
+        lg: '12px',
+      },
+      boxShadow: {
+        glass: '0 6px 20px rgba(2,6,23,0.3)',
+        lift: '0 12px 32px rgba(2,6,23,0.35)',
+      },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
@@ -51,6 +67,8 @@ export default {
   },
   plugins: [],
 }
+
+
 
 
 

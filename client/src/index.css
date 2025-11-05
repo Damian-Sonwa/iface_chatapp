@@ -6,8 +6,8 @@
 
 @layer base {
   :root {
-    /* Modern Blue-Purple Gradient Theme */
-    --background: 255 255 255; /* #FFFFFF */
+    /* Soft white light mode with colored shadows */
+    --background: 255 255 255; /* #FFFFFF - Soft white */
     --foreground: 34 34 34; /* #222222 */
     --card: 240 247 255; /* #F0F7FF - Soft blue */
     --card-foreground: 34 34 34;
@@ -34,8 +34,8 @@
   }
 
   .dark {
-    /* Modern Blue-Purple Dark Theme */
-    --background: 15 23 42; /* #0F172A - Slate-900 */
+    /* True black dark mode with accent glows */
+    --background: 0 0 0; /* #000000 - True black */
     --foreground: 248 250 252; /* #F8FAFC - Slate-50 */
     --card: 30 41 59; /* #1E293B - Slate-800 */
     --card-foreground: 248 250 252;

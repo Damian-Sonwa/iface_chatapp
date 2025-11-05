@@ -59,7 +59,7 @@ const AuthHeader = () => {
             Chaturway
           </h1>
           <p className="text-sm font-medium text-white/90 tracking-wide">
-            Connect • Chat • Create
+            AI-Powered Social Network
           </p>
         </div>
       </motion.div>
