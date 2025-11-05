@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Send, AlertCircle, ChevronRight, User } from 'lucide-react';
+import { X, Send, AlertCircle, ChevronRight, User, Sparkles } from 'lucide-react';
 import api from '../utils/api';
 
 const skillLevels = [
@@ -105,28 +105,39 @@ const TechSkillJoinModal = ({ skill, roomId, onClose, onSuccess }) => {
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-[10002] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 z-[10002] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+      >
         <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.9 }}
-          className="w-full max-w-3xl bg-gradient-to-br from-gray-800/95 to-gray-900/95 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col"
+          initial={{ opacity: 0, scale: 0.9, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.9, y: 20 }}
+          transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+          className="w-full max-w-3xl bg-gradient-to-br from-slate-900/95 via-purple-900/30 to-slate-900/95 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col"
         >
           {/* Header */}
-          <div className="p-6 border-b border-white/10 flex items-center justify-between flex-shrink-0">
-            <div>
-              <h2 className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-                Join {skill?.name} Group
-              </h2>
-              <p className="text-sm text-gray-400 mt-1">
-                {step === 1 ? 'Select your skill level' : 'Answer the questions below'}
-              </p>
+          <div className="p-6 border-b border-white/10 flex items-center justify-between flex-shrink-0 bg-gradient-to-r from-purple-500/10 to-pink-500/10">
+            <div className="flex items-center gap-4">
+              <div className="p-3 rounded-xl bg-gradient-to-br from-purple-500/20 to-pink-500/20 border border-purple-500/30">
+                <Sparkles className="w-6 h-6 text-purple-400" />
+              </div>
+              <div>
+                <h2 className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+                  Join {skill?.name} Group
+                </h2>
+                <p className="text-sm text-gray-400 mt-1">
+                  {step === 1 ? 'Select your skill level to begin' : 'Answer questions to verify your level'}
+                </p>
+              </div>
             </div>
             <button
               onClick={onClose}
               className="p-2 rounded-lg hover:bg-white/10 transition-colors"
             >
-              <X className="w-5 h-5 text-gray-400" />
+              <X className="w-5 h-5 text-gray-400 hover:text-white" />
             </button>
           </div>
 
@@ -134,9 +145,11 @@ const TechSkillJoinModal = ({ skill, roomId, onClose, onSuccess }) => {
           <div className="flex-1 overflow-y-auto p-6">
                 {step === 1 ? (
               <div className="space-y-4">
-                <p className="text-gray-300 mb-6">
-                  Please select your skill level in {skill?.name}. You'll need to answer questions to verify your level before joining the group.
-                </p>
+                <div className="mb-6 p-4 rounded-xl bg-blue-500/10 border border-blue-500/20">
+                  <p className="text-gray-200 text-sm leading-relaxed">
+                    <span className="font-semibold text-blue-300">Welcome!</span> Select your skill level in <span className="font-semibold text-purple-300">{skill?.name}</span>. You'll need to answer questions to verify your level before joining the group.
+                  </p>
+                </div>
                 {skillLevels.map((level, index) => (
                   <motion.button
                     key={level.id}
@@ -144,6 +157,7 @@ const TechSkillJoinModal = ({ skill, roomId, onClose, onSuccess }) => {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.1 }}
                     whileHover={{ scale: 1.02, x: 4 }}
+                    whileTap={{ scale: 0.98 }}
                     onClick={() => {
                       setSelectedLevel(level.id);
                       setStep(2);
@@ -155,9 +169,20 @@ const TechSkillJoinModal = ({ skill, roomId, onClose, onSuccess }) => {
                     }`}
                   >
                     <div className="flex items-center justify-between">
-                      <div>
-                        <h3 className="text-lg font-semibold text-white mb-1">{level.label}</h3>
-                        <p className="text-sm text-gray-400">{level.description}</p>
+                      <div className="flex items-center gap-3">
+                        <div className={`p-2 rounded-lg ${
+                          selectedLevel === level.id
+                            ? 'bg-purple-500/30'
+                            : 'bg-white/5'
+                        }`}>
+                          {level.id === 'Beginner' && '🌱'}
+                          {level.id === 'Intermediate' && '⚡'}
+                          {level.id === 'Professional' && '⭐'}
+                        </div>
+                        <div>
+                          <h3 className="text-lg font-semibold text-white mb-1">{level.label}</h3>
+                          <p className="text-sm text-gray-400">{level.description}</p>
+                        </div>
                       </div>
                       <ChevronRight className="w-5 h-5 text-gray-400" />
                     </div>
@@ -274,7 +299,7 @@ const TechSkillJoinModal = ({ skill, roomId, onClose, onSuccess }) => {
             )}
           </div>
         </motion.div>
-      </div>
+      </motion.div>
     </AnimatePresence>
   );
 };
