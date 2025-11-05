@@ -305,7 +305,10 @@ const HamburgerMenu = ({ darkMode, onToggleDarkMode, user }) => {
             // Handle user selection - start conversation
             setShowUserSearch(false);
             setIsOpen(false);
-            // Navigate to chat with user or emit event
+            // Emit custom event that Chat.jsx can listen to
+            window.dispatchEvent(new CustomEvent('startConversation', { 
+              detail: { user: selectedUser } 
+            }));
           }}
           onClose={() => setShowUserSearch(false)}
           currentUserId={user?._id || user?.id}

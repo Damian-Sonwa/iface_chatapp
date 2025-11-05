@@ -86,6 +86,20 @@ const Chat = () => {
     fetchPrivateChats();
     fetchUsers();
     fetchFriends();
+  }, [socket]);
+
+  // Listen for start conversation event from HamburgerMenu
+  useEffect(() => {
+    const handleStartConversation = (event) => {
+      const { user: selectedUser } = event.detail;
+      handleStartChat(selectedUser._id || selectedUser.id);
+    };
+
+    window.addEventListener('startConversation', handleStartConversation);
+    return () => {
+      window.removeEventListener('startConversation', handleStartConversation);
+    };
+  }, []);
 
     socket.on('message:new', ({ message, chatId }) => {
       setMessages(prev => {
