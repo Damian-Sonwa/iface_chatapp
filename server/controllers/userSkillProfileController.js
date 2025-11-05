@@ -145,15 +145,6 @@ exports.verifyAnswers = async (req, res) => {
     // Find existing profile
     let profile = await UserSkillProfile.findOne({ userId, skillId });
 
-    // Prepare update data (removed - using direct assignment)
-
-    if (isVerified) {
-      updateData.verifiedAt = Date.now();
-      if (room && !room.members.map(m => m.toString()).includes(userId)) {
-        updateData.joinedGroupId = room._id;
-      }
-    }
-
     if (profile) {
       // Update existing profile
       profile.levelSelected = level;
