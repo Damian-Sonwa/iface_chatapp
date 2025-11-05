@@ -11,7 +11,7 @@ import NotificationBell from '../components/NotificationBell';
 import UserProfile from '../components/UserProfile';
 import SummarizeModal from '../components/SummarizeModal';
 import SuggestReplies from '../components/SuggestReplies';
-import { LogOut, Moon, Sun, Search, MoreVertical, User, Sparkles, Languages, Settings, Menu, X } from 'lucide-react';
+import { LogOut, Moon, Sun, Search, MoreVertical, User, Sparkles, Languages, Settings, Menu, X, Heart, Camera, Users } from 'lucide-react';
 import ChatHeaderMenu from '../components/ChatHeaderMenu';
 import { applyTheme, getVibeTheme, vibes } from '../utils/themes';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -67,6 +67,7 @@ const Chat = () => {
   const [pendingJoinRequestsCount, setPendingJoinRequestsCount] = useState(0);
   const [showTechSkillJoinModal, setShowTechSkillJoinModal] = useState(false);
   const [selectedTechSkillRoom, setSelectedTechSkillRoom] = useState(null);
+  const [showTechSkills, setShowTechSkills] = useState(false);
   const socket = getSocket();
 
   useEffect(() => {
@@ -869,29 +870,105 @@ const Chat = () => {
             />
           </>
         ) : (
-          <div className="flex-1 flex items-center justify-center relative z-10">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="text-center"
-            >
+          <div className="flex-1 flex flex-col relative z-10">
+            {/* Personal Chat Features Dashboard */}
+            <div className="p-6 md:p-8">
               <motion.div
-                animate={{ 
-                  scale: [1, 1.1, 1],
-                  opacity: [0.5, 1, 0.5]
-                }}
-                transition={{ 
-                  duration: 3,
-                  repeat: Infinity,
-                  ease: 'easeInOut'
-                }}
-                className="text-7xl mb-4"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="max-w-4xl mx-auto"
               >
-                💬
+                <div className="text-center mb-8">
+                  <motion.div
+                    animate={{ 
+                      scale: [1, 1.1, 1],
+                      opacity: [0.5, 1, 0.5]
+                    }}
+                    transition={{ 
+                      duration: 3,
+                      repeat: Infinity,
+                      ease: 'easeInOut'
+                    }}
+                    className="text-7xl mb-4"
+                  >
+                    💬
+                  </motion.div>
+                  <h2 className="text-3xl font-bold mb-2 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                    Welcome to Chaturway
+                  </h2>
+                  <p className="text-gray-600 dark:text-gray-400">Select a chat to start messaging or explore features below</p>
+                </div>
+
+                {/* Personal Chat Features Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => navigate('/chat?action=search')}
+                    className="p-6 rounded-xl bg-gradient-to-br from-purple-500/10 to-pink-500/10 border border-purple-500/20 hover:border-purple-500/40 transition-all text-left"
+                  >
+                    <Search className="w-8 h-8 text-purple-500 mb-3" />
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">Search Messages</h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Find messages across all your chats</p>
+                  </motion.button>
+
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => setActivePanel('assistant')}
+                    className="p-6 rounded-xl bg-gradient-to-br from-blue-500/10 to-cyan-500/10 border border-blue-500/20 hover:border-blue-500/40 transition-all text-left"
+                  >
+                    <Sparkles className="w-8 h-8 text-blue-500 mb-3" />
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">AI Assistant</h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Get help from our AI assistant</p>
+                  </motion.button>
+
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => setActivePanel('friends')}
+                    className="p-6 rounded-xl bg-gradient-to-br from-green-500/10 to-emerald-500/10 border border-green-500/20 hover:border-green-500/40 transition-all text-left"
+                  >
+                    <Heart className="w-8 h-8 text-green-500 mb-3" />
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">Friends</h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Manage your friends and connections</p>
+                  </motion.button>
+
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => navigate('/moments')}
+                    className="p-6 rounded-xl bg-gradient-to-br from-orange-500/10 to-red-500/10 border border-orange-500/20 hover:border-orange-500/40 transition-all text-left"
+                  >
+                    <Camera className="w-8 h-8 text-orange-500 mb-3" />
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">Moments</h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Share and view moments</p>
+                  </motion.button>
+
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => navigate('/settings')}
+                    className="p-6 rounded-xl bg-gradient-to-br from-gray-500/10 to-slate-500/10 border border-gray-500/20 hover:border-gray-500/40 transition-all text-left"
+                  >
+                    <Settings className="w-8 h-8 text-gray-500 mb-3" />
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">Settings</h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Customize your experience</p>
+                  </motion.button>
+
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => setShowTechSkills(true)}
+                    className="p-6 rounded-xl bg-gradient-to-br from-indigo-500/10 to-purple-500/10 border border-indigo-500/20 hover:border-indigo-500/40 transition-all text-left"
+                  >
+                    <Users className="w-8 h-8 text-indigo-500 mb-3" />
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">Tech Groups</h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Join specialized tech communities</p>
+                  </motion.button>
+                </div>
               </motion.div>
-              <h2 className="text-2xl font-semibold mb-2 text-gray-900 dark:text-gray-200">Select a chat to start messaging</h2>
-              <p className="text-gray-600 dark:text-gray-400">Choose a group or start a private conversation</p>
-            </motion.div>
+            </div>
           </div>
         )}
         <MomentsComposer open={showMomentsComposer} onClose={() => setShowMomentsComposer(false)} onPosted={() => setShowMomentsComposer(false)} initialText={initialMomentText} />
