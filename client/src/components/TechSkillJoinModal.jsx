@@ -220,57 +220,160 @@ const TechSkillJoinModal = ({ skill, roomId, onClose, onSuccess, room }) => {
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600 mx-auto mb-4"></div>
                     <p className="text-gray-400">Loading questions...</p>
                   </div>
-                ) : (
-                  questions.map((question, qIndex) => (
-                    <div key={question._id} className="space-y-3 mb-6">
-                      <label className="block text-base font-semibold text-white">
-                        {qIndex + 1}. {question.questionText}
-                        <span className="text-red-400 ml-1">*</span>
-                      </label>
-                      {question.questionType === 'multiple-choice' && question.options ? (
-                        <div className="space-y-2">
-                          {question.options.map((option, optIndex) => (
-                            <label
-                              key={optIndex}
-                              className="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-purple-500/30 cursor-pointer transition-all"
-                            >
-                              <input
-                                type="radio"
-                                name={`question-${question._id}`}
-                                value={option}
-                                checked={answers[question._id] === option}
-                                onChange={(e) => {
-                                  setAnswers(prev => ({
-                                    ...prev,
-                                    [question._id]: e.target.value
-                                  }));
-                                  setError('');
-                                }}
-                                className="w-4 h-4 text-purple-600 focus:ring-purple-500"
-                              />
-                              <span className="text-white flex-1">{option}</span>
-                            </label>
-                          ))}
+                ) : questions.length > 0 ? (
+                  <>
+                    {/* Question Progress Indicator */}
+                    <div className="flex items-center justify-between mb-6 p-4 rounded-xl bg-white/5 border border-white/10">
+                      <div className="flex items-center gap-3">
+                        <span className="text-sm text-gray-400">Question</span>
+                        <span className="text-xl font-bold text-purple-400">
+                          {currentQuestionIndex + 1} / {questions.length}
+                        </span>
+                      </div>
+                      <div className="flex gap-1.5">
+                        {questions.map((_, idx) => (
+                          <div
+                            key={idx}
+                            className={`h-2 rounded-full transition-all ${
+                              idx === currentQuestionIndex
+                                ? 'bg-purple-500 w-8'
+                                : answers[questions[idx]._id] && answers[questions[idx]._id].trim() !== ''
+                                ? 'bg-purple-500/50 w-2'
+                                : 'bg-white/10 w-2'
+                            }`}
+                          />
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Current Question Display */}
+                    {questions[currentQuestionIndex] && (() => {
+                      const question = questions[currentQuestionIndex];
+                      return (
+                        <div key={question._id} className="space-y-4">
+                          <div className="flex items-start gap-4">
+                            <div className="flex-shrink-0 w-12 h-12 rounded-full bg-gradient-to-br from-purple-500/20 to-pink-500/20 border-2 border-purple-500/30 flex items-center justify-center text-purple-300 font-bold text-xl">
+                              {currentQuestionIndex + 1}
+                            </div>
+                            <div className="flex-1">
+                              <label className="block text-white font-semibold text-lg mb-4">
+                                {question.questionText}
+                                <span className="text-red-400 ml-1">*</span>
+                              </label>
+                              {question.questionType === 'multiple-choice' && question.options ? (
+                                <div className="space-y-3">
+                                  {question.options.map((option, optIndex) => (
+                                    <label
+                                      key={optIndex}
+                                      className={`flex items-center gap-3 p-4 rounded-xl border cursor-pointer transition-all group ${
+                                        answers[question._id] === option
+                                          ? 'bg-purple-500/20 border-purple-500/50 shadow-lg shadow-purple-500/20'
+                                          : 'bg-white/5 border-white/10 hover:bg-white/10 hover:border-purple-500/30'
+                                      }`}
+                                    >
+                                      <input
+                                        type="radio"
+                                        name={`question-${question._id}`}
+                                        value={option}
+                                        checked={answers[question._id] === option}
+                                        onChange={(e) => {
+                                          setAnswers(prev => ({
+                                            ...prev,
+                                            [question._id]: e.target.value
+                                          }));
+                                          setError('');
+                                        }}
+                                        className="w-5 h-5 text-purple-600 border-gray-300 focus:ring-purple-500"
+                                      />
+                                      <span className="text-gray-200 group-hover:text-white transition-colors flex-1 text-base">{option}</span>
+                                    </label>
+                                  ))}
+                                </div>
+                              ) : (
+                                <textarea
+                                  value={answers[question._id] || ''}
+                                  onChange={(e) => {
+                                    setAnswers(prev => ({
+                                      ...prev,
+                                      [question._id]: e.target.value
+                                    }));
+                                    setError('');
+                                  }}
+                                  placeholder="Type your answer here..."
+                                  rows={6}
+                                  required
+                                  className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 transition-all resize-none"
+                                />
+                              )}
+                            </div>
+                          </div>
                         </div>
-                      ) : (
-                        <textarea
-                          value={answers[question._id] || ''}
-                          onChange={(e) => {
-                            setAnswers(prev => ({
-                              ...prev,
-                              [question._id]: e.target.value
-                            }));
+                      );
+                    })()}
+
+                    {/* Navigation Buttons */}
+                    <div className="flex items-center justify-between gap-3 pt-4 border-t border-white/10">
+                      <motion.button
+                        type="button"
+                        onClick={() => {
+                          if (currentQuestionIndex > 0) {
+                            setCurrentQuestionIndex(prev => prev - 1);
                             setError('');
+                          }
+                        }}
+                        disabled={currentQuestionIndex === 0}
+                        whileHover={{ scale: currentQuestionIndex === 0 ? 1 : 1.05 }}
+                        whileTap={{ scale: currentQuestionIndex === 0 ? 1 : 0.95 }}
+                        className="px-6 py-3 rounded-xl bg-white/5 border border-white/10 text-white font-semibold hover:bg-white/10 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                      >
+                        <ChevronRight className="w-5 h-5 rotate-180" />
+                        Previous
+                      </motion.button>
+
+                      {currentQuestionIndex < questions.length - 1 ? (
+                        <motion.button
+                          type="button"
+                          onClick={() => {
+                            // Validate current question is answered
+                            const currentQuestion = questions[currentQuestionIndex];
+                            if (!answers[currentQuestion._id] || answers[currentQuestion._id].trim() === '') {
+                              setError('Please answer this question before proceeding to the next one.');
+                              return;
+                            }
+                            setError('');
+                            setCurrentQuestionIndex(prev => prev + 1);
                           }}
-                          placeholder="Type your answer here..."
-                          rows={4}
-                          required
-                          className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 transition-all resize-none"
-                        />
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          className="flex-1 px-6 py-3 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold hover:from-purple-500 hover:to-pink-500 transition-all flex items-center justify-center gap-2 shadow-lg shadow-purple-500/30"
+                        >
+                          Next
+                          <ChevronRight className="w-5 h-5" />
+                        </motion.button>
+                      ) : (
+                        <motion.button
+                          type="submit"
+                          disabled={loading || !answers[questions[currentQuestionIndex]?._id] || answers[questions[currentQuestionIndex]?._id]?.trim() === ''}
+                          whileHover={{ scale: loading ? 1 : 1.05 }}
+                          whileTap={{ scale: loading ? 1 : 0.95 }}
+                          className="flex-1 px-6 py-3 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold hover:from-purple-500 hover:to-pink-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg shadow-purple-500/30"
+                        >
+                          {loading ? (
+                            <>
+                              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                              <span>Submitting...</span>
+                            </>
+                          ) : (
+                            <>
+                              <Send className="w-5 h-5" />
+                              <span>Submit All Answers</span>
+                            </>
+                          )}
+                        </motion.button>
                       )}
                     </div>
-                  ))
-                )}
+                  </>
+                ) : null}
 
                 {/* Error Message */}
                 {error && (
