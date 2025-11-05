@@ -312,16 +312,20 @@ const Chat = () => {
     }
   };
 
-  const fetchPendingJoinRequestsCount = async () => {
+  const fetchPendingJoinRequestsCount = async (chat = null, type = null) => {
     try {
-      if (!activeChat || chatType !== 'room') {
+      const targetChat = chat || activeChat;
+      const targetType = type || chatType;
+      
+      if (!targetChat || targetType !== 'room') {
         setPendingJoinRequestsCount(0);
         return;
       }
       
       // Check if user is admin
-      const isAdmin = activeChat?.createdBy?._id === user?._id || 
-                     activeChat?.admins?.includes(user?._id) ||
+      const isAdmin = targetChat?.createdBy?._id === user?._id || 
+                     targetChat?.createdBy === user?._id ||
+                     targetChat?.admins?.includes(user?._id) ||
                      user?.isAdmin;
       
       if (!isAdmin) {
@@ -329,10 +333,11 @@ const Chat = () => {
         return;
       }
 
-      const response = await api.get(`/group-join-requests/room/${activeChat._id}`);
+      const response = await api.get(`/group-join-requests/room/${targetChat._id}`);
       setPendingJoinRequestsCount(response.data.requests?.length || 0);
     } catch (error) {
       console.error('Fetch pending join requests count error:', error);
+      setPendingJoinRequestsCount(0);
     }
   };
 
@@ -431,7 +436,7 @@ const Chat = () => {
       }
 
       // Fetch pending join requests count for admins
-      await fetchPendingJoinRequestsCount();
+      await fetchPendingJoinRequestsCount(chat, type);
     } else {
       await fetchMessages(null, chat._id);
       const otherUserId = chat.participants.find(p => (p._id || p.id) !== (user._id || user.id))?._id || chat.participants.find(p => (p._id || p.id) !== (user._id || user.id))?.id;
