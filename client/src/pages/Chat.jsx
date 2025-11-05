@@ -246,7 +246,16 @@ const Chat = () => {
       socket.off('user:offline');
       clearInterval(moodInterval);
     };
-  }, [socket, activeChat, chatType]);
+  }, [socket, activeChat, chatType, user]);
+
+  // Fetch pending join requests when activeChat changes
+  useEffect(() => {
+    if (activeChat && chatType === 'room') {
+      fetchPendingJoinRequestsCount();
+    } else {
+      setPendingJoinRequestsCount(0);
+    }
+  }, [activeChat, chatType, user]);
 
   // Handle navigation from Friends page
   useEffect(() => {
