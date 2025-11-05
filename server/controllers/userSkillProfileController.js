@@ -145,14 +145,7 @@ exports.verifyAnswers = async (req, res) => {
     // Find existing profile
     let profile = await UserSkillProfile.findOne({ userId, skillId });
 
-    // Prepare update data
-    const updateData = {
-      levelSelected: level,
-      answers: answerResults,
-      isVerified,
-      score: score,
-      lastAttemptAt: Date.now()
-    };
+    // Prepare update data (removed - using direct assignment)
 
     if (isVerified) {
       updateData.verifiedAt = Date.now();
@@ -166,7 +159,7 @@ exports.verifyAnswers = async (req, res) => {
       profile.levelSelected = level;
       profile.answers = answerResults;
       profile.isVerified = isVerified;
-      profile.score = score;
+      profile.verificationScore = score;
       profile.attempts += 1;
       profile.lastAttemptAt = Date.now();
       if (isVerified) {
@@ -184,7 +177,7 @@ exports.verifyAnswers = async (req, res) => {
         levelSelected: level,
         answers: answerResults,
         isVerified,
-        score: score,
+        verificationScore: score,
         attempts: 1,
         lastAttemptAt: Date.now(),
         verifiedAt: isVerified ? Date.now() : null,
