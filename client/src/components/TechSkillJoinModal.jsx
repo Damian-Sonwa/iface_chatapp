@@ -16,6 +16,7 @@ const TechSkillJoinModal = ({ skill, roomId, onClose, onSuccess, room }) => {
   const [answers, setAnswers] = useState({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0); // Track current question
 
   useEffect(() => {
     if (step === 2 && selectedLevel) {
@@ -44,6 +45,9 @@ const TechSkillJoinModal = ({ skill, roomId, onClose, onSuccess, room }) => {
         initialAnswers[q._id] = '';
       });
       setAnswers(initialAnswers);
+      
+      // Reset to first question
+      setCurrentQuestionIndex(0);
     } catch (error) {
       console.error('Error fetching questions:', error);
       setError(error.response?.data?.error || 'Failed to load questions. Please try again.');
@@ -280,7 +284,7 @@ const TechSkillJoinModal = ({ skill, roomId, onClose, onSuccess, room }) => {
                   </motion.div>
                 )}
 
-                {/* Actions */}
+                {/* Actions - Only show Back button and error handling */}
                 <div className="flex items-center gap-3 pt-4 border-t border-white/10">
                   <motion.button
                     type="button"
@@ -288,53 +292,35 @@ const TechSkillJoinModal = ({ skill, roomId, onClose, onSuccess, room }) => {
                       setStep(1);
                       setAnswers({});
                       setError('');
+                      setCurrentQuestionIndex(0);
                     }}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-white font-semibold hover:bg-white/10 transition-all"
                   >
-                    Back
+                    Back to Level Selection
                   </motion.button>
                   {error && (
                     <motion.button
                       type="button"
                       onClick={() => {
                         // Retry - reset answers and clear error
-                        setAnswers({});
                         setError('');
-                        // Reset all answers to empty
+                        // Reset all answers to empty and go back to first question
                         const resetAnswers = {};
                         questions.forEach(q => {
                           resetAnswers[q._id] = '';
                         });
                         setAnswers(resetAnswers);
+                        setCurrentQuestionIndex(0);
                       }}
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                       className="px-4 py-2 rounded-xl bg-yellow-500/20 border border-yellow-500/30 text-yellow-300 font-semibold hover:bg-yellow-500/30 transition-all"
                     >
-                      Retry
+                      Reset All
                     </motion.button>
                   )}
-                  <motion.button
-                    type="submit"
-                    disabled={loading || questions.length === 0}
-                    whileHover={{ scale: loading ? 1 : 1.05 }}
-                    whileTap={{ scale: loading ? 1 : 0.95 }}
-                    className="flex-1 py-2 px-4 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold hover:from-purple-500 hover:to-pink-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg shadow-purple-500/30"
-                  >
-                    {loading ? (
-                      <>
-                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                        <span>Submitting...</span>
-                      </>
-                    ) : (
-                      <>
-                        <Send className="w-5 h-5" />
-                        <span>Submit Request</span>
-                      </>
-                    )}
-                  </motion.button>
                 </div>
               </form>
             )}
