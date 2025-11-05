@@ -250,7 +250,7 @@ const HamburgerMenu = ({ darkMode, onToggleDarkMode, user }) => {
               </div>
 
               {/* Menu Sections - Scrollable */}
-              <div className="flex-1 overflow-y-auto p-4 space-y-2">
+              <div className="flex-1 overflow-y-auto p-4 space-y-2 pb-4">
                 {menuSections.map((section, sectionIndex) => {
                   const SectionIcon = section.icon;
                   return (
@@ -275,7 +275,7 @@ const HamburgerMenu = ({ darkMode, onToggleDarkMode, user }) => {
                             whileHover={{ scale: 1.02, x: 4 }}
                             whileTap={{ scale: 0.98 }}
                             onClick={() => handleMenuClick(item)}
-                            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-white/5 hover:bg-white/10 backdrop-blur-sm border border-white/10 hover:border-primaryFrom/30 transition-all group mb-2"
+                            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-white/5 hover:bg-white/10 backdrop-blur-sm border border-white/10 hover:border-primaryFrom/30 transition-all group mb-2 relative z-10"
                           >
                             <div className="p-2 rounded-lg bg-white/5 group-hover:bg-primaryFrom/20 transition-colors">
                               <ItemIcon className="w-5 h-5 text-gray-300 group-hover:text-primaryFrom transition-colors" />
@@ -292,7 +292,7 @@ const HamburgerMenu = ({ darkMode, onToggleDarkMode, user }) => {
               </div>
 
               {/* Fixed Bottom Section */}
-              <div className="p-4 border-t border-white/10 bg-gradient-to-br from-slate-900/95 via-purple-900/30 to-slate-900/95">
+              <div className="flex-shrink-0 p-4 border-t border-white/10 bg-gradient-to-br from-slate-900/95 via-purple-900/30 to-slate-900/95 relative z-10">
                 {/* Theme Toggle */}
                 <motion.button
                   whileHover={{ scale: 1.02 }}
