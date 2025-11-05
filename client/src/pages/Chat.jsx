@@ -12,6 +12,7 @@ import UserProfile from '../components/UserProfile';
 import SummarizeModal from '../components/SummarizeModal';
 import SuggestReplies from '../components/SuggestReplies';
 import { LogOut, Moon, Sun, Search, MoreVertical, User, Sparkles, Languages, Settings, Menu, X } from 'lucide-react';
+import ChatHeaderMenu from '../components/ChatHeaderMenu';
 import { applyTheme, getVibeTheme, vibes } from '../utils/themes';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -454,13 +455,15 @@ const Chat = () => {
         </div>
       )}
       
-      {/* Mobile Menu Button */}
-      <button 
-        onClick={() => setShowMobileSidebar(true)}
-        className="md:hidden fixed top-4 left-4 z-40 p-3 bg-white/90 dark:bg-gray-800/90 backdrop-blur-xl border border-purple-200 dark:border-purple-700 rounded-xl shadow-lg shadow-purple-500/20 hover:bg-white dark:hover:bg-gray-700 transition"
-      >
-        <Menu className="w-6 h-6 text-purple-600 dark:text-purple-400" />
-      </button>
+      {/* Mobile Sidebar Toggle - Now handled by Navigation hamburger menu */}
+      {showMobileSidebar && (
+        <button 
+          onClick={() => setShowMobileSidebar(false)}
+          className="md:hidden fixed top-4 left-4 z-40 p-3 bg-white/90 dark:bg-gray-800/90 backdrop-blur-xl border border-purple-200 dark:border-purple-700 rounded-xl shadow-lg shadow-purple-500/20 hover:bg-white dark:hover:bg-gray-700 transition"
+        >
+          <X className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+        </button>
+      )}
 
       <div className="flex-1 flex flex-col relative z-10">
         <MomentsBar onOpenComposer={() => setShowMomentsComposer(true)} onOpenViewer={(moments, id) => setViewer({ open: true, moments, id })} />
@@ -537,18 +540,7 @@ const Chat = () => {
                   </div>
                 </div>
                   <div className="flex items-center gap-2">
-                    {/* Summarize button (rooms only) */}
-                    {chatType === 'room' && (
-                      <motion.button
-                        onClick={() => setShowSummarize(true)}
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.95 }}
-                        className="p-2.5 rounded-xl bg-white/10 dark:bg-gray-800/50 backdrop-blur-sm border border-gray-200 dark:border-gray-700 hover:border-purple-500 transition text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 shadow-lg"
-                        title="AI Summarize"
-                      >
-                        <Sparkles className="w-5 h-5" />
-                      </motion.button>
-                    )}
+                    {/* Poll button (rooms only) - keep visible for quick access */}
                     {chatType === 'room' && activeChat && (
                       <motion.button
                         onClick={() => setShowPoll(true)}
@@ -560,9 +552,45 @@ const Chat = () => {
                         + Poll
                       </motion.button>
                     )}
-                    {/* Auto-translate toggle */}
-                    <motion.button
-                      onClick={() => {
+                    <NotificationBell />
+                    {/* Chat Header Menu - consolidated dropdown for all actions */}
+                    <ChatHeaderMenu
+                      conversation={activeChat}
+                      onPin={async () => {
+                        if (!activeChat) return;
+                        const isPinned = activeChat.pinnedBy?.includes(user?._id);
+                        try {
+                          await api.post(`/api/conversations/${activeChat._id}/${isPinned ? 'unpin' : 'pin'}`);
+                          // Refresh conversations
+                        } catch (error) {
+                          console.error('Error pinning conversation:', error);
+                        }
+                      }}
+                      onArchive={async () => {
+                        if (!activeChat) return;
+                        const isArchived = activeChat.archivedBy?.includes(user?._id);
+                        try {
+                          await api.post(`/api/conversations/${activeChat._id}/${isArchived ? 'unarchive' : 'archive'}`);
+                          // Refresh conversations
+                        } catch (error) {
+                          console.error('Error archiving conversation:', error);
+                        }
+                      }}
+                      onDelete={async () => {
+                        if (!activeChat) return;
+                        try {
+                          await api.delete(`/api/conversations/${activeChat._id}`);
+                          setActiveChat(null);
+                          // Refresh conversations
+                        } catch (error) {
+                          console.error('Error deleting conversation:', error);
+                        }
+                      }}
+                      onSearch={() => setShowSearch(true)}
+                      onShowProfile={() => setShowProfile(true)}
+                      onShowSettings={() => navigate('/settings')}
+                      onSummarize={() => setShowSummarize(true)}
+                      onToggleTranslate={() => {
                         const newState = !autoTranslateEnabled[activeChat?._id] || false;
                         setAutoTranslateEnabled(prev => ({ ...prev, [activeChat._id]: !newState }));
                         api.post('/users/auto-translate', {
@@ -570,69 +598,9 @@ const Chat = () => {
                           enabled: !newState
                         }).catch(console.error);
                       }}
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.95 }}
-                      className={`p-2.5 rounded-xl backdrop-blur-sm border transition shadow-lg ${
-                        autoTranslateEnabled[activeChat?._id]
-                          ? 'bg-purple-500/30 border-purple-400/50 text-purple-200'
-                          : 'bg-white/10 border-white/20 text-gray-300 hover:bg-white/20 hover:text-white'
-                      }`}
-                      title="Auto-translate"
-                    >
-                      <Languages className="w-5 h-5" />
-                    </motion.button>
-                    <motion.button
-                      onClick={() => setShowProfile(true)}
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.95 }}
-                      className="p-2.5 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 transition text-gray-300 hover:text-white shadow-lg"
-                      title="Your profile"
-                    >
-                      <User className="w-5 h-5" />
-                    </motion.button>
-                    <NotificationBell />
-                    <motion.button
-                      onClick={() => setShowSearch(true)}
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.95 }}
-                      className="p-2.5 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 transition text-gray-300 hover:text-white shadow-lg"
-                      title="Search messages"
-                    >
-                      <Search className="w-5 h-5" />
-                    </motion.button>
-                    <motion.button
-                      onClick={() => setDarkMode(!darkMode)}
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.95 }}
-                      className={`p-2.5 rounded-xl backdrop-blur-sm border shadow-lg transition ${
-                        darkMode 
-                          ? 'bg-purple-500/20 border-purple-400/50 text-purple-200 hover:bg-purple-500/30' 
-                          : 'bg-yellow-500/20 border-yellow-400/50 text-yellow-200 hover:bg-yellow-500/30'
-                      }`}
-                      title={darkMode ? "Switch to light mode" : "Switch to dark mode"}
-                    >
-                      {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-                    </motion.button>
-                    {user?.isAdmin && (
-                      <motion.button
-                        onClick={() => navigate('/admin')}
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.95 }}
-                        className="p-2.5 rounded-xl bg-white/10 dark:bg-gray-800/50 backdrop-blur-sm border border-gray-200 dark:border-gray-700 hover:border-purple-500 transition text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 shadow-lg"
-                        title="Admin Dashboard"
-                      >
-                        <Settings className="w-5 h-5" />
-                      </motion.button>
-                    )}
-                    <motion.button
-                      onClick={logout}
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.95 }}
-                      className="p-2.5 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 transition text-gray-300 hover:text-white shadow-lg"
-                      title="Logout"
-                    >
-                      <LogOut className="w-5 h-5" />
-                    </motion.button>
+                      translateEnabled={autoTranslateEnabled[activeChat?._id]}
+                      user={user}
+                    />
                   </div>
                 </motion.div>
               )}
