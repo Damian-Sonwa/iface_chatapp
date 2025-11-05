@@ -148,8 +148,6 @@ const TechSkillsMenu = ({ onClose, onJoinSuccess }) => {
         </div>
       </div>
 
-      </div>
-
       {/* Join Modal */}
       {showJoinModal && selectedSkill && (
         <TechSkillJoinModal
