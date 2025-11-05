@@ -26,6 +26,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import StatusSelector from './StatusSelector';
 import UserSearchDropdown from './UserSearchDropdown';
+import TechSkillsMenu from './TechSkillsMenu';
 import api from '../utils/api';
 
 /**
@@ -36,6 +37,7 @@ const HamburgerMenu = ({ darkMode, onToggleDarkMode, user }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [activeSubmenu, setActiveSubmenu] = useState(null);
   const [showUserSearch, setShowUserSearch] = useState(false);
+  const [showTechSkills, setShowTechSkills] = useState(false);
   const menuRef = useRef(null);
   const navigate = useNavigate();
   const { logout } = useAuth();
@@ -77,10 +79,17 @@ const HamburgerMenu = ({ darkMode, onToggleDarkMode, user }) => {
       title: 'Community',
       icon: Users,
       items: [
-        { id: 'tech-skills', label: 'Tech Skills Groups', icon: Sparkles, action: () => navigate('/tech-skills') },
         { id: 'new-group', label: 'New Group', icon: Plus, action: null },
-        { id: 'groups', label: 'Groups', icon: Users, action: null },
         { id: 'invite-user', label: 'Invite User', icon: UserPlus, action: () => navigate('/invites') },
+      ]
+    },
+    {
+      id: 'groups',
+      title: 'Groups',
+      icon: Users,
+      items: [
+        { id: 'tech-skills', label: 'Tech Skills Groups', icon: Sparkles, action: () => setShowTechSkills(true) },
+        { id: 'all-groups', label: 'All Groups', icon: Users, action: null },
       ]
     },
     {
@@ -151,7 +160,7 @@ const HamburgerMenu = ({ darkMode, onToggleDarkMode, user }) => {
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
         onClick={() => setIsOpen(!isOpen)}
-        className="relative z-[10000] p-2 rounded-lg bg-white/10 dark:bg-black/20 backdrop-blur-xl border border-white/30 dark:border-white/10 hover:bg-white/20 dark:hover:bg-black/30 transition-all"
+        className="relative z-[10001] p-2 rounded-lg bg-white/10 dark:bg-black/20 backdrop-blur-xl border border-white/30 dark:border-white/10 hover:bg-white/20 dark:hover:bg-black/30 transition-all"
         aria-label="Menu"
       >
         <AnimatePresence mode="wait">
@@ -188,17 +197,17 @@ const HamburgerMenu = ({ darkMode, onToggleDarkMode, user }) => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsOpen(false)}
-              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[9998]"
+              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[9999]"
             />
 
             {/* Menu Panel */}
             <motion.div
               ref={menuRef}
-              initial={{ x: '-100%' }}
+              initial={{ x: '100%' }}
               animate={{ x: 0 }}
-              exit={{ x: '-100%' }}
+              exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed left-0 top-0 bottom-0 w-80 max-w-[85vw] z-[9999] bg-gradient-to-br from-slate-900/95 via-purple-900/30 to-slate-900/95 backdrop-blur-xl border-r border-white/10 shadow-2xl flex flex-col"
+              className="fixed right-0 top-0 bottom-0 w-80 max-w-[85vw] z-[10000] bg-gradient-to-br from-slate-900/95 via-purple-900/30 to-slate-900/95 backdrop-blur-xl border-l border-white/10 shadow-2xl flex flex-col"
             >
               {/* Header */}
               <div className="p-6 border-b border-white/10">
@@ -340,6 +349,21 @@ const HamburgerMenu = ({ darkMode, onToggleDarkMode, user }) => {
           }}
           onClose={() => setShowUserSearch(false)}
           currentUserId={user?._id || user?.id}
+        />
+      )}
+
+      {/* Tech Skills Menu - Overlay when showing tech skills */}
+      {showTechSkills && (
+        <TechSkillsMenu
+          onClose={() => {
+            setShowTechSkills(false);
+          }}
+          onJoinSuccess={() => {
+            setShowTechSkills(false);
+            setIsOpen(false);
+            // Navigate to chat to see the new group
+            navigate('/chat');
+          }}
         />
       )}
     </>
