@@ -43,62 +43,58 @@ const TechSkillsMenu = ({ onClose, onJoinSuccess }) => {
   };
 
   const handleSkillClick = async (skill) => {
+    // Show modal immediately for faster UX
+    setSelectedSkill({
+      skill,
+      roomId: null // Will be fetched in background
+    });
+    setShowJoinModal(true);
+
     try {
-      // Check if user already has a verified profile
-      try {
-        const profileResponse = await api.get(`/user-skill-profiles/skill/${skill._id}`);
-        const profile = profileResponse.data.profile;
-        
-        if (profile && profile.isVerified) {
-          // Already verified - try to join group directly
-          try {
-            const joinResponse = await api.post(`/user-skill-profiles/skill/${skill._id}/join-group`);
-            if (joinResponse.data.room) {
-              alert('Successfully joined the group!');
-              if (onJoinSuccess) {
-                onJoinSuccess();
-              }
-              return;
-            }
-          } catch (joinError) {
-            // If join fails, show modal anyway
-          }
-        }
-      } catch (profileError) {
-        // No profile exists, continue to verification
-      }
+      // Fetch profile and rooms in parallel for faster response
+      const [profileResponse, roomsResponse] = await Promise.all([
+        api.get(`/user-skill-profiles/skill/${skill._id}`).catch(() => ({ data: { profile: null } })),
+        api.get(`/tech-skills/${skill._id}/rooms`).catch(() => ({ data: { rooms: [] } }))
+      ]);
 
-      // Get rooms for this skill
-      let roomId = null;
-      try {
-        const roomsResponse = await api.get(`/tech-skills/${skill._id}/rooms`);
-        const rooms = roomsResponse.data.rooms || [];
-        
-        if (rooms.length > 0) {
-          roomId = rooms[0]._id;
-        }
-      } catch (roomError) {
-        console.error('Error fetching rooms:', roomError);
-        // Continue anyway - we can still show the modal
-      }
+      const profile = profileResponse.data.profile;
+      const rooms = roomsResponse.data.rooms || [];
+      const roomId = rooms.length > 0 ? rooms[0]._id : null;
 
-      // Set selected skill and show modal
-      setSelectedSkill({
-        skill,
+      // Update selected skill with roomId
+      setSelectedSkill(prev => ({
+        ...prev,
         roomId: roomId
-      });
-      setShowJoinModal(true);
+      }));
+
+      // If already verified, try to join directly
+      if (profile && profile.isVerified) {
+        try {
+          const joinResponse = await api.post(`/user-skill-profiles/skill/${skill._id}/join-group`);
+          if (joinResponse.data.room) {
+            setShowJoinModal(false);
+            setSelectedSkill(null);
+            if (onJoinSuccess) {
+              onJoinSuccess(joinResponse.data.room);
+            }
+            return;
+          }
+        } catch (joinError) {
+          // If join fails, let user go through verification
+          console.error('Join error:', joinError);
+        }
+      }
     } catch (error) {
       console.error('Error getting skill info:', error);
-      alert('Failed to load skill information. Please try again.');
+      // Modal already shown, user can still proceed
     }
   };
 
-  const handleJoinSuccess = () => {
+  const handleJoinSuccess = (room) => {
     setShowJoinModal(false);
     setSelectedSkill(null);
     if (onJoinSuccess) {
-      onJoinSuccess();
+      onJoinSuccess(room);
     }
   };
 

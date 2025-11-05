@@ -367,23 +367,33 @@ const HamburgerMenu = ({ darkMode, onToggleDarkMode, user }) => {
         />
       )}
 
-      {/* Tech Skills Menu - Overlay when showing tech skills */}
-      <AnimatePresence>
-        {showTechSkills && (
-          <TechSkillsMenu
-            onClose={() => {
-              setShowTechSkills(false);
-              setIsOpen(false); // Also close hamburger menu when closing tech skills
-            }}
-            onJoinSuccess={() => {
-              setShowTechSkills(false);
-              setIsOpen(false);
-              // Navigate to chat to see the new group
-              navigate('/chat');
-            }}
-          />
-        )}
-      </AnimatePresence>
+          {/* Tech Skills Menu - Overlay when showing tech skills */}
+          <AnimatePresence>
+            {showTechSkills && (
+              <TechSkillsMenu
+                onClose={() => {
+                  setShowTechSkills(false);
+                  setIsOpen(false); // Also close hamburger menu when closing tech skills
+                }}
+                onJoinSuccess={(room) => {
+                  setShowTechSkills(false);
+                  setIsOpen(false);
+                  // Navigate directly to the joined room
+                  if (room && room._id) {
+                    navigate('/chat', { 
+                      state: { 
+                        chatId: room._id, 
+                        chatType: 'room' 
+                      } 
+                    });
+                  } else {
+                    // Fallback: navigate to chat page
+                    navigate('/chat');
+                  }
+                }}
+              />
+            )}
+          </AnimatePresence>
     </>
   );
 };

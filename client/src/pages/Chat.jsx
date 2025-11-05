@@ -278,6 +278,23 @@ const Chat = () => {
             if (chat) {
               handleChatSelect(chat, 'private');
             }
+          } else if (location.state.chatType === 'room') {
+            // Handle room navigation (e.g., from tech skill join)
+            const response = await api.get('/rooms');
+            const allRooms = response.data.rooms || [];
+            const room = allRooms.find(r => r._id === location.state.chatId);
+            
+            if (room) {
+              handleChatSelect(room, 'room');
+            } else {
+              // If room not found, refresh rooms list and try again
+              await fetchRooms();
+              const refreshedRooms = await api.get('/rooms');
+              const refreshedRoom = refreshedRooms.data.rooms.find(r => r._id === location.state.chatId);
+              if (refreshedRoom) {
+                handleChatSelect(refreshedRoom, 'room');
+              }
+            }
           }
         } catch (error) {
           console.error('Error loading chat from navigation:', error);
@@ -287,7 +304,7 @@ const Chat = () => {
         }
       };
 
-      // Small delay to ensure privateChats are loaded
+      // Small delay to ensure rooms/chats are loaded
       const timer = setTimeout(loadChatFromNavigation, 300);
       return () => clearTimeout(timer);
     }

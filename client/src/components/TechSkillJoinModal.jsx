@@ -9,7 +9,7 @@ const skillLevels = [
   { id: 'Professional', label: 'Professional', description: 'Expert level' }
 ];
 
-const TechSkillJoinModal = ({ skill, roomId, onClose, onSuccess }) => {
+const TechSkillJoinModal = ({ skill, roomId, onClose, onSuccess, room }) => {
   const [step, setStep] = useState(1); // 1: Select level, 2: Answer questions
   const [selectedLevel, setSelectedLevel] = useState('');
   const [questions, setQuestions] = useState([]);
@@ -87,9 +87,11 @@ const TechSkillJoinModal = ({ skill, roomId, onClose, onSuccess }) => {
       const { isVerified, score, message, profile, room, correctCount, totalQuestions } = verifyResponse.data;
 
       if (isVerified) {
-        // Success - close modal and refresh
-        onSuccess();
-        // Show success message
+        // Success - pass room data to onSuccess for navigation
+        if (onSuccess) {
+          onSuccess(room); // Pass room so parent can navigate
+        }
+        // Show success message briefly
         alert(`🎉 ${message}\nYou got ${correctCount}/${totalQuestions} correct (${score}%)`);
       } else {
         // Not verified - show error with retry option
