@@ -10,8 +10,11 @@ const Sidebar = ({ rooms, privateChats, activeChat, chatType, onChatSelect, onOp
   const [searchQuery, setSearchQuery] = useState('');
 
   // Combine rooms and privateChats into a unified conversation list
+  // FILTER OUT TECH SKILL GROUPS - they should only appear when accessed via Tech Groups card
   const allConversations = [
-    ...rooms.map(room => ({ ...room, conversationType: 'room' })),
+    ...rooms
+      .filter(room => !room.techSkillId) // Exclude tech skill groups
+      .map(room => ({ ...room, conversationType: 'room' })),
     ...privateChats.map(chat => ({ ...chat, conversationType: 'private' }))
   ].sort((a, b) => {
     // Sort by lastMessageAt (most recent first)

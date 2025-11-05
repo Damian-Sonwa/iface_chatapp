@@ -91,7 +91,8 @@ const HamburgerMenu = ({ darkMode, onToggleDarkMode, user }) => {
       title: 'Tech / Digital Skills',
       icon: Sparkles,
       items: [
-        { id: 'tech-skills', label: 'Explore Tech Skills', icon: Sparkles, action: () => setShowTechSkills(true) },
+        { id: 'explore-tech-skills', label: 'Explore Tech Skills', icon: Sparkles, action: () => setShowTechSkills(true) },
+        { id: 'select-group', label: 'Select Group', icon: Users, action: () => setShowTechSkills(true) },
       ]
     },
     {
@@ -211,7 +212,7 @@ const HamburgerMenu = ({ darkMode, onToggleDarkMode, user }) => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsOpen(false)}
-              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[9999]"
+              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[9999]"
             />
 
             {/* Menu Panel */}
@@ -221,7 +222,7 @@ const HamburgerMenu = ({ darkMode, onToggleDarkMode, user }) => {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed right-0 top-0 bottom-0 w-80 max-w-[85vw] z-[10000] bg-gradient-to-br from-slate-900/95 via-purple-900/30 to-slate-900/95 backdrop-blur-xl border-l border-white/10 shadow-2xl flex flex-col"
+              className="fixed right-0 top-0 bottom-0 w-80 max-w-[85vw] z-[10000] bg-gradient-to-br from-slate-900 via-purple-900/40 to-slate-900 backdrop-blur-xl border-l border-white/20 shadow-2xl flex flex-col"
             >
               {/* Header */}
               <div className="p-6 border-b border-white/10">
@@ -303,7 +304,7 @@ const HamburgerMenu = ({ darkMode, onToggleDarkMode, user }) => {
               </div>
 
               {/* Fixed Bottom Section */}
-              <div className="flex-shrink-0 p-4 border-t border-white/10 bg-gradient-to-br from-slate-900/95 via-purple-900/30 to-slate-900/95 relative z-10">
+              <div className="flex-shrink-0 p-4 border-t border-white/20 bg-gradient-to-br from-slate-900 via-purple-900/40 to-slate-900 relative z-10">
                 {/* Theme Toggle */}
                 <motion.button
                   whileHover={{ scale: 1.02 }}
