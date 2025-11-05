@@ -53,13 +53,26 @@ const ChatHeaderMenu = ({
     };
   }, [isOpen]);
 
+  // Determine if this is a group chat or personal chat
+  const isGroupChat = conversation?.type === 'group' || conversation?.conversationType === 'room' || conversation?.members?.length > 2;
+  
   const menuItems = [
+    // Personal Chat Features (always visible)
     {
       id: 'search',
       label: 'Search Messages',
       icon: Search,
       action: () => {
         onSearch?.();
+        setIsOpen(false);
+      }
+    },
+    {
+      id: 'translate',
+      label: translateEnabled ? 'Disable Auto-Translate' : 'Enable Auto-Translate',
+      icon: Languages,
+      action: () => {
+        onToggleTranslate?.();
         setIsOpen(false);
       }
     },
@@ -82,36 +95,6 @@ const ChatHeaderMenu = ({
       }
     },
     {
-      id: 'translate',
-      label: translateEnabled ? 'Disable Auto-Translate' : 'Enable Auto-Translate',
-      icon: Languages,
-      action: () => {
-        onToggleTranslate?.();
-        setIsOpen(false);
-      }
-    },
-    {
-      id: 'summarize',
-      label: 'AI Summarize',
-      icon: Sparkles,
-      action: () => {
-        onSummarize?.();
-        setIsOpen(false);
-      },
-      show: conversation?.type === 'group'
-    },
-    {
-      id: 'join-requests',
-      label: 'Join Requests',
-      icon: UserPlus,
-      action: () => {
-        onShowJoinRequests?.();
-        setIsOpen(false);
-      },
-      show: conversation?.type === 'room' && (conversation?.techSkillId || conversation?.requiresApproval) && pendingJoinRequestsCount > 0,
-      badge: pendingJoinRequestsCount
-    },
-    {
       id: 'profile',
       label: 'View Profile',
       icon: User,
@@ -128,6 +111,28 @@ const ChatHeaderMenu = ({
         onShowSettings?.();
         setIsOpen(false);
       }
+    },
+    // Group Chat Features (only visible for groups)
+    {
+      id: 'summarize',
+      label: 'AI Summarize',
+      icon: Sparkles,
+      action: () => {
+        onSummarize?.();
+        setIsOpen(false);
+      },
+      show: isGroupChat // Only show for group chats
+    },
+    {
+      id: 'join-requests',
+      label: 'Join Requests',
+      icon: UserPlus,
+      action: () => {
+        onShowJoinRequests?.();
+        setIsOpen(false);
+      },
+      show: isGroupChat && (conversation?.techSkillId || conversation?.requiresApproval) && pendingJoinRequestsCount > 0,
+      badge: pendingJoinRequestsCount
     },
     {
       id: 'delete',
