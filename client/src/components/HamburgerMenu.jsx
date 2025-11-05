@@ -130,6 +130,11 @@ const HamburgerMenu = ({ darkMode, onToggleDarkMode, user }) => {
   const handleMenuClick = async (item) => {
     if (item.action) {
       item.action();
+      // Don't close menu if it's opening TechSkillsMenu - let it handle its own state
+      if (item.id !== 'tech-skills') {
+        setIsOpen(false);
+        setActiveSubmenu(null);
+      }
     } else if (item.id === 'new-group') {
       // Create new group - prompt for name
       const groupName = prompt('Enter group name:');
@@ -142,12 +147,18 @@ const HamburgerMenu = ({ darkMode, onToggleDarkMode, user }) => {
           alert('Failed to create group');
         }
       }
+      setIsOpen(false);
+      setActiveSubmenu(null);
     } else if (item.id === 'groups') {
       // Navigate to chat and filter to show groups
       navigate('/chat?view=groups');
+      setIsOpen(false);
+      setActiveSubmenu(null);
+    } else {
+      // Default: close menu for other items
+      setIsOpen(false);
+      setActiveSubmenu(null);
     }
-    setIsOpen(false);
-    setActiveSubmenu(null);
   };
 
   const handleLogout = () => {
@@ -356,19 +367,22 @@ const HamburgerMenu = ({ darkMode, onToggleDarkMode, user }) => {
       )}
 
       {/* Tech Skills Menu - Overlay when showing tech skills */}
-      {showTechSkills && (
-        <TechSkillsMenu
-          onClose={() => {
-            setShowTechSkills(false);
-          }}
-          onJoinSuccess={() => {
-            setShowTechSkills(false);
-            setIsOpen(false);
-            // Navigate to chat to see the new group
-            navigate('/chat');
-          }}
-        />
-      )}
+      <AnimatePresence>
+        {showTechSkills && (
+          <TechSkillsMenu
+            onClose={() => {
+              setShowTechSkills(false);
+              setIsOpen(false); // Also close hamburger menu when closing tech skills
+            }}
+            onJoinSuccess={() => {
+              setShowTechSkills(false);
+              setIsOpen(false);
+              // Navigate to chat to see the new group
+              navigate('/chat');
+            }}
+          />
+        )}
+      </AnimatePresence>
     </>
   );
 };

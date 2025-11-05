@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Code, Lock, BarChart3, Palette, Rocket, Brain, Smartphone, Globe, Cloud, Link2, X, ArrowLeft, Users, ChevronRight, Wrench, Atom } from 'lucide-react';
+import { Code, Lock, BarChart3, Palette, Rocket, Brain, Smartphone, Globe, Cloud, Link2, X, ArrowLeft, Users, ChevronRight, Wrench, Atom, Sparkles } from 'lucide-react';
 import api from '../utils/api';
 import TechSkillJoinModal from './TechSkillJoinModal';
 
@@ -108,15 +108,24 @@ const TechSkillsMenu = ({ onClose, onJoinSuccess }) => {
   }
 
   return (
-    <>
+    <AnimatePresence>
       {/* Overlay */}
-      <div 
-        className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[10001]"
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[10001]"
         onClick={onClose}
       />
       
       {/* Tech Skills Panel */}
-      <div className="fixed right-0 top-0 bottom-0 w-80 max-w-[85vw] z-[10002] bg-gradient-to-br from-slate-900/95 via-purple-900/30 to-slate-900/95 backdrop-blur-xl border-l border-white/10 shadow-2xl flex flex-col">
+      <motion.div
+        initial={{ x: '100%' }}
+        animate={{ x: 0 }}
+        exit={{ x: '100%' }}
+        transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+        className="fixed right-0 top-0 bottom-0 w-80 max-w-[85vw] z-[10002] bg-gradient-to-br from-slate-900/95 via-purple-900/30 to-slate-900/95 backdrop-blur-xl border-l border-white/10 shadow-2xl flex flex-col"
+      >
         {/* Header */}
         <div className="p-4 border-b border-white/10 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -143,7 +152,11 @@ const TechSkillsMenu = ({ onClose, onJoinSuccess }) => {
         <div className="flex-1 overflow-y-auto p-4 space-y-3">
           {skills.length === 0 ? (
             <div className="text-center py-12">
-              <p className="text-gray-400">No tech skills available yet.</p>
+              <div className="mb-4">
+                <Sparkles className="w-12 h-12 text-purple-400 mx-auto opacity-50" />
+              </div>
+              <p className="text-gray-400 mb-2">No tech skills available yet.</p>
+              <p className="text-xs text-gray-500">Please run the seed script to populate tech skills.</p>
             </div>
           ) : (
             skills.map((skill, index) => {
@@ -155,25 +168,26 @@ const TechSkillsMenu = ({ onClose, onJoinSuccess }) => {
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: index * 0.05 }}
                   whileHover={{ scale: 1.02, x: 4 }}
+                  whileTap={{ scale: 0.98 }}
                   onClick={() => handleSkillClick(skill)}
                   className="w-full p-4 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-purple-500/30 transition-all group text-left"
                 >
                   <div className="flex items-center gap-4">
-                    <div className="p-3 rounded-xl bg-gradient-to-br from-purple-500/20 to-pink-500/20 border border-purple-500/30 group-hover:border-purple-400/50 transition-colors">
+                    <div className="p-3 rounded-xl bg-gradient-to-br from-purple-500/20 to-pink-500/20 border border-purple-500/30 group-hover:border-purple-400/50 transition-colors flex-shrink-0">
                       <IconComponent className="w-6 h-6 text-purple-400" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h3 className="text-lg font-bold text-white mb-1">{skill.name} Group</h3>
+                      <h3 className="text-lg font-bold text-white mb-1 truncate">{skill.name} Group</h3>
                       <p className="text-sm text-gray-400 line-clamp-2">{skill.description}</p>
                     </div>
-                    <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-purple-400 transition-colors" />
+                    <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-purple-400 transition-colors flex-shrink-0" />
                   </div>
                 </motion.button>
               );
             })
           )}
         </div>
-      </div>
+      </motion.div>
 
       {/* Join Modal */}
       {showJoinModal && selectedSkill && (
@@ -187,7 +201,7 @@ const TechSkillsMenu = ({ onClose, onJoinSuccess }) => {
           onSuccess={handleJoinSuccess}
         />
       )}
-    </>
+    </AnimatePresence>
   );
 };
 
