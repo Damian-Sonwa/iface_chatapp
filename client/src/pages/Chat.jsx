@@ -32,6 +32,7 @@ import PollModal from '../components/PollModal';
 import PollDisplay from '../components/PollDisplay';
 import GroupJoinRequestsPanel from '../components/GroupJoinRequestsPanel';
 import JoinRequestModal from '../components/JoinRequestModal';
+import TechSkillJoinModal from '../components/TechSkillJoinModal';
 
 const Chat = () => {
   const { user, logout } = useAuth();
@@ -64,6 +65,8 @@ const Chat = () => {
   const [friends, setFriends] = useState([]);
   const [showJoinRequests, setShowJoinRequests] = useState(false);
   const [pendingJoinRequestsCount, setPendingJoinRequestsCount] = useState(0);
+  const [showTechSkillJoinModal, setShowTechSkillJoinModal] = useState(false);
+  const [selectedTechSkillRoom, setSelectedTechSkillRoom] = useState(null);
   const socket = getSocket();
 
   useEffect(() => {
@@ -547,6 +550,41 @@ const Chat = () => {
     }
   };
 
+  const handleTechSkillJoin = (room) => {
+    // Get the tech skill info from the room
+    if (room.techSkillId) {
+      setSelectedTechSkillRoom({
+        skill: room.techSkillId,
+        roomId: room._id
+      });
+      setShowTechSkillJoinModal(true);
+    } else {
+      // Fallback: try to get tech skill info from API
+      api.get(`/rooms/${room._id}`)
+        .then(response => {
+          const roomData = response.data.room;
+          if (roomData.techSkillId) {
+            setSelectedTechSkillRoom({
+              skill: roomData.techSkillId,
+              roomId: room._id
+            });
+            setShowTechSkillJoinModal(true);
+          }
+        })
+        .catch(error => {
+          console.error('Error fetching room data:', error);
+        });
+    }
+  };
+
+  const handleTechSkillJoinSuccess = async () => {
+    setShowTechSkillJoinModal(false);
+    setSelectedTechSkillRoom(null);
+    // Refresh rooms to update membership status
+    await fetchRooms();
+    alert('Your join request has been submitted! An admin will review it.');
+  };
+
   return (
     <div className="flex h-screen relative overflow-hidden">
       {darkMode ? <StarryBackground /> : <FloralBackground />}
@@ -560,6 +598,7 @@ const Chat = () => {
         onOpenPanel={setActivePanel}
         activePanel={activePanel}
         friendRequestsCount={0}
+        onTechSkillJoin={handleTechSkillJoin}
       />
       
       {/* Mobile Sidebar Overlay */}
@@ -589,6 +628,7 @@ const Chat = () => {
                 }}
                 activePanel={activePanel}
                 friendRequestsCount={0}
+                onTechSkillJoin={handleTechSkillJoin}
               />
             </div>
           </div>
@@ -871,6 +911,19 @@ const Chat = () => {
         <MomentsViewer open={viewer.open} moments={viewer.moments} initialId={viewer.id} onClose={() => setViewer(v => ({ ...v, open: false }))} />
         <ReactionBurst trigger={reactionTrigger} />
       </div>
+
+      {/* Tech Skill Join Modal */}
+      {showTechSkillJoinModal && selectedTechSkillRoom && (
+        <TechSkillJoinModal
+          skill={selectedTechSkillRoom.skill}
+          roomId={selectedTechSkillRoom.roomId}
+          onClose={() => {
+            setShowTechSkillJoinModal(false);
+            setSelectedTechSkillRoom(null);
+          }}
+          onSuccess={handleTechSkillJoinSuccess}
+        />
+      )}
 
       {/* User Profile Modal */}
       {showProfile && (

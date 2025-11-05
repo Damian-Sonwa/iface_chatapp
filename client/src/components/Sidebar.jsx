@@ -5,7 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import AnimatedBadge from './AnimatedBadge';
 import SidebarQuickSearch from './SidebarQuickSearch';
 
-const Sidebar = ({ rooms, privateChats, activeChat, chatType, onChatSelect, onOpenPanel, activePanel, friendRequestsCount = 0 }) => {
+const Sidebar = ({ rooms, privateChats, activeChat, chatType, onChatSelect, onOpenPanel, activePanel, friendRequestsCount = 0, onTechSkillJoin }) => {
   const { user: currentUser } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -157,10 +157,29 @@ const Sidebar = ({ rooms, privateChats, activeChat, chatType, onChatSelect, onOp
               );
             } else {
               // For rooms/groups
+              const isTechSkillGroup = conv.techSkillId || conv.requiresApproval;
+              const currentUserId = (currentUser?._id || currentUser?.id)?.toString();
+              const isMember = conv.members?.some(m => 
+                (m._id?.toString() || m.id?.toString() || m?.toString()) === currentUserId
+              );
+              
+              // Check if user needs to join (tech skill group and not a member)
+              const needsJoin = isTechSkillGroup && !isMember;
+
+              const handleClick = () => {
+                if (needsJoin && onTechSkillJoin) {
+                  // Show join form
+                  onTechSkillJoin(conv);
+                } else {
+                  // Open chat normally
+                  onChatSelect(conv, 'room');
+                }
+              };
+
               return (
                 <motion.button
                   key={conv._id}
-                  onClick={() => onChatSelect(conv, 'room')}
+                  onClick={handleClick}
                   whileHover={{ scale: 1.02, x: 4 }}
                   className={`w-full p-3 text-left transition flex items-center gap-3 rounded-xl backdrop-blur-sm border ${
                     isActive
