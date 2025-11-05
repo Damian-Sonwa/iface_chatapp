@@ -84,16 +84,16 @@ const TechSkillJoinModal = ({ skill, roomId, onClose, onSuccess }) => {
         autoJoin: true // Automatically join group if verified
       });
 
-      const { isVerified, score, message, profile, room } = verifyResponse.data;
+      const { isVerified, score, message, profile, room, correctCount, totalQuestions } = verifyResponse.data;
 
       if (isVerified) {
         // Success - close modal and refresh
         onSuccess();
         // Show success message
-        alert(`🎉 ${message}\nScore: ${score}%`);
+        alert(`🎉 ${message}\nYou got ${correctCount}/${totalQuestions} correct (${score}%)`);
       } else {
-        // Not verified - show error with score
-        setError(`${message}\nScore: ${score}%`);
+        // Not verified - show error with retry option
+        setError(`${message}\nYou got ${correctCount}/${totalQuestions} correct (${score}%)`);
       }
     } catch (err) {
       console.error('Error verifying answers:', err);
@@ -293,6 +293,27 @@ const TechSkillJoinModal = ({ skill, roomId, onClose, onSuccess }) => {
                   >
                     Back
                   </motion.button>
+                  {error && (
+                    <motion.button
+                      type="button"
+                      onClick={() => {
+                        // Retry - reset answers and clear error
+                        setAnswers({});
+                        setError('');
+                        // Reset all answers to empty
+                        const resetAnswers = {};
+                        questions.forEach(q => {
+                          resetAnswers[q._id] = '';
+                        });
+                        setAnswers(resetAnswers);
+                      }}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="px-4 py-2 rounded-xl bg-yellow-500/20 border border-yellow-500/30 text-yellow-300 font-semibold hover:bg-yellow-500/30 transition-all"
+                    >
+                      Retry
+                    </motion.button>
+                  )}
                   <motion.button
                     type="submit"
                     disabled={loading || questions.length === 0}

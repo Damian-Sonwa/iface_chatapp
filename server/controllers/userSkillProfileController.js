@@ -133,14 +133,10 @@ exports.verifyAnswers = async (req, res) => {
     // Calculate score (percentage)
     const score = Math.round((correctCount / questions.length) * 100);
     
-    // Verification threshold: 70% for Beginner, 75% for Intermediate, 80% for Professional
-    const thresholds = {
-      'Beginner': 70,
-      'Intermediate': 75,
-      'Professional': 80
-    };
-    const threshold = thresholds[level] || 70;
-    const isVerified = score >= threshold;
+    // Verification threshold: At least 5 correct answers (out of 10 questions = 50%)
+    // This applies to all levels
+    const minCorrectAnswers = 5;
+    const isVerified = correctCount >= minCorrectAnswers;
 
     // Find existing profile
     let profile = await UserSkillProfile.findOne({ userId, skillId });
