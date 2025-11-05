@@ -40,12 +40,13 @@ exports.getUserSkillProfiles = async (req, res) => {
   }
 };
 
-// Get questions for a skill and level
+// Get questions for a skill and level - OPTIMIZED
 exports.getQuestionsForLevel = async (req, res) => {
   try {
     const { skillId, level } = req.params;
 
-    const skill = await TechSkill.findById(skillId);
+    // Use lean() for faster queries (returns plain JS objects, not Mongoose documents)
+    const skill = await TechSkill.findById(skillId).lean();
     if (!skill) {
       return res.status(404).json({ error: 'Tech skill not found' });
     }
@@ -53,28 +54,42 @@ exports.getQuestionsForLevel = async (req, res) => {
     // Filter questions for the requested level
     const questions = skill.questions.filter(q => q.level === level);
 
-    // Return questions without correct answers
+    if (questions.length === 0) {
+      return res.status(400).json({ error: `No questions found for ${level} level` });
+    }
+
+    // Return questions without correct answers (for security)
     const questionsForUser = questions.map(q => ({
       _id: q._id,
       questionText: q.questionText,
-      options: q.options,
-      questionType: q.questionType
+      options: q.options || [],
+      questionType: q.questionType || 'multiple-choice'
     }));
 
-    res.json({ questions: questionsForUser });
+    res.json({ 
+      questions: questionsForUser,
+      skillName: skill.name,
+      level: level
+    });
   } catch (error) {
     console.error('Get questions for level error:', error);
     res.status(500).json({ error: 'Server error' });
   }
 };
 
-// Verify answers and create/update user skill profile
+// Verify answers and create/update user skill profile - OPTIMIZED
+// Also automatically joins group if verified
 exports.verifyAnswers = async (req, res) => {
   try {
-    const { skillId, level, answers } = req.body;
+    const { skillId, level, answers, autoJoin = false } = req.body;
     const userId = req.userId;
 
-    const skill = await TechSkill.findById(skillId);
+    // Parallel fetch skill and room for better performance
+    const [skill, room] = await Promise.all([
+      TechSkill.findById(skillId).lean(),
+      Room.findOne({ techSkillId: skillId }).lean()
+    ]);
+
     if (!skill) {
       return res.status(404).json({ error: 'Tech skill not found' });
     }
@@ -85,19 +100,20 @@ exports.verifyAnswers = async (req, res) => {
       return res.status(400).json({ error: 'No questions found for this level' });
     }
 
-    // Verify answers
+    // Verify answers - optimized loop
     let correctCount = 0;
     const answerResults = [];
+    const questionMap = new Map(questions.map(q => [q._id.toString(), q]));
 
-    answers.forEach(userAnswer => {
-      const question = questions.find(q => q._id.toString() === userAnswer.questionId);
+    for (const userAnswer of answers) {
+      const question = questionMap.get(userAnswer.questionId);
       if (!question) {
         answerResults.push({
           questionId: userAnswer.questionId,
           answer: userAnswer.answer,
           correct: false
         });
-        return;
+        continue;
       }
 
       const isCorrect = question.questionType === 'multiple-choice'
@@ -112,7 +128,7 @@ exports.verifyAnswers = async (req, res) => {
         answer: userAnswer.answer,
         correct: isCorrect
       });
-    });
+    }
 
     // Calculate score (percentage)
     const score = Math.round((correctCount / questions.length) * 100);
@@ -126,19 +142,38 @@ exports.verifyAnswers = async (req, res) => {
     const threshold = thresholds[level] || 70;
     const isVerified = score >= threshold;
 
-    // Find or create user skill profile
+    // Find existing profile
     let profile = await UserSkillProfile.findOne({ userId, skillId });
+
+    // Prepare update data
+    const updateData = {
+      levelSelected: level,
+      answers: answerResults,
+      isVerified,
+      score: score,
+      lastAttemptAt: Date.now()
+    };
+
+    if (isVerified) {
+      updateData.verifiedAt = Date.now();
+      if (room && !room.members.map(m => m.toString()).includes(userId)) {
+        updateData.joinedGroupId = room._id;
+      }
+    }
 
     if (profile) {
       // Update existing profile
       profile.levelSelected = level;
       profile.answers = answerResults;
       profile.isVerified = isVerified;
-      profile.verificationScore = score;
+      profile.score = score;
       profile.attempts += 1;
       profile.lastAttemptAt = Date.now();
-      if (isVerified && !profile.verifiedAt) {
+      if (isVerified) {
         profile.verifiedAt = Date.now();
+        if (room && !room.members.map(m => m.toString()).includes(userId)) {
+          profile.joinedGroupId = room._id;
+        }
       }
       await profile.save();
     } else {
@@ -149,11 +184,38 @@ exports.verifyAnswers = async (req, res) => {
         levelSelected: level,
         answers: answerResults,
         isVerified,
-        verificationScore: score,
+        score: score,
         attempts: 1,
         lastAttemptAt: Date.now(),
-        verifiedAt: isVerified ? Date.now() : null
+        verifiedAt: isVerified ? Date.now() : null,
+        joinedGroupId: (isVerified && room && !room.members.map(m => m.toString()).includes(userId)) ? room._id : null
       });
+    }
+
+    // If verified and autoJoin is true, join the group automatically
+    let joinedRoom = null;
+    if (isVerified && autoJoin && room) {
+      const roomDoc = await Room.findById(room._id);
+      if (roomDoc && !roomDoc.members.map(m => m.toString()).includes(userId)) {
+        roomDoc.members.push(userId);
+        await roomDoc.save();
+        
+        // Update profile with joined group
+        profile.joinedGroupId = roomDoc._id;
+        await profile.save();
+
+        // Populate room data
+        joinedRoom = await Room.findById(roomDoc._id)
+          .populate('createdBy', 'username avatar')
+          .populate('members', 'username avatar status')
+          .populate('techSkillId', 'name icon description');
+      } else if (roomDoc) {
+        // Already a member
+        joinedRoom = await Room.findById(roomDoc._id)
+          .populate('createdBy', 'username avatar')
+          .populate('members', 'username avatar status')
+          .populate('techSkillId', 'name icon description');
+      }
     }
 
     res.json({
@@ -163,8 +225,9 @@ exports.verifyAnswers = async (req, res) => {
       correctCount,
       totalQuestions: questions.length,
       threshold,
+      room: joinedRoom,
       message: isVerified 
-        ? 'Congratulations! You are verified and can now join the group.' 
+        ? (joinedRoom ? 'Congratulations! You are verified and have joined the group.' : 'Congratulations! You are verified and can now join the group.') 
         : `Score: ${score}%. You need ${threshold}% to be verified. Please try again.`
     });
   } catch (error) {

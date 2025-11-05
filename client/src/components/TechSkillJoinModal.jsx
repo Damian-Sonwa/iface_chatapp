@@ -76,20 +76,20 @@ const TechSkillJoinModal = ({ skill, roomId, onClose, onSuccess }) => {
         answer: answers[q._id].trim()
       }));
 
-      // Verify answers
+      // Verify answers and auto-join if verified (single API call for speed)
       const verifyResponse = await api.post('/user-skill-profiles/verify', {
         skillId: skill._id,
         level: selectedLevel,
-        answers: formattedAnswers
+        answers: formattedAnswers,
+        autoJoin: true // Automatically join group if verified
       });
 
-      const { isVerified, score, message, profile } = verifyResponse.data;
+      const { isVerified, score, message, profile, room } = verifyResponse.data;
 
       if (isVerified) {
-        // If verified, join the group
-        const joinResponse = await api.post(`/user-skill-profiles/skill/${skill._id}/join-group`);
-        
+        // Success - close modal and refresh
         onSuccess();
+        // Show success message
         alert(`🎉 ${message}\nScore: ${score}%`);
       } else {
         // Not verified - show error with score
