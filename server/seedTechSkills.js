@@ -533,6 +533,94 @@ const techSkills = [
         questionType: 'multiple-choice'
       }
     ]
+  },
+  {
+    name: 'AI Engineers',
+    description: 'Artificial intelligence, machine learning, deep learning, natural language processing, and AI systems',
+    icon: '🤖',
+    questionGenerator: 'technical',
+    questionTemplate: 'What AI technologies and frameworks have you worked with?',
+    questions: [
+      {
+        level: 'Beginner',
+        questionText: 'What is artificial intelligence?',
+        correctAnswer: 'Computer systems that can perform tasks requiring human intelligence',
+        options: ['Computer systems that can perform tasks requiring human intelligence', 'A database', 'A programming language', 'A design tool'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Beginner',
+        questionText: 'What is machine learning?',
+        correctAnswer: 'A subset of AI that enables systems to learn from data',
+        options: ['A database', 'A subset of AI that enables systems to learn from data', 'A server', 'A design tool'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is deep learning?',
+        correctAnswer: 'Machine learning using neural networks with multiple layers',
+        options: ['Machine learning using neural networks with multiple layers', 'A database', 'A server', 'A design tool'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is NLP?',
+        correctAnswer: 'Natural Language Processing',
+        options: ['Natural Language Processing', 'Network Layer Protocol', 'New Learning Process', 'Neural Learning Platform'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is transfer learning?',
+        correctAnswer: 'Using pre-trained models for new tasks',
+        options: ['Using pre-trained models for new tasks', 'Moving data between servers', 'Transferring files', 'Learning to transfer'],
+        questionType: 'multiple-choice'
+      }
+    ]
+  },
+  {
+    name: 'Software Testers',
+    description: 'Quality assurance, test automation, manual testing, performance testing, and software quality assurance',
+    icon: '🧪',
+    questionGenerator: 'technical',
+    questionTemplate: 'What testing methodologies and tools are you experienced with?',
+    questions: [
+      {
+        level: 'Beginner',
+        questionText: 'What is software testing?',
+        correctAnswer: 'Process of verifying software functionality and quality',
+        options: ['Writing code', 'Process of verifying software functionality and quality', 'Designing interfaces', 'Managing servers'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Beginner',
+        questionText: 'What is unit testing?',
+        correctAnswer: 'Testing individual components or functions',
+        options: ['Testing the whole system', 'Testing individual components or functions', 'Testing user interfaces', 'Testing databases'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is test automation?',
+        correctAnswer: 'Using tools to execute tests automatically',
+        options: ['Manual testing', 'Using tools to execute tests automatically', 'Writing test cases', 'Finding bugs'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is regression testing?',
+        correctAnswer: 'Testing to ensure changes dont break existing functionality',
+        options: ['Testing new features', 'Testing to ensure changes dont break existing functionality', 'Testing performance', 'Testing security'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is CI/CD in testing?',
+        correctAnswer: 'Continuous Integration/Continuous Deployment with automated testing',
+        options: ['Continuous Integration/Continuous Deployment with automated testing', 'Code Integration', 'Client Interface', 'Computer Interface'],
+        questionType: 'multiple-choice'
+      }
+    ]
   }
 ];
 
@@ -583,7 +671,7 @@ const seedTechSkills = async () => {
       
       if (!existingRoom) {
         const room = await Room.create({
-          name: skill.name,
+          name: `${skill.name} Group`,
           description: skill.description,
           createdBy: adminUser._id,
           members: [adminUser._id],

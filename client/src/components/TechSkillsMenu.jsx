@@ -126,8 +126,8 @@ const TechSkillsMenu = ({ onClose, onJoinSuccess }) => {
               <ArrowLeft className="w-5 h-5 text-gray-400" />
             </button>
             <div>
-              <h2 className="text-xl font-bold text-white">Tech Skills Groups</h2>
-              <p className="text-xs text-gray-400">Join specialized tech groups</p>
+              <h2 className="text-xl font-bold text-white">Tech / Digital Skills</h2>
+              <p className="text-xs text-gray-400">Explore and join specialized tech groups</p>
             </div>
           </div>
           <button
@@ -162,7 +162,7 @@ const TechSkillsMenu = ({ onClose, onJoinSuccess }) => {
                       <IconComponent className="w-6 h-6 text-purple-400" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h3 className="text-lg font-bold text-white mb-1">{skill.name}</h3>
+                      <h3 className="text-lg font-bold text-white mb-1">{skill.name} Group</h3>
                       <p className="text-sm text-gray-400 line-clamp-2">{skill.description}</p>
                     </div>
                     <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-purple-400 transition-colors" />

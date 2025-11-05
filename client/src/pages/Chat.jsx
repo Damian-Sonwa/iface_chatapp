@@ -734,7 +734,7 @@ const Chat = () => {
                   <div>
                     <h3 className="font-semibold text-gray-900 dark:text-gray-100">
                       {chatType === 'room' 
-                        ? (activeChat.techSkillId?.name || activeChat.name)
+                        ? (activeChat.techSkillId?.name ? `${activeChat.techSkillId.name} Group` : (activeChat.name || 'Group Chat'))
                         : (() => {
                             const otherUser = activeChat.participants?.find(p => (p._id || p.id) !== (user._id || user.id));
                             return otherUser?.username || 'User';
