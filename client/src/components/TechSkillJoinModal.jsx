@@ -109,14 +109,21 @@ const TechSkillJoinModal = ({ skill, roomId, onClose, onSuccess }) => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 z-[10002] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+        className="fixed inset-0 z-[10003] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
+        onClick={(e) => {
+          // Close modal when clicking outside
+          if (e.target === e.currentTarget) {
+            onClose();
+          }
+        }}
       >
         <motion.div
           initial={{ opacity: 0, scale: 0.9, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.9, y: 20 }}
           transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-          className="w-full max-w-3xl bg-gradient-to-br from-slate-900/95 via-purple-900/30 to-slate-900/95 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col"
+          className="w-full max-w-3xl bg-gradient-to-br from-slate-900 via-purple-900/40 to-slate-900 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col relative z-10"
+          onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
           <div className="p-6 border-b border-white/10 flex items-center justify-between flex-shrink-0 bg-gradient-to-r from-purple-500/10 to-pink-500/10">

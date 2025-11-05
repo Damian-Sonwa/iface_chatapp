@@ -69,19 +69,25 @@ const TechSkillsMenu = ({ onClose, onJoinSuccess }) => {
       }
 
       // Get rooms for this skill
-      const roomsResponse = await api.get(`/tech-skills/${skill._id}/rooms`);
-      const rooms = roomsResponse.data.rooms || [];
-      
-      if (rooms.length > 0) {
-        const room = rooms[0];
-        setSelectedSkill({
-          skill,
-          roomId: room._id
-        });
-        setShowJoinModal(true);
-      } else {
-        alert('No room found for this tech skill. Please contact an admin.');
+      let roomId = null;
+      try {
+        const roomsResponse = await api.get(`/tech-skills/${skill._id}/rooms`);
+        const rooms = roomsResponse.data.rooms || [];
+        
+        if (rooms.length > 0) {
+          roomId = rooms[0]._id;
+        }
+      } catch (roomError) {
+        console.error('Error fetching rooms:', roomError);
+        // Continue anyway - we can still show the modal
       }
+
+      // Set selected skill and show modal
+      setSelectedSkill({
+        skill,
+        roomId: roomId
+      });
+      setShowJoinModal(true);
     } catch (error) {
       console.error('Error getting skill info:', error);
       alert('Failed to load skill information. Please try again.');
