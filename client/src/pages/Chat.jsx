@@ -33,6 +33,7 @@ import PollDisplay from '../components/PollDisplay';
 import GroupJoinRequestsPanel from '../components/GroupJoinRequestsPanel';
 import JoinRequestModal from '../components/JoinRequestModal';
 import TechSkillJoinModal from '../components/TechSkillJoinModal';
+import TechSkillsMenu from '../components/TechSkillsMenu';
 
 const Chat = () => {
   const { user, logout } = useAuth();
