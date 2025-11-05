@@ -1035,6 +1035,17 @@ const Chat = () => {
         />
       )}
 
+      {/* Tech Skills Menu */}
+      {showTechSkills && (
+        <TechSkillsMenu
+          onClose={() => setShowTechSkills(false)}
+          onJoinSuccess={async () => {
+            setShowTechSkills(false);
+            await fetchRooms();
+          }}
+        />
+      )}
+
       {/* User Profile Modal */}
       {showProfile && (
         <UserProfile
