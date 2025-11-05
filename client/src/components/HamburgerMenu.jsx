@@ -108,8 +108,8 @@ const HamburgerMenu = ({ darkMode, onToggleDarkMode, user }) => {
       title: 'Features',
       icon: Sparkles,
       items: [
-        { id: 'ai-assistant', label: 'AI Assistant', icon: Sparkles, action: () => navigate('/chat?panel=assistant') },
-        { id: 'polls', label: 'Polls', icon: FileText, action: () => navigate('/chat?action=poll') },
+        { id: 'ai-assistant', label: 'AI Assistant', icon: Bot, action: () => navigate('/chat?panel=assistant') },
+        { id: 'polls', label: 'Polls', icon: BarChart2, action: () => navigate('/chat?action=poll') },
         { id: 'summarize', label: 'Summarize Chat', icon: FileText, action: () => navigate('/chat?action=summarize') },
         { id: 'translate', label: 'Translation', icon: Languages, action: () => navigate('/chat?action=translate') },
       ]

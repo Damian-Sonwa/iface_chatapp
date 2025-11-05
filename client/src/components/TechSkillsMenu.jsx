@@ -33,7 +33,7 @@ const TechSkillsMenu = ({ onClose, onJoinSuccess }) => {
     try {
       setLoading(true);
       const response = await api.get('/tech-skills');
-      setSkills(response.data.skills || []);
+      setSkills(response.data.techSkills || response.data.skills || []);
     } catch (error) {
       console.error('Error fetching tech skills:', error);
     } finally {
