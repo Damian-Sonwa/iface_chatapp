@@ -96,6 +96,19 @@ const Chat = () => {
     };
 
     socket.on('message:new', ({ message, chatId }) => {
+      // Only add message if it belongs to the currently active chat
+      if (!activeChat) return;
+      
+      // Check if message belongs to current chat
+      const messageBelongsToChat = 
+        (chatId && activeChat._id === chatId) ||
+        (message.conversationId && message.conversationId === activeChat._id) ||
+        (message.roomId && message.roomId === activeChat._id) ||
+        (message.room && message.room === activeChat._id) ||
+        (message.privateChat && message.privateChat === activeChat._id);
+      
+      if (!messageBelongsToChat) return;
+
       setMessages(prev => {
         // Check if message already exists
         const exists = prev.find(m => 
@@ -103,13 +116,19 @@ const Chat = () => {
           (m.id && message.id && m.id === message.id)
         );
         if (exists) {
-          // Update existing message (replace temp)
+          // Update existing message (replace temp message with real one)
           return prev.map(m => 
             (m._id === message._id || m.id === message.id) ? message : m
           );
         }
-        // Remove any pending temp messages and add the real one
-        const filtered = prev.filter(m => !m.isPending);
+        // Only remove the specific pending temp message that matches this one
+        // Keep all other messages (including other pending messages)
+        const filtered = prev.filter(m => {
+          // Don't remove if it's not a pending message
+          if (!m.isPending) return true;
+          // Remove only if content matches and it's a temp message
+          return !(m.content === message.content && m._id?.toString().startsWith('temp-'));
+        });
         return [...filtered, message];
       });
 
@@ -297,7 +316,39 @@ const Chat = () => {
       } else {
         response = await api.get(`/private/messages/${chatId}`);
       }
-      setMessages(response.data.messages);
+      
+      // Merge fetched messages with existing messages instead of replacing
+      // This ensures messages received via socket aren't lost
+      setMessages(prev => {
+        const fetchedMessages = response.data.messages || [];
+        const messageMap = new Map();
+        
+        // Add existing messages to map
+        prev.forEach(msg => {
+          const id = msg._id || msg.id;
+          if (id) messageMap.set(id, msg);
+        });
+        
+        // Add/update with fetched messages
+        fetchedMessages.forEach(msg => {
+          const id = msg._id || msg.id;
+          if (id) {
+            // Only update if fetched message is newer or if existing is pending
+            const existing = messageMap.get(id);
+            if (!existing || existing.isPending || !existing.createdAt || 
+                (msg.createdAt && new Date(msg.createdAt) > new Date(existing.createdAt))) {
+              messageMap.set(id, msg);
+            }
+          }
+        });
+        
+        // Convert map back to array and sort by createdAt
+        return Array.from(messageMap.values()).sort((a, b) => {
+          const aTime = new Date(a.createdAt || 0);
+          const bTime = new Date(b.createdAt || 0);
+          return aTime - bTime;
+        });
+      });
     } catch (error) {
       console.error('Fetch messages error:', error);
     }
@@ -324,6 +375,8 @@ const Chat = () => {
   };
 
   const handleChatSelect = async (chat, type) => {
+    // Clear messages first to prevent mixing messages from different chats
+    setMessages([]);
     setActiveChat(chat);
     setChatType(type);
     setTypingUsers([]);
@@ -402,10 +455,8 @@ const Chat = () => {
       });
     }
 
-    // Remove temp message when real one arrives (handled in socket.on('message:new'))
-    setTimeout(() => {
-      setMessages(prev => prev.filter(m => !m.isPending || m._id !== tempMessage._id));
-    }, 5000);
+    // Don't remove temp message automatically - it will be replaced by the real message
+    // when socket.on('message:new') receives it. This ensures messages never disappear.
   };
 
   const handleStartChat = async (userId) => {
@@ -429,16 +480,12 @@ const Chat = () => {
       <Sidebar
         rooms={rooms}
         privateChats={privateChats}
-        users={users}
         activeChat={activeChat}
         chatType={chatType}
         onChatSelect={handleChatSelect}
-        onStartChat={handleStartChat}
-        onCreateRoom={fetchRooms}
         onOpenPanel={setActivePanel}
         activePanel={activePanel}
         friendRequestsCount={0}
-        invitesCount={0}
       />
       
       {/* Mobile Sidebar Overlay */}
@@ -456,22 +503,18 @@ const Chat = () => {
               <Sidebar
                 rooms={rooms}
                 privateChats={privateChats}
-                users={users}
                 activeChat={activeChat}
                 chatType={chatType}
                 onChatSelect={(chat, type) => {
                   handleChatSelect(chat, type);
                   setShowMobileSidebar(false);
                 }}
-                onStartChat={handleStartChat}
-                onCreateRoom={fetchRooms}
                 onOpenPanel={(panel) => {
                   setActivePanel(panel);
                   setShowMobileSidebar(false);
                 }}
                 activePanel={activePanel}
                 friendRequestsCount={0}
-                invitesCount={0}
               />
             </div>
           </div>

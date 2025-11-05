@@ -26,6 +26,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import StatusSelector from './StatusSelector';
 import UserSearchDropdown from './UserSearchDropdown';
+import api from '../utils/api';
 
 /**
  * HamburgerMenu Component
@@ -67,18 +68,25 @@ const HamburgerMenu = ({ darkMode, onToggleDarkMode, user }) => {
       icon: MessageCircle,
       items: [
         { id: 'new-dm', label: 'New Direct Message', icon: UserPlus, action: () => setShowUserSearch(true) },
-        { id: 'new-group', label: 'New Group Chat', icon: Users, action: () => navigate('/chat?action=new-group') },
         { id: 'archived', label: 'Archived Chats', icon: Archive, action: () => navigate('/chat?filter=archived') },
         { id: 'search', label: 'Search Messages', icon: Search, action: () => navigate('/chat?action=search') },
       ]
     },
     {
-      id: 'social',
-      title: 'Social',
+      id: 'community',
+      title: 'Community',
       icon: Users,
       items: [
-        { id: 'friends', label: 'Friends', icon: Heart, action: () => navigate('/friends') },
-        { id: 'invites', label: 'Invites', icon: UserPlus, action: () => navigate('/invites') },
+        { id: 'new-group', label: 'New Group', icon: Plus, action: null },
+        { id: 'groups', label: 'Groups', icon: Users, action: null },
+        { id: 'invite-user', label: 'Invite User', icon: UserPlus, action: () => navigate('/invites') },
+      ]
+    },
+    {
+      id: 'social',
+      title: 'Social',
+      icon: Heart,
+      items: [
         { id: 'moments', label: 'Moments', icon: Camera, action: () => navigate('/moments') },
         { id: 'blocked', label: 'Blocked Users', icon: Ban, action: () => navigate('/chat?filter=blocked') },
       ]
@@ -106,8 +114,25 @@ const HamburgerMenu = ({ darkMode, onToggleDarkMode, user }) => {
     }
   ];
 
-  const handleMenuClick = (item) => {
-    item.action();
+  const handleMenuClick = async (item) => {
+    if (item.action) {
+      item.action();
+    } else if (item.id === 'new-group') {
+      // Create new group - prompt for name
+      const groupName = prompt('Enter group name:');
+      if (groupName && groupName.trim()) {
+        try {
+          const response = await api.post('/rooms', { name: groupName.trim() });
+          navigate('/chat', { state: { chatId: response.data.room._id, chatType: 'room' } });
+        } catch (error) {
+          console.error('Create group error:', error);
+          alert('Failed to create group');
+        }
+      }
+    } else if (item.id === 'groups') {
+      // Navigate to chat and filter to show groups
+      navigate('/chat?view=groups');
+    }
     setIsOpen(false);
     setActiveSubmenu(null);
   };
