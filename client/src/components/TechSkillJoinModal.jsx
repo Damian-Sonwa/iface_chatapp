@@ -126,7 +126,7 @@ const TechSkillJoinModal = ({ skill, roomId, onClose, onSuccess }) => {
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
-          <div className="p-6 border-b border-white/10 flex items-center justify-between flex-shrink-0 bg-gradient-to-r from-purple-500/10 to-pink-500/10">
+          <div className="p-6 border-b border-white/20 flex items-center justify-between flex-shrink-0 bg-gradient-to-r from-purple-500/10 to-pink-500/10">
             <div className="flex items-center gap-4">
               <div className="p-3 rounded-xl bg-gradient-to-br from-purple-500/20 to-pink-500/20 border border-purple-500/30">
                 <Sparkles className="w-6 h-6 text-purple-400" />
@@ -140,12 +140,23 @@ const TechSkillJoinModal = ({ skill, roomId, onClose, onSuccess }) => {
                 </p>
               </div>
             </div>
-            <button
-              onClick={onClose}
-              className="p-2 rounded-lg hover:bg-white/10 transition-colors"
-            >
-              <X className="w-5 h-5 text-gray-400 hover:text-white" />
-            </button>
+            <div className="flex items-center gap-2">
+              <motion.button
+                onClick={onClose}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-white font-medium hover:bg-white/10 transition-all"
+              >
+                Cancel
+              </motion.button>
+              <button
+                onClick={onClose}
+                className="p-2 rounded-lg hover:bg-white/10 transition-colors"
+                title="Close"
+              >
+                <X className="w-5 h-5 text-gray-400 hover:text-white" />
+              </button>
+            </div>
           </div>
 
           {/* Content */}
