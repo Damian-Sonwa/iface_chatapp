@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Code, Lock, BarChart3, Palette, Rocket, Brain, Smartphone, Globe, Cloud, Link2, X, ArrowLeft, Users, ChevronRight } from 'lucide-react';
+import { Code, Lock, BarChart3, Palette, Rocket, Brain, Smartphone, Globe, Cloud, Link2, X, ArrowLeft, Users, ChevronRight, Wrench, Atom } from 'lucide-react';
 import api from '../utils/api';
 import TechSkillJoinModal from './TechSkillJoinModal';
 
@@ -14,7 +14,9 @@ const iconMap = {
   '📱': Smartphone,
   '🌐': Globe,
   '☁️': Cloud,
-  '⛓️': Link2
+  '⛓️': Link2,
+  '⚛️': Atom,
+  '🔧': Wrench
 };
 
 const TechSkillsMenu = ({ onClose, onJoinSuccess }) => {

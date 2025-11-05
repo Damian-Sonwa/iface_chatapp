@@ -20,7 +20,10 @@ import {
   Camera,
   Search,
   Plus,
-  ChevronRight
+  ChevronRight,
+  Languages,
+  Bot,
+  BarChart2
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -85,11 +88,10 @@ const HamburgerMenu = ({ darkMode, onToggleDarkMode, user }) => {
     },
     {
       id: 'groups',
-      title: 'Groups',
+      title: 'Tech Groups',
       icon: Users,
       items: [
-        { id: 'tech-skills', label: 'Tech Skills Groups', icon: Sparkles, action: () => setShowTechSkills(true) },
-        { id: 'all-groups', label: 'All Groups', icon: Users, action: null },
+        { id: 'tech-skills', label: 'Join Tech Groups', icon: Sparkles, action: () => setShowTechSkills(true) },
       ]
     },
     {
@@ -106,9 +108,10 @@ const HamburgerMenu = ({ darkMode, onToggleDarkMode, user }) => {
       title: 'Features',
       icon: Sparkles,
       items: [
-        { id: 'ai-assistant', label: 'AI Assistant', icon: Sparkles, action: () => navigate('/chat?action=ai') },
+        { id: 'ai-assistant', label: 'AI Assistant', icon: Sparkles, action: () => navigate('/chat?panel=assistant') },
         { id: 'polls', label: 'Polls', icon: FileText, action: () => navigate('/chat?action=poll') },
         { id: 'summarize', label: 'Summarize Chat', icon: FileText, action: () => navigate('/chat?action=summarize') },
+        { id: 'translate', label: 'Translation', icon: Languages, action: () => navigate('/chat?action=translate') },
       ]
     },
     {

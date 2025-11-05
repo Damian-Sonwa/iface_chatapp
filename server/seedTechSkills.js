@@ -7,74 +7,88 @@ const User = require('./models/User');
 
 const techSkills = [
   {
-    name: 'Software Engineering',
-    description: 'Build scalable applications, learn best practices, and collaborate on software projects',
-    icon: '💻',
-    questionGenerator: 'technical',
-    questionTemplate: 'What programming languages and frameworks are you most experienced with?'
-  },
-  {
-    name: 'Cybersecurity',
-    description: 'Security practices, threat analysis, ethical hacking, and protecting digital assets',
-    icon: '🔒',
-    questionGenerator: 'technical',
-    questionTemplate: 'What security certifications or experience do you have in cybersecurity?'
-  },
-  {
-    name: 'Data Analysis',
-    description: 'Data science, analytics, visualization, and deriving insights from data',
+    name: 'Data Analysts',
+    description: 'Data analysis, visualization, statistical modeling, and business intelligence',
     icon: '📊',
     questionGenerator: 'experience',
     questionTemplate: 'What data analysis tools and techniques have you worked with?'
   },
   {
-    name: 'UI/UX Engineering',
-    description: 'User interface design, user experience optimization, and creating intuitive designs',
+    name: 'Full-stack Developers',
+    description: 'End-to-end web development, frontend and backend technologies, and full application lifecycle',
+    icon: '💻',
+    questionGenerator: 'technical',
+    questionTemplate: 'What full-stack technologies and frameworks are you experienced with?'
+  },
+  {
+    name: 'UI/UX Engineers',
+    description: 'User interface design, user experience optimization, prototyping, and design systems',
     icon: '🎨',
     questionGenerator: 'experience',
     questionTemplate: 'What design tools and UX methodologies are you familiar with?'
   },
   {
-    name: 'DevOps',
-    description: 'CI/CD pipelines, cloud infrastructure, containerization, and automation',
+    name: 'Frontend Engineers',
+    description: 'Client-side development, modern JavaScript frameworks, responsive design, and user interfaces',
+    icon: '⚛️',
+    questionGenerator: 'technical',
+    questionTemplate: 'What frontend technologies and frameworks do you work with?'
+  },
+  {
+    name: 'Backend Engineers',
+    description: 'Server-side development, APIs, databases, system architecture, and performance optimization',
+    icon: '🔧',
+    questionGenerator: 'technical',
+    questionTemplate: 'What backend technologies, databases, and APIs have you built?'
+  },
+  {
+    name: 'Cybersecurity',
+    description: 'Security practices, threat analysis, ethical hacking, penetration testing, and protecting digital assets',
+    icon: '🔒',
+    questionGenerator: 'technical',
+    questionTemplate: 'What security certifications or experience do you have in cybersecurity?'
+  },
+  {
+    name: 'Network Analysts',
+    description: 'Network infrastructure, protocols, troubleshooting, security, and network architecture',
+    icon: '🌐',
+    questionGenerator: 'technical',
+    questionTemplate: 'What network technologies and protocols are you familiar with?'
+  },
+  {
+    name: 'DevOps Engineers',
+    description: 'CI/CD pipelines, cloud infrastructure, containerization, automation, and infrastructure as code',
     icon: '🚀',
     questionGenerator: 'technical',
     questionTemplate: 'What DevOps tools and cloud platforms have you worked with?'
   },
   {
-    name: 'Machine Learning',
-    description: 'AI algorithms, neural networks, model training, and predictive analytics',
+    name: 'Machine Learning Engineers',
+    description: 'AI algorithms, neural networks, model training, predictive analytics, and ML pipelines',
     icon: '🤖',
     questionGenerator: 'technical',
     questionTemplate: 'What machine learning frameworks and algorithms have you used?'
   },
   {
-    name: 'Mobile Development',
-    description: 'iOS, Android, React Native, Flutter, and cross-platform mobile apps',
+    name: 'Mobile Developers',
+    description: 'iOS, Android, React Native, Flutter, and cross-platform mobile application development',
     icon: '📱',
     questionGenerator: 'technical',
     questionTemplate: 'What mobile development platforms and frameworks are you proficient in?'
   },
   {
-    name: 'Web Development',
-    description: 'Frontend, backend, full-stack development, and modern web technologies',
-    icon: '🌐',
-    questionGenerator: 'technical',
-    questionTemplate: 'What web technologies and frameworks do you work with?'
-  },
-  {
-    name: 'Cloud Computing',
-    description: 'AWS, Azure, GCP, serverless architecture, and cloud-native solutions',
+    name: 'Cloud Architects',
+    description: 'AWS, Azure, GCP, serverless architecture, cloud-native solutions, and distributed systems',
     icon: '☁️',
     questionGenerator: 'technical',
-    questionTemplate: 'What cloud platforms and services have you worked with?'
+    questionTemplate: 'What cloud platforms and services have you architected solutions with?'
   },
   {
-    name: 'Blockchain Development',
-    description: 'Smart contracts, decentralized applications, cryptocurrencies, and Web3',
+    name: 'Blockchain Developers',
+    description: 'Smart contracts, decentralized applications, cryptocurrencies, Web3, and blockchain protocols',
     icon: '⛓️',
     questionGenerator: 'technical',
-    questionTemplate: 'What blockchain technologies and smart contract platforms have you explored?'
+    questionTemplate: 'What blockchain technologies and smart contract platforms have you developed on?'
   }
 ];
 

@@ -257,33 +257,62 @@ const Chat = () => {
     }
   }, [activeChat, chatType, user]);
 
-  // Handle navigation from Friends page
+  // Handle navigation from Friends page and URL query parameters
   useEffect(() => {
-    if (!user || !location.state?.chatId) return;
+    if (!user) return;
 
-    const loadChatFromNavigation = async () => {
-      try {
-        if (location.state.chatType === 'private') {
-          const response = await api.get('/private');
-          const chats = response.data.chats || [];
-          const chat = chats.find(c => c._id === location.state.chatId);
-          
-          if (chat) {
-            handleChatSelect(chat, 'private');
+    // Handle chat navigation from state
+    if (location.state?.chatId) {
+      const loadChatFromNavigation = async () => {
+        try {
+          if (location.state.chatType === 'private') {
+            const response = await api.get('/private');
+            const chats = response.data.chats || [];
+            const chat = chats.find(c => c._id === location.state.chatId);
+            
+            if (chat) {
+              handleChatSelect(chat, 'private');
+            }
           }
+        } catch (error) {
+          console.error('Error loading chat from navigation:', error);
+        } finally {
+          // Clear location state
+          navigate(location.pathname, { replace: true, state: {} });
         }
-      } catch (error) {
-        console.error('Error loading chat from navigation:', error);
-      } finally {
-        // Clear location state
-        navigate(location.pathname, { replace: true, state: {} });
-      }
-    };
+      };
 
-    // Small delay to ensure privateChats are loaded
-    const timer = setTimeout(loadChatFromNavigation, 300);
-    return () => clearTimeout(timer);
-  }, [location.state, user, navigate]);
+      // Small delay to ensure privateChats are loaded
+      const timer = setTimeout(loadChatFromNavigation, 300);
+      return () => clearTimeout(timer);
+    }
+
+    // Handle URL query parameters for features
+    const searchParams = new URLSearchParams(location.search);
+    const panel = searchParams.get('panel');
+    const action = searchParams.get('action');
+
+    if (panel === 'assistant') {
+      setActivePanel('assistant');
+      // Clear query params
+      navigate(location.pathname, { replace: true });
+    } else if (action === 'poll' && activeChat) {
+      setShowPoll(true);
+      navigate(location.pathname, { replace: true });
+    } else if (action === 'summarize' && activeChat) {
+      setShowSummarize(true);
+      navigate(location.pathname, { replace: true });
+    } else if (action === 'translate' && activeChat) {
+      setAutoTranslateEnabled(prev => ({
+        ...prev,
+        [activeChat._id]: !prev[activeChat._id]
+      }));
+      navigate(location.pathname, { replace: true });
+    } else if (action === 'search') {
+      setShowSearch(true);
+      navigate(location.pathname, { replace: true });
+    }
+  }, [location.state, location.search, user, navigate, activeChat]);
 
   const fetchRooms = async () => {
     try {
