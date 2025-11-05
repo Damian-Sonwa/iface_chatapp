@@ -57,6 +57,15 @@ exports.joinRoom = async (req, res) => {
       return res.status(404).json({ error: 'Room not found' });
     }
 
+    // Check if room requires approval
+    if (room.requiresApproval || room.techSkillId) {
+      return res.status(400).json({ 
+        error: 'This room requires approval. Please submit a join request.',
+        requiresApproval: true,
+        techSkillId: room.techSkillId
+      });
+    }
+
     if (!room.members.includes(userId)) {
       room.members.push(userId);
       await room.save();
@@ -64,7 +73,8 @@ exports.joinRoom = async (req, res) => {
 
     const populatedRoom = await Room.findById(roomId)
       .populate('createdBy', 'username avatar')
-      .populate('members', 'username avatar status');
+      .populate('members', 'username avatar status')
+      .populate('techSkillId', 'name icon description');
 
     res.json({ room: populatedRoom });
   } catch (error) {

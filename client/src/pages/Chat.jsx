@@ -30,6 +30,8 @@ import FlippingAvatars from '../components/FlippingAvatars';
 import ReactionBurst from '../components/ReactionBurst';
 import PollModal from '../components/PollModal';
 import PollDisplay from '../components/PollDisplay';
+import GroupJoinRequestsPanel from '../components/GroupJoinRequestsPanel';
+import JoinRequestModal from '../components/JoinRequestModal';
 
 const Chat = () => {
   const { user, logout } = useAuth();
@@ -60,6 +62,8 @@ const Chat = () => {
   const [showMobileSidebar, setShowMobileSidebar] = useState(false);
   const [polls, setPolls] = useState([]);
   const [friends, setFriends] = useState([]);
+  const [showJoinRequests, setShowJoinRequests] = useState(false);
+  const [pendingJoinRequestsCount, setPendingJoinRequestsCount] = useState(0);
   const socket = getSocket();
 
   useEffect(() => {
@@ -308,6 +312,30 @@ const Chat = () => {
     }
   };
 
+  const fetchPendingJoinRequestsCount = async () => {
+    try {
+      if (!activeChat || chatType !== 'room') {
+        setPendingJoinRequestsCount(0);
+        return;
+      }
+      
+      // Check if user is admin
+      const isAdmin = activeChat?.createdBy?._id === user?._id || 
+                     activeChat?.admins?.includes(user?._id) ||
+                     user?.isAdmin;
+      
+      if (!isAdmin) {
+        setPendingJoinRequestsCount(0);
+        return;
+      }
+
+      const response = await api.get(`/group-join-requests/room/${activeChat._id}`);
+      setPendingJoinRequestsCount(response.data.requests?.length || 0);
+    } catch (error) {
+      console.error('Fetch pending join requests count error:', error);
+    }
+  };
+
   const fetchMessages = async (roomId, chatId) => {
     try {
       let response;
@@ -401,6 +429,9 @@ const Chat = () => {
       } catch (error) {
         console.error('Error fetching polls:', error);
       }
+
+      // Fetch pending join requests count for admins
+      await fetchPendingJoinRequestsCount();
     } else {
       await fetchMessages(null, chat._id);
       const otherUserId = chat.participants.find(p => (p._id || p.id) !== (user._id || user.id))?._id || chat.participants.find(p => (p._id || p.id) !== (user._id || user.id))?.id;
@@ -538,6 +569,14 @@ const Chat = () => {
           <div className="p-4 md:p-6">
             <Moments onAdd={() => setShowMomentsComposer(true)} />
           </div>
+        ) : showJoinRequests && activeChat && chatType === 'room' ? (
+          <GroupJoinRequestsPanel
+            roomId={activeChat._id}
+            onClose={() => {
+              setShowJoinRequests(false);
+              fetchPendingJoinRequestsCount();
+            }}
+          />
         ) : activePanel === 'friends' ? (
           <div className="p-4 md:p-6">
             <Friends />
@@ -665,6 +704,8 @@ const Chat = () => {
                         }).catch(console.error);
                       }}
                       translateEnabled={autoTranslateEnabled[activeChat?._id]}
+                      onShowJoinRequests={() => setShowJoinRequests(true)}
+                      pendingJoinRequestsCount={pendingJoinRequestsCount}
                       user={user}
                     />
                   </div>

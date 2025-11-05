@@ -6,6 +6,7 @@ import Chat from './pages/Chat';
 import Admin from './pages/Admin';
 import Friends from './pages/Friends';
 import Settings from './pages/Settings';
+import TechSkills from './pages/TechSkills';
 import Navigation from './components/Navigation';
 import SideShell from './components/SideShell';
 
@@ -75,6 +76,13 @@ function AppRoutes() {
           <PrivateRoute adminOnly>
             <SideShell>
               <Admin />
+            </SideShell>
+          </PrivateRoute>
+        } />
+        <Route path="/tech-skills" element={
+          <PrivateRoute>
+            <SideShell>
+              <TechSkills />
             </SideShell>
           </PrivateRoute>
         } />

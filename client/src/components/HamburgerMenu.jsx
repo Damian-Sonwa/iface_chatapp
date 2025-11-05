@@ -77,6 +77,7 @@ const HamburgerMenu = ({ darkMode, onToggleDarkMode, user }) => {
       title: 'Community',
       icon: Users,
       items: [
+        { id: 'tech-skills', label: 'Tech Skills Groups', icon: Sparkles, action: () => navigate('/tech-skills') },
         { id: 'new-group', label: 'New Group', icon: Plus, action: null },
         { id: 'groups', label: 'Groups', icon: Users, action: null },
         { id: 'invite-user', label: 'Invite User', icon: UserPlus, action: () => navigate('/invites') },

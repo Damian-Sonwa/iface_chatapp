@@ -10,8 +10,10 @@ import {
   User,
   Settings,
   Search,
-  X
+  X,
+  UserPlus
 } from 'lucide-react';
+import AnimatedBadge from './AnimatedBadge';
 
 /**
  * ChatHeaderMenu Component
@@ -28,6 +30,8 @@ const ChatHeaderMenu = ({
   onSummarize,
   onToggleTranslate,
   translateEnabled,
+  onShowJoinRequests,
+  pendingJoinRequestsCount = 0,
   user
 }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -95,6 +99,17 @@ const ChatHeaderMenu = ({
         setIsOpen(false);
       },
       show: conversation?.type === 'group'
+    },
+    {
+      id: 'join-requests',
+      label: 'Join Requests',
+      icon: UserPlus,
+      action: () => {
+        onShowJoinRequests?.();
+        setIsOpen(false);
+      },
+      show: conversation?.type === 'room' && (conversation?.techSkillId || conversation?.requiresApproval) && pendingJoinRequestsCount > 0,
+      badge: pendingJoinRequestsCount
     },
     {
       id: 'profile',
@@ -178,6 +193,9 @@ const ChatHeaderMenu = ({
                   >
                     <Icon className={`w-4 h-4 ${item.danger ? 'text-red-400' : 'text-gray-300'}`} />
                     <span className="flex-1">{item.label}</span>
+                    {item.badge && item.badge > 0 && (
+                      <AnimatedBadge count={item.badge} />
+                    )}
                   </motion.button>
                 );
               })}
