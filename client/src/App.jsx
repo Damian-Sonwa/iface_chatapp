@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { lazy, Suspense } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import Navigation from './components/Navigation';
@@ -13,6 +13,8 @@ const Friends = lazy(() => import('./pages/Friends'));
 const Settings = lazy(() => import('./pages/Settings'));
 const TechSkills = lazy(() => import('./pages/TechSkills'));
 const Classrooms = lazy(() => import('./pages/Classrooms'));
+const Onboarding = lazy(() => import('./pages/Onboarding'));
+const Dashboard = lazy(() => import('./pages/Dashboard'));
 
 // Loading component
 const PageLoader = () => (
@@ -23,6 +25,8 @@ const PageLoader = () => (
 
 const PrivateRoute = ({ children, adminOnly }) => {
   const { user, loading } = useAuth();
+  const location = useLocation();
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -30,8 +34,19 @@ const PrivateRoute = ({ children, adminOnly }) => {
       </div>
     );
   }
-  if (!user) return <Navigate to="/login" />;
-  if (adminOnly && !user.isAdmin) return <Navigate to="/chat" />;
+
+  if (!user) return <Navigate to="/login" state={{ from: location }} replace />;
+
+  if (!user.hasOnboarded && location.pathname !== '/onboarding') {
+    return <Navigate to="/onboarding" replace />;
+  }
+
+  if (user.hasOnboarded && location.pathname === '/onboarding') {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  if (adminOnly && !user.isAdmin) return <Navigate to="/dashboard" replace />;
+
   return children;
 };
 
@@ -44,7 +59,7 @@ const PublicRoute = ({ children }) => {
       </div>
     );
   }
-  return !user ? children : <Navigate to="/chat" />;
+  return !user ? children : <Navigate to="/dashboard" replace />;
 };
 
 function AppRoutes() {
@@ -52,7 +67,7 @@ function AppRoutes() {
   
   return (
     <>
-      {user && <Navigation />}
+      {user?.hasOnboarded && <Navigation />}
       <Suspense fallback={<PageLoader />}>
         <Routes>
           <Route path="/login" element={
@@ -64,6 +79,16 @@ function AppRoutes() {
             <PublicRoute>
               <SignUp />
             </PublicRoute>
+          } />
+          <Route path="/onboarding" element={
+            <PrivateRoute>
+              <Onboarding />
+            </PrivateRoute>
+          } />
+          <Route path="/dashboard" element={
+            <PrivateRoute>
+              <Dashboard />
+            </PrivateRoute>
           } />
           <Route path="/chat" element={
             <PrivateRoute>
@@ -105,7 +130,7 @@ function AppRoutes() {
               </SideShell>
             </PrivateRoute>
           } />
-        <Route path="*" element={<Navigate to="/chat" replace />} />
+          <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>
       </Suspense>
     </>

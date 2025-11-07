@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const { buildUserResponse } = require('../utils/userResponse');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'yourSuperSecretKeyHere';
 
@@ -48,13 +49,7 @@ exports.register = async (req, res) => {
     res.status(201).json({
       message: `Welcome to Chaturway, ${username}! 🎉 Your account has been created successfully. Please check your email to confirm your account.`,
       token,
-      user: {
-        id: user._id,
-        username: user.username,
-        email: user.email,
-        avatar: user.avatar,
-        status: user.status
-      }
+      user: buildUserResponse(user)
     });
   } catch (error) {
     console.error('Register error:', error);
@@ -172,14 +167,7 @@ exports.login = async (req, res) => {
     res.json({
       message: 'Login successful',
       token,
-      user: {
-        id: user._id,
-        username: user.username,
-        email: user.email,
-        avatar: user.avatar,
-        status: user.status,
-        twoFactorEnabled: user.twoFactorEnabled
-      }
+      user: buildUserResponse(user)
     });
   } catch (error) {
     console.error('Login error:', error);
@@ -241,7 +229,7 @@ exports.getCurrentUser = async (req, res) => {
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
-    res.json({ user });
+    res.json({ user: buildUserResponse(user) });
   } catch (error) {
     res.status(500).json({ error: 'Server error' });
   }

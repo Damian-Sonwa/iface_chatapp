@@ -61,6 +61,14 @@ const messageSchema = new mongoose.Schema({
     type: Date,
     default: null
   },
+  isArchived: {
+    type: Boolean,
+    default: false
+  },
+  archivedAt: {
+    type: Date,
+    default: null
+  },
   isPinned: {
     type: Boolean,
     default: false
@@ -103,7 +111,9 @@ messageSchema.index({ senderId: 1, createdAt: -1 });
 messageSchema.index({ conversationId: 1, isPinned: 1 });
 // Legacy indexes for backward compatibility
 messageSchema.index({ room: 1, createdAt: -1 });
+messageSchema.index({ room: 1, isArchived: 1, createdAt: -1 });
 messageSchema.index({ privateChat: 1, createdAt: -1 });
+messageSchema.index({ privateChat: 1, isArchived: 1, createdAt: -1 });
 
 module.exports = mongoose.model('Message', messageSchema);
 

@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Message = require('../models/Message');
 const Room = require('../models/Room');
+const PrivateChat = require('../models/PrivateChat');
 const authController = require('../controllers/authController');
 
 // All routes require authentication
@@ -10,7 +11,7 @@ router.use(authController.verifyToken);
 // Search messages within a room or private chat
 router.get('/search', async (req, res) => {
   try {
-    const { roomId, chatId, q, limit = 50 } = req.query;
+    const { roomId, chatId, q, limit = 50, archived } = req.query;
 
     if (!q || !q.trim()) {
       return res.json({ messages: [] });
@@ -33,6 +34,12 @@ router.get('/search', async (req, res) => {
 
     if (chatId) {
       query.privateChat = chatId;
+    }
+
+    if (archived === 'true') {
+      query.isArchived = true;
+    } else if (archived === 'false') {
+      query.isArchived = false;
     }
 
     const messages = await Message.find(query)
@@ -187,6 +194,96 @@ router.post('/:messageId/unpin', async (req, res) => {
     res.json({ success: true });
   } catch (error) {
     console.error('Unpin message error:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Archive message
+router.patch('/:messageId/archive', async (req, res) => {
+  try {
+    const { messageId } = req.params;
+    const userId = req.userId;
+
+    const message = await Message.findById(messageId);
+    if (!message) {
+      return res.status(404).json({ error: 'Message not found' });
+    }
+
+    if (message.isArchived) {
+      return res.json({ message });
+    }
+
+    if (message.room) {
+      const room = await Room.findById(message.room);
+      const isAdmin = room?.admins?.some(admin => admin.toString() === userId) || room?.createdBy?.toString() === userId;
+      if (message.sender.toString() !== userId && !isAdmin) {
+        return res.status(403).json({ error: 'Unauthorized' });
+      }
+    } else if (message.privateChat) {
+      const chat = await PrivateChat.findById(message.privateChat);
+      const isParticipant = chat?.participants?.some(participant => participant.toString() === userId);
+      if (!isParticipant) {
+        return res.status(403).json({ error: 'Unauthorized' });
+      }
+    } else if (message.sender.toString() !== userId) {
+      return res.status(403).json({ error: 'Unauthorized' });
+    }
+
+    message.isArchived = true;
+    message.archivedAt = new Date();
+    await message.save();
+
+    const populatedMessage = await Message.findById(messageId)
+      .populate('sender', 'username avatar');
+
+    res.json({ message: populatedMessage });
+  } catch (error) {
+    console.error('Archive message error:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Unarchive message
+router.patch('/:messageId/unarchive', async (req, res) => {
+  try {
+    const { messageId } = req.params;
+    const userId = req.userId;
+
+    const message = await Message.findById(messageId);
+    if (!message) {
+      return res.status(404).json({ error: 'Message not found' });
+    }
+
+    if (!message.isArchived) {
+      return res.json({ message });
+    }
+
+    if (message.room) {
+      const room = await Room.findById(message.room);
+      const isAdmin = room?.admins?.some(admin => admin.toString() === userId) || room?.createdBy?.toString() === userId;
+      if (message.sender.toString() !== userId && !isAdmin) {
+        return res.status(403).json({ error: 'Unauthorized' });
+      }
+    } else if (message.privateChat) {
+      const chat = await PrivateChat.findById(message.privateChat);
+      const isParticipant = chat?.participants?.some(participant => participant.toString() === userId);
+      if (!isParticipant) {
+        return res.status(403).json({ error: 'Unauthorized' });
+      }
+    } else if (message.sender.toString() !== userId) {
+      return res.status(403).json({ error: 'Unauthorized' });
+    }
+
+    message.isArchived = false;
+    message.archivedAt = null;
+    await message.save();
+
+    const populatedMessage = await Message.findById(messageId)
+      .populate('sender', 'username avatar');
+
+    res.json({ message: populatedMessage });
+  } catch (error) {
+    console.error('Unarchive message error:', error);
     res.status(500).json({ error: 'Server error' });
   }
 });

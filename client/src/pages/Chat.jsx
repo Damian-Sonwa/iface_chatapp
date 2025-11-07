@@ -47,6 +47,7 @@ const Chat = () => {
   const [privateChats, setPrivateChats] = useState([]);
   const [users, setUsers] = useState([]);
   const [messages, setMessages] = useState([]);
+  const [messageView, setMessageView] = useState('active');
   const [typingUsers, setTypingUsers] = useState([]);
   const [showSearch, setShowSearch] = useState(false);
   const [replyingTo, setReplyingTo] = useState(null);
@@ -141,6 +142,10 @@ const Chat = () => {
       
       if (!messageBelongsToChat) return;
 
+      if (messageView === 'archived' && !message.isArchived) {
+        return;
+      }
+ 
       setMessages(prev => {
         // Check if message already exists
         const exists = prev.find(m => 
@@ -220,6 +225,16 @@ const Chat = () => {
       setTypingUsers(prev => prev.filter(u => u.userId !== userId));
     });
 
+    socket.on('violation:warning', ({ reason, count, threshold }) => {
+      alert(`Warning: your recent message violated our guidelines (${count}/${threshold}). ${reason === 'banned_word' ? 'Please avoid using banned language.' : ''}`);
+    });
+
+    socket.on('account:suspended', ({ reason, suspendedUntil }) => {
+      alert(`Your account has been suspended. ${reason || ''} ${suspendedUntil ? `Suspension lifts at ${new Date(suspendedUntil).toLocaleString()}.` : ''}`);
+      logout();
+      navigate('/login');
+    });
+
     const updateUserStatusHandler = (userId, status) => {
       setUsers(prev => prev.map(u => 
         u.id === userId || u._id === userId ? { ...u, status } : u
@@ -272,9 +287,11 @@ const Chat = () => {
       socket.off('typing:stop');
       socket.off('user:online');
       socket.off('user:offline');
+      socket.off('violation:warning');
+      socket.off('account:suspended');
       clearInterval(moodInterval);
     };
-  }, [socket, activeChat, chatType, user]);
+  }, [socket, activeChat, chatType, user, messageView, logout, navigate]);
 
   // Fetch pending join requests when activeChat changes
   useEffect(() => {
@@ -384,6 +401,15 @@ const Chat = () => {
       navigate(location.pathname, { replace: true });
     }
   }, [location.state, location.search, user, navigate, activeChat]);
+
+  useEffect(() => {
+    if (!activeChat) return;
+    if (chatType === 'room') {
+      fetchMessages(activeChat._id, null, messageView);
+    } else if (chatType === 'private') {
+      fetchMessages(null, activeChat._id, messageView);
+    }
+  }, [messageView, activeChat?._id, chatType]);
 
   useEffect(() => {
     if (!pendingHighlightMessageId) return;
@@ -543,47 +569,24 @@ const Chat = () => {
     }
   };
 
-  const fetchMessages = async (roomId, chatId) => {
+  const fetchMessages = async (roomId, chatId, viewOverride) => {
     try {
+      const view = viewOverride || messageView;
+      const params = view === 'archived' ? { archived: true } : {};
       let response;
       if (roomId) {
-        response = await api.get(`/rooms/${roomId}/messages`);
+        response = await api.get(`/rooms/${roomId}/messages`, { params });
       } else {
-        response = await api.get(`/private/messages/${chatId}`);
+        response = await api.get(`/private/messages/${chatId}`, { params });
       }
       
-      // Merge fetched messages with existing messages instead of replacing
-      // This ensures messages received via socket aren't lost
-      setMessages(prev => {
-        const fetchedMessages = response.data.messages || [];
-        const messageMap = new Map();
-        
-        // Add existing messages to map
-        prev.forEach(msg => {
-          const id = msg._id || msg.id;
-          if (id) messageMap.set(id, msg);
-        });
-        
-        // Add/update with fetched messages
-        fetchedMessages.forEach(msg => {
-          const id = msg._id || msg.id;
-          if (id) {
-            // Only update if fetched message is newer or if existing is pending
-            const existing = messageMap.get(id);
-            if (!existing || existing.isPending || !existing.createdAt || 
-                (msg.createdAt && new Date(msg.createdAt) > new Date(existing.createdAt))) {
-              messageMap.set(id, msg);
-            }
-          }
-        });
-        
-        // Convert map back to array and sort by createdAt
-        return Array.from(messageMap.values()).sort((a, b) => {
-          const aTime = new Date(a.createdAt || 0);
-          const bTime = new Date(b.createdAt || 0);
-          return aTime - bTime;
-        });
+      const fetchedMessages = response.data.messages || [];
+      const sortedMessages = fetchedMessages.sort((a, b) => {
+        const aTime = new Date(a.createdAt || 0);
+        const bTime = new Date(b.createdAt || 0);
+        return aTime - bTime;
       });
+      setMessages(sortedMessages);
     } catch (error) {
       console.error('Fetch messages error:', error);
     }
@@ -616,9 +619,10 @@ const Chat = () => {
     setChatType(type);
     setTypingUsers([]);
     setReplyingTo(null);
+    setMessageView('active');
 
     if (type === 'room') {
-      await fetchMessages(chat._id, null);
+      await fetchMessages(chat._id, null, 'active');
       socket?.emit('room:join', { roomId: chat._id });
       
       // Fetch pinned messages
@@ -640,7 +644,7 @@ const Chat = () => {
       // Fetch pending join requests count for admins
       await fetchPendingJoinRequestsCount(chat, type);
     } else {
-      await fetchMessages(null, chat._id);
+      await fetchMessages(null, chat._id, 'active');
       const otherUserId = chat.participants.find(p => (p._id || p.id) !== (user._id || user.id))?._id || chat.participants.find(p => (p._id || p.id) !== (user._id || user.id))?.id;
       socket?.emit('chat:join', { chatId: chat._id, otherUserId });
     }
@@ -850,6 +854,38 @@ const Chat = () => {
     }
   };
 
+  const handleArchiveMessage = async (message) => {
+    const messageId = message?._id || message?.id;
+    if (!messageId) return;
+    try {
+      const response = await api.patch(`/messages/${messageId}/archive`);
+      const updated = response.data.message;
+      setMessages(prev => prev
+        .map(m => ((m._id || m.id) === (updated._id || updated.id) ? updated : m))
+        .filter(m => messageView === 'active' ? !m.isArchived : m.isArchived)
+      );
+    } catch (error) {
+      console.error('Archive message error:', error);
+      alert(error.response?.data?.error || 'Failed to archive message');
+    }
+  };
+
+  const handleUnarchiveMessage = async (message) => {
+    const messageId = message?._id || message?.id;
+    if (!messageId) return;
+    try {
+      const response = await api.patch(`/messages/${messageId}/unarchive`);
+      const updated = response.data.message;
+      setMessages(prev => prev
+        .map(m => ((m._id || m.id) === (updated._id || updated.id) ? updated : m))
+        .filter(m => messageView === 'archived' ? m.isArchived : !m.isArchived)
+      );
+    } catch (error) {
+      console.error('Unarchive message error:', error);
+      alert(error.response?.data?.error || 'Failed to unarchive message');
+    }
+  };
+
   return (
     <div className="flex h-screen max-h-screen relative overflow-hidden safe-area-inset pt-[64px]">
       {darkMode ? <StarryBackground /> : <FloralBackground />}
@@ -1030,6 +1066,24 @@ const Chat = () => {
                         <span className="sm:hidden">+</span>
                       </motion.button>
                     )}
+                    <div className="hidden sm:flex items-center gap-1 bg-white/10 dark:bg-gray-900/50 border border-white/20 rounded-full p-1" data-tour="messages-toggle">
+                      {[
+                        { id: 'active', label: 'Active' },
+                        { id: 'archived', label: 'Archived' }
+                      ].map(option => (
+                        <button
+                          key={option.id}
+                          onClick={() => setMessageView(option.id)}
+                          className={`px-3 py-1 text-xs font-semibold rounded-full transition ${
+                            messageView === option.id
+                              ? 'bg-gradient-to-r from-purple-600 to-pink-500 text-white shadow'
+                              : 'text-gray-400 hover:text-white'
+                          }`}
+                        >
+                          {option.label}
+                        </button>
+                      ))}
+                    </div>
                     <div className="hidden sm:block">
                       <NotificationBell />
                     </div>
@@ -1135,6 +1189,9 @@ const Chat = () => {
                 onSuggestReplies={(message) => setShowSuggestions(message)}
                 autoTranslateEnabled={autoTranslateEnabled[activeChat?._id]}
                 translatedMessages={translatedMessages}
+                onArchiveMessage={handleArchiveMessage}
+                onUnarchiveMessage={handleUnarchiveMessage}
+                messageView={messageView}
               />
               <MessageInput
                 onSend={handleSendMessage}

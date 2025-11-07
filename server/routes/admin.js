@@ -16,6 +16,7 @@ router.get('/dashboard', adminController.getDashboard);
 router.get('/users', adminController.listUsers);
 router.post('/users/:userId/ban', adminController.banUser);
 router.post('/users/:userId/suspend', adminController.suspendUser);
+router.post('/users/:userId/reinstate', adminController.reinstateUser);
 router.delete('/users/:userId', adminController.deleteUser);
 router.post('/users/:userId/reset-password', adminController.resetPassword);
 
@@ -25,6 +26,7 @@ router.delete('/rooms/:roomId', adminController.deleteRoom);
 
 // Activity logs
 router.get('/activity', adminController.getActivity);
+router.get('/logs', adminController.listActionLogs);
 
 module.exports = router;
 

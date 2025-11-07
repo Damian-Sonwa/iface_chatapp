@@ -20,7 +20,8 @@
     "clsx": "^2.0.0",
     "tailwind-merge": "^2.1.0",
     "@tanstack/react-query": "^5.17.9",
-    "zustand": "^4.4.7"
+    "zustand": "^4.4.7",
+    "react-joyride": "^2.5.5"
   },
   "devDependencies": {
     "@types/react": "^18.2.43",

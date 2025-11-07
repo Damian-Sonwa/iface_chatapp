@@ -3,6 +3,21 @@ const Room = require('../models/Room');
 const Message = require('../models/Message');
 const Summary = require('../models/Summary');
 const PrivateChat = require('../models/PrivateChat');
+const AdminActionLog = require('../models/AdminActionLog');
+const Violation = require('../models/Violation');
+
+const logAdminAction = async ({ adminId, action, targetUserId, details = {} }) => {
+  try {
+    await AdminActionLog.create({
+      admin: adminId,
+      action,
+      targetUser: targetUserId,
+      details
+    });
+  } catch (error) {
+    console.error('Admin action log error:', error);
+  }
+};
 
 /**
  * Check if user is admin
@@ -10,7 +25,7 @@ const PrivateChat = require('../models/PrivateChat');
 const isAdmin = async (req, res, next) => {
   try {
     const user = await User.findById(req.userId);
-    if (!user || !user.isAdmin) {
+    if (!user || (!user.isAdmin && user.role !== 'admin')) {
       return res.status(403).json({ error: 'Admin access required' });
     }
     next();
@@ -31,12 +46,20 @@ const getDashboard = async (req, res) => {
     const totalMessages = await Message.countDocuments();
     const totalSummaries = await Summary.countDocuments();
     const activeUsers = await User.countDocuments({ status: 'online' });
+    const suspendedUsers = await User.countDocuments({ isSuspended: true });
 
     // Recent activity
     const recentUsers = await User.find()
       .sort({ createdAt: -1 })
       .limit(10)
       .select('username email createdAt status isAdmin');
+
+    const recentViolations = await Violation.find()
+      .populate('user', 'username email')
+      .populate('message', 'content room privateChat createdAt')
+      .sort({ createdAt: -1 })
+      .limit(10)
+      .lean();
 
     const recentSummaries = await Summary.find()
       .populate('requestedBy', 'username')
@@ -74,9 +97,11 @@ const getDashboard = async (req, res) => {
         totalRooms,
         totalMessages,
         totalSummaries,
-        activeUsers
+        activeUsers,
+        suspendedUsers
       },
       recentUsers,
+      recentViolations,
       recentSummaries,
       messagesPerDay
     });
@@ -93,24 +118,28 @@ const getDashboard = async (req, res) => {
 const listUsers = async (req, res) => {
   try {
     const { search, role, status } = req.query;
-    const query = {};
+    const filters = [];
 
     if (search) {
-      query.$or = [
-        { username: { $regex: search, $options: 'i' } },
-        { email: { $regex: search, $options: 'i' } }
-      ];
+      filters.push({
+        $or: [
+          { username: { $regex: search, $options: 'i' } },
+          { email: { $regex: search, $options: 'i' } }
+        ]
+      });
     }
 
     if (role === 'admin') {
-      query.isAdmin = true;
+      filters.push({ $or: [{ role: 'admin' }, { isAdmin: true }] });
     } else if (role === 'user') {
-      query.isAdmin = false;
+      filters.push({ $and: [{ role: { $ne: 'admin' } }, { isAdmin: { $ne: true } }] });
     }
 
     if (status) {
-      query.status = status;
+      filters.push({ status });
     }
+
+    const query = filters.length > 0 ? { $and: filters } : {};
 
     const users = await User.find(query)
       .select('-password -twoFactorSecret')
@@ -147,6 +176,13 @@ const banUser = async (req, res) => {
     user.status = banned ? 'offline' : user.status;
     
     await user.save();
+
+    await logAdminAction({
+      adminId: req.userId,
+      action: banned ? 'ban' : 'unban',
+      targetUserId: user._id,
+      details: banned ? { reason: user.banReason } : {}
+    });
 
     console.log(`🚫 User ${user.username} ${banned ? 'banned' : 'unbanned'} by admin`);
     res.json({ success: true, user });
@@ -189,6 +225,13 @@ const suspendUser = async (req, res) => {
     user.status = suspended ? 'offline' : user.status;
     await user.save();
 
+    await logAdminAction({
+      adminId: req.userId,
+      action: suspended ? 'suspend' : 'unsuspend',
+      targetUserId: user._id,
+      details: suspended ? { reason: user.suspensionReason, days } : {}
+    });
+
     console.log(`⏸️  User ${user.username} ${suspended ? `suspended until ${user.suspendedUntil}` : 'unsuspended'} by admin`);
     res.json({ success: true, user });
   } catch (error) {
@@ -221,6 +264,13 @@ const deleteUser = async (req, res) => {
     // await Message.deleteMany({ sender: userId });
     // await PrivateChat.deleteMany({ participants: userId });
     // await Room.updateMany({ members: userId }, { $pull: { members: userId } });
+
+    await logAdminAction({
+      adminId: req.userId,
+      action: 'delete',
+      targetUserId: user._id,
+      details: { username: user.username }
+    });
 
     console.log(`🗑️  User ${user.username} deleted by admin`);
     res.json({ success: true, message: 'User deleted successfully' });
@@ -255,6 +305,12 @@ const resetPassword = async (req, res) => {
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
+
+    await logAdminAction({
+      adminId: req.userId,
+      action: 'reset-password',
+      targetUserId: user._id
+    });
 
     console.log(`🔑 Password reset for user ${user.username} by admin`);
 
@@ -371,6 +427,56 @@ const getActivity = async (req, res) => {
   }
 };
 
+const reinstateUser = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    if (user.isAdmin) {
+      return res.status(403).json({ error: 'Cannot reinstate admin users' });
+    }
+
+    user.isSuspended = false;
+    user.suspendedUntil = null;
+    user.suspensionReason = null;
+    user.isBanned = false;
+    user.banReason = null;
+    user.status = 'offline';
+    await user.save();
+
+    await logAdminAction({
+      adminId: req.userId,
+      action: 'reinstate',
+      targetUserId: user._id
+    });
+
+    res.json({ success: true, user });
+  } catch (error) {
+    console.error('Reinstate user error:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+};
+
+const listActionLogs = async (req, res) => {
+  try {
+    const { limit = 100 } = req.query;
+    const logs = await AdminActionLog.find()
+      .populate('admin', 'username email')
+      .populate('targetUser', 'username email')
+      .sort({ createdAt: -1 })
+      .limit(parseInt(limit, 10));
+
+    res.json({ logs });
+  } catch (error) {
+    console.error('List admin logs error:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+};
+
 module.exports = {
   isAdmin,
   getDashboard,
@@ -381,6 +487,8 @@ module.exports = {
   resetPassword,
   listRooms,
   deleteRoom,
-  getActivity
+  getActivity,
+  reinstateUser,
+  listActionLogs
 };
 

@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
-import { Check, CheckCheck, Download, Pin, Reply as ReplyIcon, Edit2, Trash2, Link as LinkIcon, Clock } from 'lucide-react';
+import { Check, CheckCheck, Download, Pin, Reply as ReplyIcon, Edit2, Trash2, Link as LinkIcon, Clock, Archive } from 'lucide-react';
 import { motion, AnimatePresence, useMotionValue, useSpring } from 'framer-motion';
 import MessageOptions from './MessageOptions';
 import api from '../utils/api';
 import { getSocket } from '../utils/socket';
 import { highlightMentions, MentionText } from './MentionHighlight';
 
-const ChatArea = ({ messages, typingUsers, currentUser, activeChat, chatType, onReply, onSuggestReplies, autoTranslateEnabled, translatedMessages }) => {
+const ChatArea = ({ messages, typingUsers, currentUser, activeChat, chatType, onReply, onSuggestReplies, autoTranslateEnabled, translatedMessages, onArchiveMessage, onUnarchiveMessage, messageView }) => {
   const messagesEndRef = useRef(null);
   const containerRef = useRef(null);
   const [reactingToMessage, setReactingToMessage] = useState(null);
@@ -103,6 +103,15 @@ const ChatArea = ({ messages, typingUsers, currentUser, activeChat, chatType, on
               <p className="text-gray-400 text-lg font-light">No messages yet. Start the conversation!</p>
             </div>
           </motion.div>
+        )}
+
+        {messageView === 'archived' && (
+          <div className="px-4 md:px-6">
+            <div className="mb-3 px-4 py-2 rounded-2xl bg-amber-500/10 border border-amber-400/30 text-xs text-amber-300 flex items-center gap-2">
+              <Archive className="w-4 h-4" />
+              Messages older than 30 days move here automatically. Unarchive any note you still need active.
+            </div>
+          </div>
         )}
 
         <AnimatePresence mode="popLayout">
@@ -313,22 +322,28 @@ const ChatArea = ({ messages, typingUsers, currentUser, activeChat, chatType, on
                     )}
 
                     {/* Timestamp and read receipts */}
-                      <div className={`flex items-center gap-1.5 mt-1.5 text-xs ${
-                        own ? 'justify-end text-white/60' : 'justify-start text-gray-500 dark:text-gray-400'
-                      }`}>
-                      <span>{formatTime(message.createdAt)}</span>
-                      {own && (
-                        <span>
-                          {message.readBy?.length > 1 ? (
-                            <CheckCheck className="w-3.5 h-3.5 inline" />
-                          ) : (
-                            <Check className="w-3.5 h-3.5 inline" />
-                          )}
-                        </span>
-                      )}
-                    </div>
+                  <div className={`flex items-center ${own ? 'justify-end' : 'justify-between'} gap-2 text-xs text-gray-400 dark:text-gray-500`}
+                    data-tour-message-meta
+                  >
+                    <span>{formatTime(message.createdAt)}</span>
+                    {own && (
+                      <span>
+                        {message.readBy?.length > 1 ? (
+                          <CheckCheck className="w-3.5 h-3.5 inline" />
+                        ) : (
+                          <Check className="w-3.5 h-3.5 inline" />
+                        )}
+                      </span>
+                    )}
+                  </div>
 
-                    {/* Reactions */}
+                  {message.isArchived && (
+                    <span className="inline-flex items-center gap-1 text-[10px] uppercase tracking-wide text-amber-400 bg-amber-500/10 border border-amber-400/30 px-2 py-0.5 rounded-full">
+                      Archived
+                    </span>
+                  )}
+ 
+                   {/* Reactions */}
                     {message.reactions?.length > 0 && (
                       <div className="flex gap-1.5 mt-2 flex-wrap">
                         {message.reactions.map((reaction, idx) => (
@@ -352,17 +367,7 @@ const ChatArea = ({ messages, typingUsers, currentUser, activeChat, chatType, on
                   <MessageOptions
                     message={message}
                     isOwnMessage={own}
-                    onReact={(emoji) => {
-                      const socket = getSocket();
-                      if (!socket || !activeChat) return;
-                      socket.emit('message:react', {
-                        messageId: message._id || message.id,
-                        emoji,
-                        chatId: chatType === 'private' ? activeChat._id : null,
-                        roomId: chatType === 'room' ? activeChat._id : null,
-                      });
-                    }}
-                    onEdit={() => setEditingMessage(message)}
+                    onEdit={own ? () => setEditingMessage(message) : undefined}
                     onDelete={() => {
                       const socket = getSocket();
                       if (!socket || !activeChat) return;
@@ -374,16 +379,24 @@ const ChatArea = ({ messages, typingUsers, currentUser, activeChat, chatType, on
                         });
                       }
                     }}
-                    onReply={() => onReply(message)}
-                    onPin={async () => {
-                      try {
-                        await api.post(`/messages/${message._id || message.id}/pin`, { roomId: activeChat._id });
-                      } catch (error) {
-                        console.error('Pin error:', error);
-                      }
-                    }}
-                    currentUser={currentUser}
-                    chatType={chatType}
+                    onReply={onReply ? () => onReply(message) : undefined}
+                    onPin={chatType === 'room' ? async () => {
+                       try {
+                         await api.post(`/messages/${message._id || message.id}/pin`, { roomId: activeChat._id });
+                       } catch (error) {
+                         console.error('Pin error:', error);
+                       }
+                     } : undefined}
+                     onUnpin={chatType === 'room' && message.pinned ? async () => {
+                       try {
+                         await api.post(`/messages/${message._id || message.id}/unpin`, { roomId: activeChat._id });
+                       } catch (error) {
+                         console.error('Unpin error:', error);
+                       }
+                     } : undefined}
+                    onSuggestReplies={onSuggestReplies ? () => onSuggestReplies(message) : undefined}
+                    onArchive={onArchiveMessage ? () => onArchiveMessage(message) : undefined}
+                    onUnarchive={onUnarchiveMessage && message.isArchived ? () => onUnarchiveMessage(message) : undefined}
                   />
                 </div>
               </motion.div>

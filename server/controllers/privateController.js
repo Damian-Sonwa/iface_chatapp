@@ -55,9 +55,31 @@ exports.getUserChats = async (req, res) => {
 exports.getChatMessages = async (req, res) => {
   try {
     const { chatId } = req.params;
-    const { page = 1, limit = 50 } = req.query;
+    const { page = 1, limit = 50, archived } = req.query;
+    const showArchived = archived === 'true';
 
-    const messages = await Message.find({ privateChat: chatId })
+    const cutoffDate = new Date(Date.now() - (30 * 24 * 60 * 60 * 1000));
+    await Message.updateMany(
+      {
+        privateChat: chatId,
+        isArchived: false,
+        createdAt: { $lte: cutoffDate }
+      },
+      {
+        $set: {
+          isArchived: true,
+          archivedAt: new Date()
+        }
+      }
+    );
+
+    const filter = {
+      privateChat: chatId,
+      deletedAt: null,
+      isArchived: showArchived
+    };
+
+    const messages = await Message.find(filter)
       .populate('sender', 'username avatar')
       .sort({ createdAt: -1 })
       .limit(limit * 1)

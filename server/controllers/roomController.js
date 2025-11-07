@@ -117,9 +117,31 @@ exports.joinRoom = async (req, res) => {
 exports.getRoomMessages = async (req, res) => {
   try {
     const { roomId } = req.params;
-    const { page = 1, limit = 50 } = req.query;
+    const { page = 1, limit = 50, archived } = req.query;
+    const showArchived = archived === 'true';
 
-    const messages = await Message.find({ room: roomId })
+    const cutoffDate = new Date(Date.now() - (30 * 24 * 60 * 60 * 1000));
+    await Message.updateMany(
+      {
+        room: roomId,
+        isArchived: false,
+        createdAt: { $lte: cutoffDate }
+      },
+      {
+        $set: {
+          isArchived: true,
+          archivedAt: new Date()
+        }
+      }
+    );
+
+    const filter = {
+      room: roomId,
+      deletedAt: null,
+      isArchived: showArchived
+    };
+
+    const messages = await Message.find(filter)
       .populate('sender', 'username avatar')
       .sort({ createdAt: -1 })
       .limit(limit * 1)

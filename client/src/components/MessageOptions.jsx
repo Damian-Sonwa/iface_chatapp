@@ -1,8 +1,20 @@
 import { useState } from 'react';
-import { MoreVertical, Edit, Trash2, Pin, Reply, Copy, Languages, Sparkles } from 'lucide-react';
+import { MoreVertical, Edit, Trash2, Pin, Reply, Copy, Languages, Sparkles, Archive, ArchiveRestore } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const MessageOptions = ({ message, isOwn, isAdmin, onEdit, onDelete, onReply, onPin, onUnpin, onTranslate, onSuggestReplies }) => {
+const MessageOptions = ({
+  message,
+  isOwnMessage,
+  onEdit,
+  onDelete,
+  onReply,
+  onPin,
+  onUnpin,
+  onTranslate,
+  onSuggestReplies,
+  onArchive,
+  onUnarchive
+}) => {
   const [showMenu, setShowMenu] = useState(false);
 
   return (
@@ -51,7 +63,7 @@ const MessageOptions = ({ message, isOwn, isAdmin, onEdit, onDelete, onReply, on
                 </button>
               )}
 
-              {onSuggestReplies && !isOwn && (
+              {onSuggestReplies && !isOwnMessage && (
                 <button
                   onClick={() => {
                     onSuggestReplies(message);
@@ -77,7 +89,7 @@ const MessageOptions = ({ message, isOwn, isAdmin, onEdit, onDelete, onReply, on
                 </button>
               )}
 
-              {isOwn && onEdit && (
+              {isOwnMessage && onEdit && (
                 <button
                   onClick={() => {
                     onEdit(message);
@@ -90,7 +102,33 @@ const MessageOptions = ({ message, isOwn, isAdmin, onEdit, onDelete, onReply, on
                 </button>
               )}
 
-              {(isOwn || isAdmin) && onDelete && (
+              {onArchive && !message.isArchived && (
+                <button
+                  onClick={() => {
+                    onArchive(message);
+                    setShowMenu(false);
+                  }}
+                  className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2"
+                >
+                  <Archive className="w-4 h-4" />
+                  Archive
+                </button>
+              )}
+
+              {onUnarchive && message.isArchived && (
+                <button
+                  onClick={() => {
+                    onUnarchive(message);
+                    setShowMenu(false);
+                  }}
+                  className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2"
+                >
+                  <ArchiveRestore className="w-4 h-4" />
+                  Unarchive
+                </button>
+              )}
+
+              {onDelete && (
                 <button
                   onClick={() => {
                     onDelete(message);
@@ -103,7 +141,7 @@ const MessageOptions = ({ message, isOwn, isAdmin, onEdit, onDelete, onReply, on
                 </button>
               )}
 
-              {isAdmin && onPin && message.pinned && (
+              {onUnpin && message.pinned && (
                 <button
                   onClick={() => {
                     onUnpin(message);
@@ -116,7 +154,7 @@ const MessageOptions = ({ message, isOwn, isAdmin, onEdit, onDelete, onReply, on
                 </button>
               )}
 
-              {isAdmin && onPin && !message.pinned && (
+              {onPin && !message.pinned && (
                 <button
                   onClick={() => {
                     onPin(message);

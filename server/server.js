@@ -14,16 +14,99 @@ const userRoutes = require('./routes/users');
 const adminRoutes = require('./routes/admin');
 const techSkillRoutes = require('./routes/techSkills');
 const groupJoinRequestRoutes = require('./routes/groupJoinRequests');
+const onboardingRoutes = require('./routes/onboarding');
 const Message = require('./models/Message');
 const Room = require('./models/Room');
 const PrivateChat = require('./models/PrivateChat');
 const User = require('./models/User');
 const Poll = require('./models/Poll');
+const Violation = require('./models/Violation');
+const AdminActionLog = require('./models/AdminActionLog');
 const jwt = require('jsonwebtoken');
 const { getLinkPreview } = require('./utils/linkPreview');
 const { extractMentionedUsernames } = require('./utils/mentionParser');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'yourSuperSecretKeyHere';
+
+const escapeRegExp = (string = '') => string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const bannedWordList = (process.env.BANNED_WORDS || 'spam,scam,abuse').split(',').map(word => word.trim().toLowerCase()).filter(Boolean);
+const violationThreshold = parseInt(process.env.VIOLATION_THRESHOLD || '3', 10);
+const autoSuspendDurationHours = parseInt(process.env.VIOLATION_SUSPEND_HOURS || '24', 10);
+
+const containsBannedWord = (content = '') => {
+  const normalized = content.toLowerCase();
+  return bannedWordList.some(word => word && new RegExp(`\\b${escapeRegExp(word)}\\b`, 'i').test(normalized));
+};
+
+const handleViolation = async ({ userId, messageId, content, reason, io, socket }) => {
+  const existing = await Violation.findOne({ message: messageId });
+  if (existing) return;
+
+  await Violation.create({
+    user: userId,
+    message: messageId,
+    reason,
+    content
+  });
+
+  const violationCount = await Violation.countDocuments({ user: userId });
+
+  socket.emit('violation:warning', {
+    reason,
+    count: violationCount,
+    threshold: violationThreshold
+  });
+
+  const user = await User.findById(userId);
+
+  if (violationCount >= violationThreshold && user && !user.isSuspended) {
+    user.isSuspended = true;
+    user.suspendedUntil = new Date(Date.now() + autoSuspendDurationHours * 60 * 60 * 1000);
+    user.suspensionReason = 'Automatic suspension due to repeated violations';
+    user.status = 'offline';
+    await user.save();
+
+    await AdminActionLog.create({
+      admin: null,
+      action: 'suspend',
+      targetUser: user._id,
+      details: {
+        reason: user.suspensionReason,
+        auto: true,
+        violations: violationCount
+      }
+    });
+
+    const userSocketId = activeUsers.get(userId);
+    if (userSocketId) {
+      io.to(userSocketId).emit('account:suspended', {
+        reason: user.suspensionReason,
+        suspendedUntil: user.suspendedUntil
+      });
+    }
+
+    io.emit('admin:violation', {
+      userId,
+      username: user.username,
+      count: violationCount,
+      autoSuspended: true
+    });
+  } else {
+    io.emit('admin:violation', {
+      userId,
+      username: user?.username,
+      count: violationCount,
+      content
+    });
+  }
+};
+
+const checkMessageForViolations = async ({ userId, messageId, content, io, socket }) => {
+  if (!content || bannedWordList.length === 0) return;
+  if (containsBannedWord(content)) {
+    await handleViolation({ userId, messageId, content, reason: 'banned_word', io, socket });
+  }
+};
 
 // Validate required environment variables
 if (!process.env.MONGODB_URI && !process.env.MONGO_URI) {
@@ -147,6 +230,7 @@ app.use('/api/upload', uploadRoutes);
 app.use('/api/messages', messageRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/onboarding', onboardingRoutes);
 app.use('/api/ai', require('./routes/ai'));
 app.use('/api/translate', require('./routes/translate'));
 app.use('/api/friends', require('./routes/friends'));
@@ -274,6 +358,8 @@ io.on('connection', async (socket) => {
         .populate('sender', 'username avatar')
         .populate('replyTo', 'content sender');
 
+      await checkMessageForViolations({ userId, messageId: message._id, content, io, socket });
+
       // Check for @mentions and notify users
       const mentionedUsernames = extractMentionedUsernames(content);
       if (mentionedUsernames.length > 0) {
@@ -357,6 +443,8 @@ io.on('connection', async (socket) => {
       const populatedMessage = await Message.findById(message._id)
         .populate('sender', 'username avatar')
         .populate('replyTo', 'content sender');
+
+      await checkMessageForViolations({ userId, messageId: message._id, content, io, socket });
 
       // Emit to recipient
       const recipientSocketId = activeUsers.get(recipientId);
