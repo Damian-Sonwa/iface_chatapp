@@ -5,7 +5,20 @@ const User = require('../models/User');
 // Get all rooms
 exports.getAllRooms = async (req, res) => {
   try {
-    const rooms = await Room.find()
+    const { roomType, techSkillId } = req.query;
+    const query = {};
+    
+    // Filter by room type if provided
+    if (roomType) {
+      query.roomType = roomType;
+    }
+    
+    // Filter by tech skill if provided
+    if (techSkillId) {
+      query.techSkillId = techSkillId;
+    }
+    
+    const rooms = await Room.find(query)
       .populate('createdBy', 'username avatar')
       .populate('members', 'username avatar status')
       .populate('techSkillId', 'name icon description')
@@ -128,6 +141,27 @@ exports.getAllUsers = async (req, res) => {
     res.json({ users });
   } catch (error) {
     console.error('Get users error:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+};
+
+// Get single room details
+exports.getRoomById = async (req, res) => {
+  try {
+    const { roomId } = req.params;
+
+    const room = await Room.findById(roomId)
+      .populate('createdBy', 'username avatar')
+      .populate('members', 'username avatar status')
+      .populate('techSkillId', 'name icon description');
+
+    if (!room) {
+      return res.status(404).json({ error: 'Room not found' });
+    }
+
+    res.json({ room });
+  } catch (error) {
+    console.error('Get room by id error:', error);
     res.status(500).json({ error: 'Server error' });
   }
 };

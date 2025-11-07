@@ -156,6 +156,7 @@ app.use('/api/polls', require('./routes/polls'));
 app.use('/api/tech-skills', techSkillRoutes);
 app.use('/api/group-join-requests', groupJoinRequestRoutes);
 app.use('/api/user-skill-profiles', require('./routes/userSkillProfiles'));
+app.use('/api/classrooms', require('./routes/classrooms'));
 
 // Socket.io authentication middleware
 io.use(async (socket, next) => {

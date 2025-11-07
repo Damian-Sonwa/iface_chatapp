@@ -23,7 +23,7 @@ const Navigation = () => {
   if (!user) return null;
 
   return (
-    <nav className="bg-black/20 backdrop-blur-xl border-b border-white/10 px-4 py-3 relative z-10">
+    <nav className="bg-black/20 backdrop-blur-xl border-b border-white/10 px-4 py-3 relative z-[100] fixed top-0 left-0 right-0">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         {/* Logo/Brand */}
         <motion.div whileHover={{ scale: 1.05 }}>

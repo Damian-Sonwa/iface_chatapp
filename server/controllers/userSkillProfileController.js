@@ -54,7 +54,13 @@ exports.getQuestionsForLevel = async (req, res) => {
     // Filter questions for the requested level
     const questions = skill.questions.filter(q => q.level === level);
 
+    console.log(`📊 Getting questions for ${skill.name} - ${level} level`);
+    console.log(`📊 Total questions in skill: ${skill.questions.length}`);
+    console.log(`📊 Questions filtered for ${level}: ${questions.length}`);
+    console.log(`📊 Question levels found:`, [...new Set(skill.questions.map(q => q.level))]);
+
     if (questions.length === 0) {
+      console.error(`❌ No questions found for ${level} level in skill ${skill.name}`);
       return res.status(400).json({ error: `No questions found for ${level} level` });
     }
 
@@ -66,10 +72,13 @@ exports.getQuestionsForLevel = async (req, res) => {
       questionType: q.questionType || 'multiple-choice'
     }));
 
+    console.log(`✅ Returning ${questionsForUser.length} questions for ${level} level`);
+
     res.json({ 
       questions: questionsForUser,
       skillName: skill.name,
-      level: level
+      level: level,
+      totalQuestions: questionsForUser.length
     });
   } catch (error) {
     console.error('Get questions for level error:', error);
@@ -183,6 +192,16 @@ exports.verifyAnswers = async (req, res) => {
         // Update profile with joined group
         profile.joinedGroupId = roomDoc._id;
         await profile.save();
+
+        // Also add user to General Info room for this tech skill (if exists)
+        const generalInfoRoom = await Room.findOne({
+          techSkillId: skill._id,
+          roomType: 'general-info'
+        });
+        if (generalInfoRoom && !generalInfoRoom.members.map(m => m.toString()).includes(userId)) {
+          generalInfoRoom.members.push(userId);
+          await generalInfoRoom.save();
+        }
 
         // Populate room data
         joinedRoom = await Room.findById(roomDoc._id)

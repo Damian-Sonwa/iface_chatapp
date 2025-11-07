@@ -382,7 +382,7 @@ const MessageInput = ({ onSend, onTypingStart, onTypingStop, replyingTo, onCance
   };
 
   return (
-    <div className="relative z-10 border-t border-gray-200 dark:border-gray-700 bg-white/90 dark:bg-gray-800/80 backdrop-blur-xl">
+    <div className="relative z-10 border-t border-gray-200 dark:border-gray-700 bg-white/90 dark:bg-gray-800/80 backdrop-blur-xl safe-area-inset-bottom">
       {/* Reply preview */}
       <AnimatePresence>
         {replyingTo && (
@@ -517,76 +517,96 @@ const MessageInput = ({ onSend, onTypingStart, onTypingStop, replyingTo, onCance
         )}
       </AnimatePresence>
 
-      <div className="p-4">
-        <form onSubmit={handleSubmit} className="flex items-end gap-3">
-          <input
-            ref={fileInputRef}
-            type="file"
-            multiple
-            accept="image/*,video/*,.pdf,.doc,.docx,.txt,.zip"
-            onChange={handleFileSelect}
-            className="hidden"
-          />
-          
-          <motion.button
-            type="button"
-            onClick={toggleEmojiPicker}
-            ref={emojiButtonRef}
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.95 }}
-            className="p-3 rounded-xl bg-gray-100 dark:bg-gray-700 backdrop-blur-sm border border-gray-200 dark:border-gray-600 hover:border-purple-500 transition text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 shadow-lg"
-          >
-            <Smile className="w-5 h-5" />
-          </motion.button>
-
-          <div className="flex-1 relative">
-            <textarea
-              value={message}
-              onChange={handleChange}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                  e.preventDefault();
-                  handleSubmit(e);
-                }
-              }}
-              placeholder={replyingTo ? `Reply to ${replyingTo.sender?.username}...` : "Type a message..."}
-              rows={1}
-              className="w-full px-4 py-3 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 resize-none max-h-32 overflow-y-auto transition-all shadow-lg"
-              style={{ minHeight: '48px' }}
-              disabled={uploading || recording}
+      <div className="p-2 sm:p-4 pb-safe">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-2">
+          {/* Main input row - always visible */}
+          <div className="flex items-end gap-2">
+            <input
+              ref={fileInputRef}
+              type="file"
+              multiple
+              accept="image/*,video/*,.pdf,.doc,.docx,.txt,.zip"
+              onChange={handleFileSelect}
+              className="hidden"
             />
+            
+            <motion.button
+              type="button"
+              onClick={toggleEmojiPicker}
+              ref={emojiButtonRef}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+              className="p-2 sm:p-3 rounded-xl bg-gray-100 dark:bg-gray-700 backdrop-blur-sm border border-gray-200 dark:border-gray-600 hover:border-purple-500 transition text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 shadow-lg flex-shrink-0"
+            >
+              <Smile className="w-4 h-4 sm:w-5 sm:h-5" />
+            </motion.button>
+
+            <div className="flex-1 relative min-w-0">
+              <textarea
+                value={message}
+                onChange={handleChange}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSubmit(e);
+                  }
+                }}
+                placeholder={replyingTo ? `Reply to ${replyingTo.sender?.username}...` : "Type a message..."}
+                rows={1}
+                className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 resize-none max-h-32 overflow-y-auto transition-all shadow-lg text-sm sm:text-base"
+                style={{ minHeight: '44px' }}
+                disabled={uploading || recording}
+              />
+            </div>
+
+            {/* Send button - always visible on mobile */}
+            <motion.button
+              type="submit"
+              disabled={(!message.trim() && selectedFiles.length === 0 && !audioBlob) || uploading || recording}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="p-2 sm:p-3 rounded-xl bg-gradient-to-r from-purple-500 to-purple-600 text-white hover:from-purple-400 hover:to-purple-500 transition disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-purple-500/50 relative overflow-hidden group flex-shrink-0"
+            >
+              {uploading ? (
+                <Loader2 className="w-4 h-4 sm:w-5 sm:h-5 animate-spin relative z-10" />
+              ) : (
+                <Send className="w-4 h-4 sm:w-5 sm:h-5 relative z-10" />
+              )}
+            </motion.button>
           </div>
 
-          <div className="flex items-center gap-2">
+          {/* Toolbar row - scrollable on mobile, compact */}
+          <div className="flex items-center gap-1 sm:gap-2 overflow-x-auto pb-1 -mx-2 px-2 scrollbar-hide">
             <button
               type="button"
               onClick={askAI}
               disabled={aiLoading}
-              className="p-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 transition text-gray-300 hover:text-white disabled:opacity-50 shadow-lg flex items-center gap-1"
+              className="p-2 sm:p-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 transition text-gray-300 hover:text-white disabled:opacity-50 shadow-lg flex items-center gap-1 flex-shrink-0"
               title="Ask AI"
             >
-              {aiLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Bot className="w-5 h-5" />}
+              {aiLoading ? <Loader2 className="w-4 h-4 sm:w-5 sm:h-5 animate-spin" /> : <Bot className="w-4 h-4 sm:w-5 sm:h-5" />}
             </button>
+            
             {/* Disappearing message toggle */}
             <motion.div 
-              className="relative group"
-              whileHover={{ scale: 1.1 }}
+              className="relative group flex-shrink-0"
+              whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
               <button
                 type="button"
                 onClick={() => setDisappearingAfter(disappearingAfter ? null : 24)}
-                className={`p-3 rounded-xl backdrop-blur-sm border transition ${
+                className={`p-2 sm:p-3 rounded-xl backdrop-blur-sm border transition ${
                   disappearingAfter
                     ? 'bg-purple-500/30 border-purple-400/50 text-purple-700 dark:text-purple-200 shadow-lg shadow-purple-500/30'
                     : 'bg-gray-100 dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-purple-500'
                 }`}
                 title="Disappearing message (24h)"
               >
-                <Clock className="w-5 h-5" />
+                <Clock className="w-4 h-4 sm:w-5 sm:h-5" />
               </button>
               {disappearingAfter && (
-                <span className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-purple-500/90 backdrop-blur-sm text-white text-xs px-2 py-1 rounded whitespace-nowrap border border-purple-400/50">
+                <span className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-purple-500/90 backdrop-blur-sm text-white text-xs px-2 py-1 rounded whitespace-nowrap border border-purple-400/50 hidden sm:block">
                   24h
                 </span>
               )}
@@ -598,23 +618,23 @@ const MessageInput = ({ onSend, onTypingStart, onTypingStop, replyingTo, onCance
                 type="button"
                 onClick={startRecording}
                 disabled={uploading}
-                whileHover={{ scale: 1.1 }}
+                whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="p-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 transition text-gray-300 hover:text-white disabled:opacity-50 shadow-lg"
+                className="p-2 sm:p-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 transition text-gray-300 hover:text-white disabled:opacity-50 shadow-lg flex-shrink-0"
                 title="Record voice message"
               >
-                <Mic className="w-5 h-5" />
+                <Mic className="w-4 h-4 sm:w-5 sm:h-5" />
               </motion.button>
             ) : (
               <motion.button
                 type="button"
                 onClick={stopRecording}
-                whileHover={{ scale: 1.1 }}
+                whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="p-3 rounded-xl bg-red-500 text-white hover:bg-red-600 transition shadow-lg shadow-red-500/50"
+                className="p-2 sm:p-3 rounded-xl bg-red-500 text-white hover:bg-red-600 transition shadow-lg shadow-red-500/50 flex-shrink-0"
                 title="Stop recording"
               >
-                <Square className="w-5 h-5" />
+                <Square className="w-4 h-4 sm:w-5 sm:h-5" />
               </motion.button>
             )}
 
@@ -622,25 +642,25 @@ const MessageInput = ({ onSend, onTypingStart, onTypingStop, replyingTo, onCance
               type="button"
               onClick={() => fileInputRef.current?.click()}
               disabled={uploading || selectedFiles.length >= 5}
-              whileHover={{ scale: 1.1 }}
+              whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="p-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 transition text-gray-300 hover:text-white disabled:opacity-50 shadow-lg"
+              className="p-2 sm:p-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 transition text-gray-300 hover:text-white disabled:opacity-50 shadow-lg flex-shrink-0"
               title="Attach file"
             >
-              <Paperclip className="w-5 h-5" />
+              <Paperclip className="w-4 h-4 sm:w-5 sm:h-5" />
             </motion.button>
 
-            {/* Voice typing (speech-to-text) */}
+            {/* Voice typing (speech-to-text) - hide on very small screens */}
             <motion.button
               type="button"
               onClick={toggleDictation}
               disabled={uploading || recording}
-              whileHover={{ scale: 1.1 }}
+              whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className={`p-3 rounded-xl ${dictating ? 'bg-purple-500 text-white' : 'bg-white/10 text-gray-300 hover:text-white'} backdrop-blur-sm border border-white/20 hover:bg-white/20 transition disabled:opacity-50 shadow-lg`}
+              className={`hidden xs:flex p-2 sm:p-3 rounded-xl ${dictating ? 'bg-purple-500 text-white' : 'bg-white/10 text-gray-300 hover:text-white'} backdrop-blur-sm border border-white/20 hover:bg-white/20 transition disabled:opacity-50 shadow-lg flex-shrink-0`}
               title="Voice typing"
             >
-              <Mic className="w-5 h-5" />
+              <Mic className="w-4 h-4 sm:w-5 sm:h-5" />
             </motion.button>
 
             {aiSuggested && (
@@ -649,36 +669,11 @@ const MessageInput = ({ onSend, onTypingStart, onTypingStop, replyingTo, onCance
                 onClick={() => onShareMomentFromAI?.(message)}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="px-3 py-2 rounded-xl bg-purple-500 text-white hover:bg-purple-600 text-xs shadow-lg"
+                className="px-2 sm:px-3 py-2 rounded-xl bg-purple-500 text-white hover:bg-purple-600 text-xs shadow-lg flex-shrink-0 whitespace-nowrap"
               >
                 Share as Moment
               </motion.button>
             )}
-
-            <motion.button
-              type="submit"
-              disabled={(!message.trim() && selectedFiles.length === 0 && !audioBlob) || uploading || recording}
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
-              className="p-3 rounded-xl bg-gradient-to-r from-purple-500 to-purple-600 text-white hover:from-purple-400 hover:to-purple-500 transition disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-purple-500/50 relative overflow-hidden group"
-            >
-              <motion.div
-                className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0"
-                animate={{
-                  x: ['-100%', '100%']
-                }}
-                transition={{
-                  duration: 2,
-                  repeat: Infinity,
-                  ease: 'linear'
-                }}
-              />
-              {uploading ? (
-                <Loader2 className="w-5 h-5 animate-spin relative z-10" />
-              ) : (
-                <Send className="w-5 h-5 relative z-10" />
-              )}
-            </motion.button>
           </div>
         </form>
       </div>

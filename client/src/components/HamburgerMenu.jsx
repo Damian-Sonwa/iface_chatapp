@@ -23,13 +23,16 @@ import {
   ChevronRight,
   Languages,
   Bot,
-  BarChart2
+  BarChart2,
+  GraduationCap
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import StatusSelector from './StatusSelector';
 import UserSearchDropdown from './UserSearchDropdown';
 import TechSkillsMenu from './TechSkillsMenu';
+import ClassroomList from './ClassroomList';
+import AllClassroomsView from './AllClassroomsView';
 import api from '../utils/api';
 
 /**
@@ -41,6 +44,7 @@ const HamburgerMenu = ({ darkMode, onToggleDarkMode, user }) => {
   const [activeSubmenu, setActiveSubmenu] = useState(null);
   const [showUserSearch, setShowUserSearch] = useState(false);
   const [showTechSkills, setShowTechSkills] = useState(false);
+  const [showAllClassrooms, setShowAllClassrooms] = useState(false);
   const menuRef = useRef(null);
   const navigate = useNavigate();
   const { logout } = useAuth();
@@ -48,21 +52,36 @@ const HamburgerMenu = ({ darkMode, onToggleDarkMode, user }) => {
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
+        // Don't close if clicking on hamburger button
+        if (event.target.closest('[data-hamburger-button]')) {
+          return;
+        }
         setIsOpen(false);
         setActiveSubmenu(null);
       }
     };
 
+    // Listen for custom event to open tech skills
+    const handleOpenTechSkills = () => {
+      if (isOpen) {
+        setShowTechSkills(true);
+      }
+    };
+
     if (isOpen) {
       document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('touchstart', handleClickOutside);
       document.body.style.overflow = 'hidden';
+      window.addEventListener('openTechSkills', handleOpenTechSkills);
     } else {
       document.body.style.overflow = 'unset';
     }
 
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
       document.body.style.overflow = 'unset';
+      window.removeEventListener('openTechSkills', handleOpenTechSkills);
     };
   }, [isOpen]);
 
@@ -91,8 +110,33 @@ const HamburgerMenu = ({ darkMode, onToggleDarkMode, user }) => {
       title: 'Tech / Digital Skills',
       icon: Sparkles,
       items: [
-        { id: 'explore-tech-skills', label: 'Explore Tech Skills', icon: Sparkles, action: () => setShowTechSkills(true) },
-        { id: 'select-group', label: 'Select Group', icon: Users, action: () => setShowTechSkills(true) },
+        { 
+          id: 'explore-tech-skills', 
+          label: 'Explore Tech Skills', 
+          icon: Sparkles, 
+          action: () => {
+            console.log('Opening Tech Skills Menu');
+            setShowTechSkills(true);
+          }
+        },
+        { 
+          id: 'select-group', 
+          label: 'Select Group', 
+          icon: Users, 
+          action: () => {
+            console.log('Opening Tech Skills Menu (Select Group)');
+            setShowTechSkills(true);
+          }
+        },
+        { 
+          id: 'classrooms', 
+          label: 'Classrooms', 
+          icon: GraduationCap, 
+          action: () => {
+            console.log('Opening All Classrooms');
+            setShowAllClassrooms(true);
+          }
+        },
       ]
     },
     {
@@ -172,10 +216,11 @@ const HamburgerMenu = ({ darkMode, onToggleDarkMode, user }) => {
     <>
       {/* Hamburger Button */}
       <motion.button
+        data-hamburger-button
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
         onClick={() => setIsOpen(!isOpen)}
-        className="relative z-[10001] p-2 rounded-lg bg-white/10 dark:bg-black/20 backdrop-blur-xl border border-white/30 dark:border-white/10 hover:bg-white/20 dark:hover:bg-black/30 transition-all"
+        className="relative z-[10001] p-2 sm:p-3 rounded-lg bg-white/10 dark:bg-black/20 backdrop-blur-xl border border-white/30 dark:border-white/10 hover:bg-white/20 dark:hover:bg-black/30 transition-all min-h-[44px] min-w-[44px] flex items-center justify-center touch-manipulation"
         aria-label="Menu"
       >
         <AnimatePresence mode="wait">
@@ -212,7 +257,7 @@ const HamburgerMenu = ({ darkMode, onToggleDarkMode, user }) => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsOpen(false)}
-              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[9999]"
+              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[10008]"
             />
 
             {/* Menu Panel */}
@@ -222,7 +267,7 @@ const HamburgerMenu = ({ darkMode, onToggleDarkMode, user }) => {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed right-0 top-0 bottom-0 w-80 max-w-[85vw] z-[10000] bg-gradient-to-br from-slate-900 via-purple-900/40 to-slate-900 backdrop-blur-xl border-l border-white/20 shadow-2xl flex flex-col"
+              className="fixed right-0 top-0 bottom-0 w-80 max-w-[85vw] z-[10009] bg-gradient-to-br from-slate-900 via-purple-900/40 to-slate-900 backdrop-blur-xl border-l border-white/20 shadow-2xl flex flex-col h-screen max-h-screen overflow-hidden"
             >
               {/* Header */}
               <div className="p-6 border-b border-white/10">
@@ -232,7 +277,7 @@ const HamburgerMenu = ({ darkMode, onToggleDarkMode, user }) => {
                   </h2>
                   <button
                     onClick={() => setIsOpen(false)}
-                    className="p-2 rounded-lg hover:bg-white/10 transition-colors"
+                    className="p-3 rounded-lg hover:bg-white/10 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center touch-manipulation"
                   >
                     <X className="w-5 h-5 text-gray-400" />
                   </button>
@@ -287,7 +332,7 @@ const HamburgerMenu = ({ darkMode, onToggleDarkMode, user }) => {
                             whileHover={{ scale: 1.02, x: 4 }}
                             whileTap={{ scale: 0.98 }}
                             onClick={() => handleMenuClick(item)}
-                            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-white/5 hover:bg-white/10 backdrop-blur-sm border border-white/10 hover:border-primaryFrom/30 transition-all group mb-2 relative z-10"
+                            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-white/5 hover:bg-white/10 backdrop-blur-sm border border-white/10 hover:border-primaryFrom/30 transition-all group mb-2 relative z-10 min-h-[48px] touch-manipulation"
                           >
                             <div className="p-2 rounded-lg bg-white/5 group-hover:bg-primaryFrom/20 transition-colors">
                               <ItemIcon className="w-5 h-5 text-gray-300 group-hover:text-primaryFrom transition-colors" />
@@ -310,7 +355,7 @@ const HamburgerMenu = ({ darkMode, onToggleDarkMode, user }) => {
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={onToggleDarkMode}
-                  className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-white/5 hover:bg-white/10 backdrop-blur-sm border border-white/10 hover:border-primaryFrom/30 transition-all mb-2"
+                  className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-white/5 hover:bg-white/10 backdrop-blur-sm border border-white/10 hover:border-primaryFrom/30 transition-all mb-2 min-h-[48px] touch-manipulation"
                 >
                   <div className="p-2 rounded-lg bg-white/5">
                     {darkMode ? (
@@ -329,7 +374,7 @@ const HamburgerMenu = ({ darkMode, onToggleDarkMode, user }) => {
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={handleLogout}
-                  className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-red-500/10 hover:bg-red-500/20 backdrop-blur-sm border border-red-500/30 hover:border-red-500/50 transition-all"
+                  className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-red-500/10 hover:bg-red-500/20 backdrop-blur-sm border border-red-500/30 hover:border-red-500/50 transition-all min-h-[48px] touch-manipulation"
                 >
                   <div className="p-2 rounded-lg bg-red-500/20">
                     <LogOut className="w-5 h-5 text-red-400" />
@@ -372,25 +417,38 @@ const HamburgerMenu = ({ darkMode, onToggleDarkMode, user }) => {
             {showTechSkills && (
               <TechSkillsMenu
                 onClose={() => {
+                  console.log('🚪 Closing Tech Skills Menu');
                   setShowTechSkills(false);
                   setIsOpen(false); // Also close hamburger menu when closing tech skills
                 }}
                 onJoinSuccess={(room) => {
+                  console.log('✅ Join success, room:', room);
                   setShowTechSkills(false);
                   setIsOpen(false);
                   // Navigate directly to the joined room
                   if (room && room._id) {
+                    // Use replace to avoid back button issues
                     navigate('/chat', { 
+                      replace: true,
                       state: { 
                         chatId: room._id, 
-                        chatType: 'room' 
+                        chatType: 'room',
+                        forceRefresh: true
                       } 
                     });
+                    // Rooms will be refetched automatically via React Query
                   } else {
                     // Fallback: navigate to chat page
-                    navigate('/chat');
+                    navigate('/chat', { replace: true });
                   }
                 }}
+              />
+            )}
+
+            {/* All Classrooms View */}
+            {showAllClassrooms && (
+              <AllClassroomsView
+                onClose={() => setShowAllClassrooms(false)}
               />
             )}
           </AnimatePresence>

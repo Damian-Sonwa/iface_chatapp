@@ -9,12 +9,32 @@ const Sidebar = ({ rooms, privateChats, activeChat, chatType, onChatSelect, onOp
   const { user: currentUser } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Combine rooms and privateChats into a unified conversation list
-  // FILTER OUT TECH SKILL GROUPS - they should only appear when accessed via Tech Groups card
+  // Filter rooms to only show groups the user is a member of
+  const currentUserId = (currentUser?._id || currentUser?.id)?.toString();
+  
+  const userRooms = rooms.filter(room => {
+    // Check if user is a member
+    const isMember = room.members?.some(m => {
+      const memberId = (m._id?.toString() || m.id?.toString() || m?.toString());
+      return memberId === currentUserId;
+    });
+    
+    // Only show rooms where user is a member
+    // Exclude main tech skill groups (they're accessed via Tech Groups card)
+    // But include General Info rooms and Classrooms if user is a member
+    if (!isMember) return false;
+    
+    // Exclude main tech skill groups (roomType === 'main' with techSkillId)
+    if (room.techSkillId && room.roomType === 'main') {
+      return false; // Main tech groups accessed via Tech Groups card
+    }
+    
+    return true; // Include all other rooms where user is a member
+  });
+
+  // Combine user's rooms and privateChats into a unified conversation list
   const allConversations = [
-    ...rooms
-      .filter(room => !room.techSkillId) // Exclude tech skill groups
-      .map(room => ({ ...room, conversationType: 'room' })),
+    ...userRooms.map(room => ({ ...room, conversationType: 'room' })),
     ...privateChats.map(chat => ({ ...chat, conversationType: 'private' }))
   ].sort((a, b) => {
     // Sort by lastMessageAt (most recent first)
@@ -161,6 +181,8 @@ const Sidebar = ({ rooms, privateChats, activeChat, chatType, onChatSelect, onOp
             } else {
               // For rooms/groups
               const isTechSkillGroup = conv.techSkillId || conv.requiresApproval;
+              const isGeneralInfo = conv.roomType === 'general-info';
+              const isClassroom = conv.roomType === 'classroom';
               const currentUserId = (currentUser?._id || currentUser?.id)?.toString();
               const isMember = conv.members?.some(m => 
                 (m._id?.toString() || m.id?.toString() || m?.toString()) === currentUserId
@@ -179,6 +201,28 @@ const Sidebar = ({ rooms, privateChats, activeChat, chatType, onChatSelect, onOp
                 }
               };
 
+              // Get icon based on room type
+              const getRoomIcon = () => {
+                if (isClassroom) {
+                  return <span className="text-indigo-300 relative z-10">🎓</span>;
+                } else if (isGeneralInfo) {
+                  return <span className="text-blue-300 relative z-10">ℹ️</span>;
+                }
+                return <Users className="w-5 h-5 text-purple-200 relative z-10" />;
+              };
+
+              // Get room name
+              const getRoomName = () => {
+                if (isClassroom) {
+                  return conv.name || 'Classroom';
+                } else if (isGeneralInfo) {
+                  return conv.name || `${conv.techSkillId?.name || ''} - General Info`;
+                } else if (conv.techSkillId?.name) {
+                  return `${conv.techSkillId.name} Group`;
+                }
+                return conv.name || 'Group Chat';
+              };
+
               return (
                 <motion.button
                   key={conv._id}
@@ -186,21 +230,35 @@ const Sidebar = ({ rooms, privateChats, activeChat, chatType, onChatSelect, onOp
                   whileHover={{ scale: 1.02, x: 4 }}
                   className={`w-full p-3 text-left transition flex items-center gap-3 rounded-xl backdrop-blur-sm border ${
                     isActive
-                      ? 'bg-purple-500/20 border-purple-400/50 shadow-lg shadow-purple-500/20'
+                      ? isClassroom
+                        ? 'bg-indigo-500/20 border-indigo-400/50 shadow-lg shadow-indigo-500/20'
+                        : isGeneralInfo
+                        ? 'bg-blue-500/20 border-blue-400/50 shadow-lg shadow-blue-500/20'
+                        : 'bg-purple-500/20 border-purple-400/50 shadow-lg shadow-purple-500/20'
                       : 'bg-white/5 border-white/10 hover:bg-white/10'
                   }`}
                 >
                   <div className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold relative overflow-hidden ${
                     isActive
-                      ? 'bg-gradient-to-br from-purple-500/30 to-pink-500/30 border border-purple-400/50'
+                      ? isClassroom
+                        ? 'bg-gradient-to-br from-indigo-500/30 to-purple-500/30 border border-indigo-400/50'
+                        : isGeneralInfo
+                        ? 'bg-gradient-to-br from-blue-500/30 to-cyan-500/30 border border-blue-400/50'
+                        : 'bg-gradient-to-br from-purple-500/30 to-pink-500/30 border border-purple-400/50'
                       : 'bg-white/10 border border-white/20'
                   }`}>
-                    <div className="absolute inset-0 bg-gradient-to-br from-purple-400/20 to-pink-400/20 animate-pulse" />
-                    <Users className="w-5 h-5 text-purple-200 relative z-10" />
+                    <div className={`absolute inset-0 animate-pulse ${
+                      isClassroom
+                        ? 'bg-gradient-to-br from-indigo-400/20 to-purple-400/20'
+                        : isGeneralInfo
+                        ? 'bg-gradient-to-br from-blue-400/20 to-cyan-400/20'
+                        : 'bg-gradient-to-br from-purple-400/20 to-pink-400/20'
+                    }`} />
+                    {getRoomIcon()}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="font-medium truncate text-gray-100">
-                      {conv.techSkillId?.name ? `${conv.techSkillId.name} Group` : (conv.name || 'Group Chat')}
+                      {getRoomName()}
                     </div>
                     <div className="text-xs text-gray-400 truncate">
                       {conv.lastMessage?.content || conv.description || conv.techSkillId?.description || 'No messages yet'}

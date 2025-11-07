@@ -1123,6 +1123,7 @@ const techSkills = [
     questionGenerator: 'technical',
     questionTemplate: 'What security certifications or experience do you have in cybersecurity?',
     questions: [
+      // Beginner - 10 questions
       {
         level: 'Beginner',
         questionText: 'What is a firewall?',
@@ -1138,6 +1139,63 @@ const techSkills = [
         questionType: 'multiple-choice'
       },
       {
+        level: 'Beginner',
+        questionText: 'What is a password?',
+        correctAnswer: 'Secret code for authentication',
+        options: ['Secret code for authentication', 'A username', 'An email', 'A file'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Beginner',
+        questionText: 'What is malware?',
+        correctAnswer: 'Malicious software',
+        options: ['Malicious software', 'Good software', 'System software', 'Application software'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Beginner',
+        questionText: 'What is a virus?',
+        correctAnswer: 'Malicious program that replicates',
+        options: ['Malicious program that replicates', 'A computer part', 'A database', 'A file'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Beginner',
+        questionText: 'What is phishing?',
+        correctAnswer: 'Fake emails to steal information',
+        options: ['Fake emails to steal information', 'Fishing online', 'Email marketing', 'Social media'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Beginner',
+        questionText: 'What is a VPN?',
+        correctAnswer: 'Virtual Private Network',
+        options: ['Virtual Private Network', 'Very Private Network', 'Video Private Network', 'Virtual Public Network'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Beginner',
+        questionText: 'What is antivirus software?',
+        correctAnswer: 'Software that protects against malware',
+        options: ['Software that protects against malware', 'A virus', 'A firewall', 'A password'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Beginner',
+        questionText: 'What is a security patch?',
+        correctAnswer: 'Update to fix security vulnerabilities',
+        options: ['Update to fix security vulnerabilities', 'A new feature', 'A bug', 'A file'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Beginner',
+        questionText: 'What is a strong password?',
+        correctAnswer: 'Password with mixed characters and length',
+        options: ['Password with mixed characters and length', 'Short password', 'Simple password', 'One word'],
+        questionType: 'multiple-choice'
+      },
+      // Intermediate - 10 questions
+      {
         level: 'Intermediate',
         questionText: 'What is a SQL injection attack?',
         correctAnswer: 'Injecting malicious SQL code',
@@ -1152,10 +1210,130 @@ const techSkills = [
         questionType: 'multiple-choice'
       },
       {
+        level: 'Intermediate',
+        questionText: 'What is XSS?',
+        correctAnswer: 'Cross-Site Scripting',
+        options: ['Cross-Site Scripting', 'Cross-Site Security', 'Cross-Site System', 'Cross-Site Service'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is a DDoS attack?',
+        correctAnswer: 'Distributed Denial of Service',
+        options: ['Distributed Denial of Service', 'Data Denial of Service', 'Direct Denial of Service', 'Digital Denial of Service'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is SSL/TLS?',
+        correctAnswer: 'Secure communication protocols',
+        options: ['Secure communication protocols', 'Storage protocols', 'Server protocols', 'System protocols'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is a vulnerability?',
+        correctAnswer: 'Weakness in system security',
+        options: ['Weakness in system security', 'A feature', 'A bug', 'A file'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is a security audit?',
+        correctAnswer: 'Review of security measures',
+        options: ['Review of security measures', 'Installing software', 'Updating systems', 'Backing up data'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is a honeypot?',
+        correctAnswer: 'Decoy system to detect attacks',
+        options: ['Decoy system to detect attacks', 'A database', 'A server', 'A firewall'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is access control?',
+        correctAnswer: 'Managing who can access resources',
+        options: ['Managing who can access resources', 'Controlling networks', 'Managing files', 'Controlling databases'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is encryption at rest?',
+        correctAnswer: 'Encrypting stored data',
+        options: ['Encrypting stored data', 'Encrypting network traffic', 'Encrypting emails', 'Encrypting passwords'],
+        questionType: 'multiple-choice'
+      },
+      // Professional - 10 questions
+      {
         level: 'Professional',
         questionText: 'What is penetration testing?',
         correctAnswer: 'Testing security by simulating attacks',
         options: ['Testing security by simulating attacks', 'Breaking into systems', 'Fixing bugs', 'Writing code'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is zero-day vulnerability?',
+        correctAnswer: 'Unknown security flaw',
+        options: ['Unknown security flaw', 'Old vulnerability', 'Fixed vulnerability', 'Minor issue'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is threat modeling?',
+        correctAnswer: 'Identifying potential security threats',
+        options: ['Identifying potential security threats', 'Creating threats', 'Modeling systems', 'Testing networks'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is SIEM?',
+        correctAnswer: 'Security Information and Event Management',
+        options: ['Security Information and Event Management', 'System Information Event Management', 'Security Internet Event Management', 'System Internet Event Management'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is public key infrastructure?',
+        correctAnswer: 'System for managing digital certificates',
+        options: ['System for managing digital certificates', 'Public networks', 'Private keys', 'Public databases'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is a security incident response?',
+        correctAnswer: 'Process for handling security breaches',
+        options: ['Process for handling security breaches', 'Preventing attacks', 'Installing software', 'Backing up data'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is defense in depth?',
+        correctAnswer: 'Multiple layers of security',
+        options: ['Multiple layers of security', 'Single security layer', 'Network security', 'Firewall only'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is a security compliance framework?',
+        correctAnswer: 'Standards for security practices',
+        options: ['Standards for security practices', 'Security tools', 'Network protocols', 'Encryption methods'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is red team vs blue team?',
+        correctAnswer: 'Attackers vs defenders in security testing',
+        options: ['Attackers vs defenders in security testing', 'Two security teams', 'Network teams', 'System teams'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is a security orchestration?',
+        correctAnswer: 'Automating security processes',
+        options: ['Automating security processes', 'Manual security', 'Security training', 'Security audits'],
         questionType: 'multiple-choice'
       }
     ]
@@ -1167,6 +1345,7 @@ const techSkills = [
     questionGenerator: 'technical',
     questionTemplate: 'What network technologies and protocols are you familiar with?',
     questions: [
+      // Beginner - 10 questions
       {
         level: 'Beginner',
         questionText: 'What does IP stand for?',
@@ -1182,6 +1361,63 @@ const techSkills = [
         questionType: 'multiple-choice'
       },
       {
+        level: 'Beginner',
+        questionText: 'What is a switch?',
+        correctAnswer: 'Network device that connects devices',
+        options: ['Network device that connects devices', 'A router', 'A server', 'A database'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Beginner',
+        questionText: 'What is Wi-Fi?',
+        correctAnswer: 'Wireless network technology',
+        options: ['Wireless network technology', 'Wired network', 'Internet service', 'Computer brand'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Beginner',
+        questionText: 'What is LAN?',
+        correctAnswer: 'Local Area Network',
+        options: ['Local Area Network', 'Large Area Network', 'Long Area Network', 'Limited Area Network'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Beginner',
+        questionText: 'What is WAN?',
+        correctAnswer: 'Wide Area Network',
+        options: ['Wide Area Network', 'Wireless Area Network', 'Web Area Network', 'Work Area Network'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Beginner',
+        questionText: 'What is an IP address?',
+        correctAnswer: 'Unique identifier for devices on network',
+        options: ['Unique identifier for devices on network', 'Internet password', 'Website address', 'Email address'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Beginner',
+        questionText: 'What is bandwidth?',
+        correctAnswer: 'Data transfer capacity',
+        options: ['Data transfer capacity', 'Network speed', 'Internet provider', 'Network device'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Beginner',
+        questionText: 'What is latency?',
+        correctAnswer: 'Delay in data transmission',
+        options: ['Delay in data transmission', 'Network speed', 'Data amount', 'Network type'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Beginner',
+        questionText: 'What is a modem?',
+        correctAnswer: 'Device that connects to internet',
+        options: ['Device that connects to internet', 'A router', 'A switch', 'A server'],
+        questionType: 'multiple-choice'
+      },
+      // Intermediate - 10 questions
+      {
         level: 'Intermediate',
         questionText: 'What is TCP/IP?',
         correctAnswer: 'Transmission Control Protocol/Internet Protocol',
@@ -1196,10 +1432,130 @@ const techSkills = [
         questionType: 'multiple-choice'
       },
       {
+        level: 'Intermediate',
+        questionText: 'What is DHCP?',
+        correctAnswer: 'Dynamic Host Configuration Protocol',
+        options: ['Dynamic Host Configuration Protocol', 'Dynamic Host Control Protocol', 'Data Host Configuration Protocol', 'Domain Host Configuration Protocol'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is NAT?',
+        correctAnswer: 'Network Address Translation',
+        options: ['Network Address Translation', 'Network Address Transfer', 'Network Access Translation', 'Network Access Transfer'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is subnetting?',
+        correctAnswer: 'Dividing network into smaller networks',
+        options: ['Dividing network into smaller networks', 'Combining networks', 'Connecting networks', 'Securing networks'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is VLAN?',
+        correctAnswer: 'Virtual Local Area Network',
+        options: ['Virtual Local Area Network', 'Visual Local Area Network', 'Variable Local Area Network', 'Valid Local Area Network'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is a gateway?',
+        correctAnswer: 'Network entry/exit point',
+        options: ['Network entry/exit point', 'A router', 'A switch', 'A server'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is packet loss?',
+        correctAnswer: 'Data packets not reaching destination',
+        options: ['Data packets not reaching destination', 'Slow network', 'Fast network', 'Network device'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is a firewall in networking?',
+        correctAnswer: 'Security barrier for network traffic',
+        options: ['Security barrier for network traffic', 'A router', 'A switch', 'A server'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is port forwarding?',
+        correctAnswer: 'Redirecting network traffic to specific port',
+        options: ['Redirecting network traffic to specific port', 'Blocking ports', 'Opening ports', 'Closing ports'],
+        questionType: 'multiple-choice'
+      },
+      // Professional - 10 questions
+      {
         level: 'Professional',
         questionText: 'What is a VPN?',
         correctAnswer: 'Virtual Private Network',
         options: ['Virtual Private Network', 'Virtual Public Network', 'Valid Private Network', 'Valid Public Network'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is BGP?',
+        correctAnswer: 'Border Gateway Protocol',
+        options: ['Border Gateway Protocol', 'Border Gateway Process', 'Basic Gateway Protocol', 'Broad Gateway Protocol'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is OSPF?',
+        correctAnswer: 'Open Shortest Path First',
+        options: ['Open Shortest Path First', 'Open Shortest Path Forward', 'Optimal Shortest Path First', 'Optimal Shortest Path Forward'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is MPLS?',
+        correctAnswer: 'Multiprotocol Label Switching',
+        options: ['Multiprotocol Label Switching', 'Multiprotocol Label System', 'Multiple Protocol Label Switching', 'Multiple Protocol Label System'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is SDN?',
+        correctAnswer: 'Software Defined Networking',
+        options: ['Software Defined Networking', 'Software Designed Networking', 'System Defined Networking', 'System Designed Networking'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is load balancing in networking?',
+        correctAnswer: 'Distributing traffic across multiple paths',
+        options: ['Distributing traffic across multiple paths', 'Blocking traffic', 'Limiting traffic', 'Encrypting traffic'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is network redundancy?',
+        correctAnswer: 'Backup paths for network reliability',
+        options: ['Backup paths for network reliability', 'Single network path', 'Network security', 'Network speed'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is QoS?',
+        correctAnswer: 'Quality of Service',
+        options: ['Quality of Service', 'Quality of System', 'Quantity of Service', 'Quantity of System'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is network segmentation?',
+        correctAnswer: 'Dividing network into isolated segments',
+        options: ['Dividing network into isolated segments', 'Combining networks', 'Securing networks', 'Connecting networks'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is network monitoring?',
+        correctAnswer: 'Observing and analyzing network performance',
+        options: ['Observing and analyzing network performance', 'Blocking networks', 'Creating networks', 'Deleting networks'],
         questionType: 'multiple-choice'
       }
     ]
@@ -1211,6 +1567,7 @@ const techSkills = [
     questionGenerator: 'technical',
     questionTemplate: 'What DevOps tools and cloud platforms have you worked with?',
     questions: [
+      // Beginner - 10 questions
       {
         level: 'Beginner',
         questionText: 'What is CI/CD?',
@@ -1226,6 +1583,63 @@ const techSkills = [
         questionType: 'multiple-choice'
       },
       {
+        level: 'Beginner',
+        questionText: 'What is a container?',
+        correctAnswer: 'Package with app and dependencies',
+        options: ['Package with app and dependencies', 'A database', 'A server', 'A file'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Beginner',
+        questionText: 'What is Git?',
+        correctAnswer: 'Version control system',
+        options: ['Version control system', 'A database', 'A server', 'A design tool'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Beginner',
+        questionText: 'What is GitHub?',
+        correctAnswer: 'Code hosting platform',
+        options: ['Code hosting platform', 'A database', 'A server', 'A design tool'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Beginner',
+        questionText: 'What is deployment?',
+        correctAnswer: 'Releasing software to production',
+        options: ['Releasing software to production', 'Writing code', 'Testing code', 'Designing software'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Beginner',
+        questionText: 'What is automation?',
+        correctAnswer: 'Automating repetitive tasks',
+        options: ['Automating repetitive tasks', 'Manual work', 'Testing', 'Designing'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Beginner',
+        questionText: 'What is a server?',
+        correctAnswer: 'Computer that provides services',
+        options: ['Computer that provides services', 'A database', 'A file', 'A design tool'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Beginner',
+        questionText: 'What is cloud computing?',
+        correctAnswer: 'Delivering computing services over internet',
+        options: ['Delivering computing services over internet', 'Local computing', 'Desktop computing', 'Mobile computing'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Beginner',
+        questionText: 'What is a pipeline?',
+        correctAnswer: 'Automated workflow for software delivery',
+        options: ['Automated workflow for software delivery', 'A pipe', 'A database', 'A server'],
+        questionType: 'multiple-choice'
+      },
+      // Intermediate - 10 questions
+      {
         level: 'Intermediate',
         questionText: 'What is Kubernetes?',
         correctAnswer: 'Container orchestration platform',
@@ -1240,10 +1654,130 @@ const techSkills = [
         questionType: 'multiple-choice'
       },
       {
+        level: 'Intermediate',
+        questionText: 'What is Terraform?',
+        correctAnswer: 'Infrastructure as Code tool',
+        options: ['Infrastructure as Code tool', 'A database', 'A server', 'A design tool'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is Ansible?',
+        correctAnswer: 'Configuration management tool',
+        options: ['Configuration management tool', 'A database', 'A server', 'A design tool'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is Jenkins?',
+        correctAnswer: 'CI/CD automation server',
+        options: ['CI/CD automation server', 'A database', 'A server framework', 'A design tool'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is a Docker image?',
+        correctAnswer: 'Template for creating containers',
+        options: ['Template for creating containers', 'A running container', 'A database', 'A file'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is monitoring?',
+        correctAnswer: 'Observing system performance',
+        options: ['Observing system performance', 'Controlling systems', 'Creating systems', 'Deleting systems'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is logging?',
+        correctAnswer: 'Recording system events',
+        options: ['Recording system events', 'Deleting logs', 'Creating files', 'Managing databases'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is scaling?',
+        correctAnswer: 'Adjusting resources based on demand',
+        options: ['Adjusting resources based on demand', 'Deleting resources', 'Creating resources', 'Managing resources'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is a microservice?',
+        correctAnswer: 'Small independent service',
+        options: ['Small independent service', 'Large service', 'Database service', 'Network service'],
+        questionType: 'multiple-choice'
+      },
+      // Professional - 10 questions
+      {
         level: 'Professional',
         questionText: 'What is a blue-green deployment?',
         correctAnswer: 'A deployment strategy with two environments',
         options: ['A deployment strategy with two environments', 'A color scheme', 'A design pattern', 'A database type'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is canary deployment?',
+        correctAnswer: 'Gradual rollout to subset of users',
+        options: ['Gradual rollout to subset of users', 'Full deployment', 'No deployment', 'Manual deployment'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is service mesh?',
+        correctAnswer: 'Infrastructure layer for service communication',
+        options: ['Infrastructure layer for service communication', 'A database', 'A server', 'A network'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is GitOps?',
+        correctAnswer: 'Using Git for operations',
+        options: ['Using Git for operations', 'Git operations', 'Git management', 'Git hosting'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is observability?',
+        correctAnswer: 'Understanding system internal state',
+        options: ['Understanding system internal state', 'Monitoring only', 'Logging only', 'Testing only'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is chaos engineering?',
+        correctAnswer: 'Testing system resilience',
+        options: ['Testing system resilience', 'Breaking systems', 'Creating chaos', 'Deleting systems'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is infrastructure drift?',
+        correctAnswer: 'Deviation from defined infrastructure',
+        options: ['Deviation from defined infrastructure', 'Infrastructure change', 'Infrastructure update', 'Infrastructure creation'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is immutable infrastructure?',
+        correctAnswer: 'Infrastructure that cannot be modified',
+        options: ['Infrastructure that cannot be modified', 'Infrastructure that changes', 'Infrastructure that updates', 'Infrastructure that deletes'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is a distributed system?',
+        correctAnswer: 'System spread across multiple machines',
+        options: ['System spread across multiple machines', 'Single machine system', 'Network system', 'Database system'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is container orchestration?',
+        correctAnswer: 'Managing containerized applications',
+        options: ['Managing containerized applications', 'Creating containers', 'Deleting containers', 'Running containers'],
         questionType: 'multiple-choice'
       }
     ]
@@ -1255,6 +1789,7 @@ const techSkills = [
     questionGenerator: 'technical',
     questionTemplate: 'What machine learning frameworks and algorithms have you used?',
     questions: [
+      // Beginner - 10 questions
       {
         level: 'Beginner',
         questionText: 'What is machine learning?',
@@ -1270,6 +1805,63 @@ const techSkills = [
         questionType: 'multiple-choice'
       },
       {
+        level: 'Beginner',
+        questionText: 'What is a dataset?',
+        correctAnswer: 'Collection of data for training',
+        options: ['Collection of data for training', 'A database', 'A file', 'A server'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Beginner',
+        questionText: 'What is training data?',
+        correctAnswer: 'Data used to train model',
+        options: ['Data used to train model', 'Test data', 'Production data', 'Raw data'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Beginner',
+        questionText: 'What is a model?',
+        correctAnswer: 'Trained algorithm that makes predictions',
+        options: ['Trained algorithm that makes predictions', 'A database', 'A file', 'A server'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Beginner',
+        questionText: 'What is Python used for in ML?',
+        correctAnswer: 'Programming language for ML',
+        options: ['Programming language for ML', 'A database', 'A server', 'A design tool'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Beginner',
+        questionText: 'What is a prediction?',
+        correctAnswer: 'Model output based on input',
+        options: ['Model output based on input', 'Model input', 'Model training', 'Model testing'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Beginner',
+        questionText: 'What is accuracy?',
+        correctAnswer: 'How correct model predictions are',
+        options: ['How correct model predictions are', 'Model speed', 'Model size', 'Model complexity'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Beginner',
+        questionText: 'What is a feature?',
+        correctAnswer: 'Input variable for model',
+        options: ['Input variable for model', 'Model output', 'Model parameter', 'Model result'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Beginner',
+        questionText: 'What is a label?',
+        correctAnswer: 'Correct answer in training data',
+        options: ['Correct answer in training data', 'Input data', 'Model output', 'Model parameter'],
+        questionType: 'multiple-choice'
+      },
+      // Intermediate - 10 questions
+      {
         level: 'Intermediate',
         questionText: 'What is a neural network?',
         correctAnswer: 'A computing system inspired by brains',
@@ -1284,10 +1876,130 @@ const techSkills = [
         questionType: 'multiple-choice'
       },
       {
+        level: 'Intermediate',
+        questionText: 'What is TensorFlow?',
+        correctAnswer: 'ML framework by Google',
+        options: ['ML framework by Google', 'A database', 'A server', 'A design tool'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is PyTorch?',
+        correctAnswer: 'ML framework by Facebook',
+        options: ['ML framework by Facebook', 'A database', 'A server', 'A design tool'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is cross-validation?',
+        correctAnswer: 'Testing model on different data splits',
+        options: ['Testing model on different data splits', 'Training model', 'Deploying model', 'Deleting model'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is feature engineering?',
+        correctAnswer: 'Creating better input features',
+        options: ['Creating better input features', 'Training model', 'Testing model', 'Deploying model'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is regularization?',
+        correctAnswer: 'Preventing overfitting',
+        options: ['Preventing overfitting', 'Speeding up training', 'Slowing down training', 'Deleting data'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is a hyperparameter?',
+        correctAnswer: 'Model configuration setting',
+        options: ['Model configuration setting', 'Model input', 'Model output', 'Model data'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is unsupervised learning?',
+        correctAnswer: 'Learning from unlabeled data',
+        options: ['Learning from unlabeled data', 'Learning from labeled data', 'Learning from code', 'Learning manually'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is a loss function?',
+        correctAnswer: 'Measures model prediction error',
+        options: ['Measures model prediction error', 'Measures model speed', 'Measures model size', 'Measures model complexity'],
+        questionType: 'multiple-choice'
+      },
+      // Professional - 10 questions
+      {
         level: 'Professional',
         questionText: 'What is gradient descent?',
         correctAnswer: 'An optimization algorithm',
         options: ['An optimization algorithm', 'A database query', 'A design pattern', 'A server protocol'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is backpropagation?',
+        correctAnswer: 'Training neural networks algorithm',
+        options: ['Training neural networks algorithm', 'Forward propagation', 'Data processing', 'Model deployment'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is transfer learning?',
+        correctAnswer: 'Using pre-trained models for new tasks',
+        options: ['Using pre-trained models for new tasks', 'Training from scratch', 'Deleting models', 'Copying models'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is a convolutional neural network?',
+        correctAnswer: 'Neural network for image processing',
+        options: ['Neural network for image processing', 'Text processing network', 'Audio processing network', 'Data processing network'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is reinforcement learning?',
+        correctAnswer: 'Learning through rewards and penalties',
+        options: ['Learning through rewards and penalties', 'Learning from labels', 'Learning from data', 'Learning from code'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is model deployment?',
+        correctAnswer: 'Making model available for use',
+        options: ['Making model available for use', 'Training model', 'Testing model', 'Deleting model'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is A/B testing for ML?',
+        correctAnswer: 'Comparing model versions',
+        options: ['Comparing model versions', 'Training models', 'Testing models', 'Deleting models'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is model versioning?',
+        correctAnswer: 'Tracking different model versions',
+        options: ['Tracking different model versions', 'Training models', 'Deleting models', 'Testing models'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is MLOps?',
+        correctAnswer: 'ML operations and deployment',
+        options: ['ML operations and deployment', 'ML training', 'ML testing', 'ML data'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is model drift?',
+        correctAnswer: 'Model performance degradation over time',
+        options: ['Model performance degradation over time', 'Model improvement', 'Model training', 'Model testing'],
         questionType: 'multiple-choice'
       }
     ]
@@ -1299,6 +2011,7 @@ const techSkills = [
     questionGenerator: 'technical',
     questionTemplate: 'What mobile development platforms and frameworks are you proficient in?',
     questions: [
+      // Beginner - 10 questions
       {
         level: 'Beginner',
         questionText: 'What is React Native?',
@@ -1314,6 +2027,63 @@ const techSkills = [
         questionType: 'multiple-choice'
       },
       {
+        level: 'Beginner',
+        questionText: 'What is iOS?',
+        correctAnswer: 'Apple mobile operating system',
+        options: ['Apple mobile operating system', 'Android OS', 'Windows OS', 'Linux OS'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Beginner',
+        questionText: 'What is Android?',
+        correctAnswer: 'Google mobile operating system',
+        options: ['Google mobile operating system', 'Apple OS', 'Windows OS', 'Linux OS'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Beginner',
+        questionText: 'What is a mobile app?',
+        correctAnswer: 'Application for mobile devices',
+        options: ['Application for mobile devices', 'Desktop application', 'Web application', 'Server application'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Beginner',
+        questionText: 'What is an emulator?',
+        correctAnswer: 'Software that simulates mobile device',
+        options: ['Software that simulates mobile device', 'A real device', 'A server', 'A database'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Beginner',
+        questionText: 'What is responsive design in mobile?',
+        correctAnswer: 'Design that adapts to screen sizes',
+        options: ['Design that adapts to screen sizes', 'Fixed design', 'Large design', 'Small design'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Beginner',
+        questionText: 'What is a touch interface?',
+        correctAnswer: 'User interface controlled by touch',
+        options: ['User interface controlled by touch', 'Keyboard interface', 'Mouse interface', 'Voice interface'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Beginner',
+        questionText: 'What is an app store?',
+        correctAnswer: 'Marketplace for mobile apps',
+        options: ['Marketplace for mobile apps', 'A database', 'A server', 'A file'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Beginner',
+        questionText: 'What is a mobile SDK?',
+        correctAnswer: 'Software Development Kit for mobile',
+        options: ['Software Development Kit for mobile', 'A database', 'A server', 'A design tool'],
+        questionType: 'multiple-choice'
+      },
+      // Intermediate - 10 questions
+      {
         level: 'Intermediate',
         questionText: 'What is Flutter?',
         correctAnswer: 'A UI toolkit for cross-platform apps',
@@ -1328,10 +2098,130 @@ const techSkills = [
         questionType: 'multiple-choice'
       },
       {
+        level: 'Intermediate',
+        questionText: 'What is cross-platform development?',
+        correctAnswer: 'Developing apps for multiple platforms',
+        options: ['Developing apps for multiple platforms', 'Single platform', 'Desktop only', 'Web only'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is a mobile API?',
+        correctAnswer: 'Interface for mobile app communication',
+        options: ['Interface for mobile app communication', 'A database', 'A server', 'A file'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is push notification?',
+        correctAnswer: 'Message sent from server to app',
+        options: ['Message sent from server to app', 'App message', 'Email message', 'SMS message'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is offline storage?',
+        correctAnswer: 'Storing data locally on device',
+        options: ['Storing data locally on device', 'Cloud storage', 'Server storage', 'Database storage'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is app state management?',
+        correctAnswer: 'Managing app data and UI state',
+        options: ['Managing app data and UI state', 'Managing servers', 'Managing databases', 'Managing files'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is a mobile backend?',
+        correctAnswer: 'Server-side for mobile apps',
+        options: ['Server-side for mobile apps', 'Mobile frontend', 'Mobile UI', 'Mobile design'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is app performance optimization?',
+        correctAnswer: 'Improving app speed and efficiency',
+        options: ['Improving app speed and efficiency', 'Adding features', 'Removing features', 'Changing design'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is mobile testing?',
+        correctAnswer: 'Testing apps on mobile devices',
+        options: ['Testing apps on mobile devices', 'Testing on desktop', 'Testing on server', 'Testing databases'],
+        questionType: 'multiple-choice'
+      },
+      // Professional - 10 questions
+      {
         level: 'Professional',
         questionText: 'What is code push?',
         correctAnswer: 'Updating apps without app store approval',
         options: ['Updating apps without app store approval', 'Pushing code to repository', 'Deploying to servers', 'Testing code'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is mobile CI/CD?',
+        correctAnswer: 'Automated mobile app deployment',
+        options: ['Automated mobile app deployment', 'Manual deployment', 'Testing only', 'Development only'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is mobile app architecture?',
+        correctAnswer: 'Structure and design of mobile apps',
+        options: ['Structure and design of mobile apps', 'App UI', 'App design', 'App testing'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is mobile security?',
+        correctAnswer: 'Protecting mobile apps and data',
+        options: ['Protecting mobile apps and data', 'App design', 'App testing', 'App deployment'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is mobile analytics?',
+        correctAnswer: 'Analyzing mobile app usage data',
+        options: ['Analyzing mobile app usage data', 'App design', 'App testing', 'App development'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is mobile app monetization?',
+        correctAnswer: 'Generating revenue from apps',
+        options: ['Generating revenue from apps', 'Free apps', 'App development', 'App testing'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is mobile app distribution?',
+        correctAnswer: 'Deploying apps to users',
+        options: ['Deploying apps to users', 'App development', 'App testing', 'App design'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is mobile app lifecycle?',
+        correctAnswer: 'Stages from development to end-of-life',
+        options: ['Stages from development to end-of-life', 'App development', 'App testing', 'App design'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is mobile app versioning?',
+        correctAnswer: 'Managing different app versions',
+        options: ['Managing different app versions', 'App development', 'App testing', 'App design'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is mobile app scalability?',
+        correctAnswer: 'Ability to handle growing users',
+        options: ['Ability to handle growing users', 'App size', 'App speed', 'App design'],
         questionType: 'multiple-choice'
       }
     ]
@@ -1343,6 +2233,7 @@ const techSkills = [
     questionGenerator: 'technical',
     questionTemplate: 'What cloud platforms and services have you architected solutions with?',
     questions: [
+      // Beginner - 10 questions
       {
         level: 'Beginner',
         questionText: 'What is cloud computing?',
@@ -1358,6 +2249,63 @@ const techSkills = [
         questionType: 'multiple-choice'
       },
       {
+        level: 'Beginner',
+        questionText: 'What is Azure?',
+        correctAnswer: 'Microsoft cloud platform',
+        options: ['Microsoft cloud platform', 'Google cloud', 'Amazon cloud', 'Apple cloud'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Beginner',
+        questionText: 'What is GCP?',
+        correctAnswer: 'Google Cloud Platform',
+        options: ['Google Cloud Platform', 'General Cloud Platform', 'Global Cloud Platform', 'Generic Cloud Platform'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Beginner',
+        questionText: 'What is cloud storage?',
+        correctAnswer: 'Storing data in the cloud',
+        options: ['Storing data in the cloud', 'Local storage', 'Database storage', 'File storage'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Beginner',
+        questionText: 'What is a virtual machine?',
+        correctAnswer: 'Virtual computer in the cloud',
+        options: ['Virtual computer in the cloud', 'Physical computer', 'Database', 'Network'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Beginner',
+        questionText: 'What is cloud hosting?',
+        correctAnswer: 'Hosting applications in the cloud',
+        options: ['Hosting applications in the cloud', 'Local hosting', 'Desktop hosting', 'Mobile hosting'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Beginner',
+        questionText: 'What is scalability?',
+        correctAnswer: 'Ability to handle growth',
+        options: ['Ability to handle growth', 'App size', 'App speed', 'App design'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Beginner',
+        questionText: 'What is cloud backup?',
+        correctAnswer: 'Backing up data to cloud',
+        options: ['Backing up data to cloud', 'Local backup', 'No backup', 'Manual backup'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Beginner',
+        questionText: 'What is a cloud service?',
+        correctAnswer: 'Service provided over the internet',
+        options: ['Service provided over the internet', 'Local service', 'Desktop service', 'Mobile service'],
+        questionType: 'multiple-choice'
+      },
+      // Intermediate - 10 questions
+      {
         level: 'Intermediate',
         questionText: 'What is serverless computing?',
         correctAnswer: 'Running code without managing servers',
@@ -1372,10 +2320,130 @@ const techSkills = [
         questionType: 'multiple-choice'
       },
       {
+        level: 'Intermediate',
+        questionText: 'What is load balancing in cloud?',
+        correctAnswer: 'Distributing traffic across servers',
+        options: ['Distributing traffic across servers', 'Blocking traffic', 'Limiting traffic', 'Encrypting traffic'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is a container in cloud?',
+        correctAnswer: 'Lightweight virtualized environment',
+        options: ['Lightweight virtualized environment', 'A database', 'A server', 'A file'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is cloud migration?',
+        correctAnswer: 'Moving systems to the cloud',
+        options: ['Moving systems to the cloud', 'Moving from cloud', 'Staying on-premise', 'Deleting systems'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is cloud security?',
+        correctAnswer: 'Protecting cloud resources',
+        options: ['Protecting cloud resources', 'Cloud design', 'Cloud testing', 'Cloud development'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is multi-cloud?',
+        correctAnswer: 'Using multiple cloud providers',
+        options: ['Using multiple cloud providers', 'Single cloud', 'No cloud', 'Local only'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is cloud monitoring?',
+        correctAnswer: 'Observing cloud resource performance',
+        options: ['Observing cloud resource performance', 'Cloud design', 'Cloud testing', 'Cloud development'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is cloud cost optimization?',
+        correctAnswer: 'Reducing cloud spending',
+        options: ['Reducing cloud spending', 'Increasing costs', 'Ignoring costs', 'Fixed costs'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is cloud governance?',
+        correctAnswer: 'Managing cloud resources and policies',
+        options: ['Managing cloud resources and policies', 'Cloud design', 'Cloud testing', 'Cloud development'],
+        questionType: 'multiple-choice'
+      },
+      // Professional - 10 questions
+      {
         level: 'Professional',
         questionText: 'What is infrastructure as a service (IaaS)?',
         correctAnswer: 'Cloud computing service providing virtualized infrastructure',
         options: ['Cloud computing service providing virtualized infrastructure', 'A database service', 'A design service', 'A network service'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is platform as a service (PaaS)?',
+        correctAnswer: 'Cloud platform for app development',
+        options: ['Cloud platform for app development', 'Infrastructure service', 'Software service', 'Database service'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is software as a service (SaaS)?',
+        correctAnswer: 'Cloud-based software delivery',
+        options: ['Cloud-based software delivery', 'Platform service', 'Infrastructure service', 'Database service'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is cloud-native architecture?',
+        correctAnswer: 'Designing for cloud from the start',
+        options: ['Designing for cloud from the start', 'Migrating to cloud', 'Hybrid cloud', 'On-premise'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is cloud disaster recovery?',
+        correctAnswer: 'Recovering systems from cloud backups',
+        options: ['Recovering systems from cloud backups', 'Cloud development', 'Cloud testing', 'Cloud design'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is cloud architecture patterns?',
+        correctAnswer: 'Design patterns for cloud solutions',
+        options: ['Design patterns for cloud solutions', 'Cloud design', 'Cloud testing', 'Cloud development'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is cloud compliance?',
+        correctAnswer: 'Meeting regulatory requirements in cloud',
+        options: ['Meeting regulatory requirements in cloud', 'Cloud design', 'Cloud testing', 'Cloud development'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is cloud federation?',
+        correctAnswer: 'Connecting multiple cloud environments',
+        options: ['Connecting multiple cloud environments', 'Single cloud', 'No cloud', 'Local only'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is cloud networking?',
+        correctAnswer: 'Network infrastructure in the cloud',
+        options: ['Network infrastructure in the cloud', 'Local networking', 'Desktop networking', 'Mobile networking'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is cloud elasticity?',
+        correctAnswer: 'Automatic resource scaling',
+        options: ['Automatic resource scaling', 'Manual scaling', 'Fixed resources', 'Limited resources'],
         questionType: 'multiple-choice'
       }
     ]
@@ -1387,6 +2455,7 @@ const techSkills = [
     questionGenerator: 'technical',
     questionTemplate: 'What blockchain technologies and smart contract platforms have you developed on?',
     questions: [
+      // Beginner - 10 questions
       {
         level: 'Beginner',
         questionText: 'What is blockchain?',
@@ -1402,6 +2471,63 @@ const techSkills = [
         questionType: 'multiple-choice'
       },
       {
+        level: 'Beginner',
+        questionText: 'What is a cryptocurrency?',
+        correctAnswer: 'Digital currency using blockchain',
+        options: ['Digital currency using blockchain', 'Physical currency', 'Bank currency', 'Credit card'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Beginner',
+        questionText: 'What is Bitcoin?',
+        correctAnswer: 'First cryptocurrency',
+        options: ['First cryptocurrency', 'A database', 'A server', 'A design tool'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Beginner',
+        questionText: 'What is a block?',
+        correctAnswer: 'Group of transactions in blockchain',
+        options: ['Group of transactions in blockchain', 'A database', 'A file', 'A server'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Beginner',
+        questionText: 'What is a transaction?',
+        correctAnswer: 'Transfer of value on blockchain',
+        options: ['Transfer of value on blockchain', 'A database query', 'A file operation', 'A server request'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Beginner',
+        questionText: 'What is a wallet?',
+        correctAnswer: 'Tool to store cryptocurrency',
+        options: ['Tool to store cryptocurrency', 'A database', 'A server', 'A file'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Beginner',
+        questionText: 'What is a node?',
+        correctAnswer: 'Computer in blockchain network',
+        options: ['Computer in blockchain network', 'A database', 'A server', 'A file'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Beginner',
+        questionText: 'What is decentralization?',
+        correctAnswer: 'No central authority control',
+        options: ['No central authority control', 'Central control', 'Government control', 'Bank control'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Beginner',
+        questionText: 'What is a hash?',
+        correctAnswer: 'Unique identifier for data',
+        options: ['Unique identifier for data', 'A password', 'A key', 'A file'],
+        questionType: 'multiple-choice'
+      },
+      // Intermediate - 10 questions
+      {
         level: 'Intermediate',
         questionText: 'What is Ethereum?',
         correctAnswer: 'A blockchain platform for smart contracts',
@@ -1416,10 +2542,130 @@ const techSkills = [
         questionType: 'multiple-choice'
       },
       {
+        level: 'Intermediate',
+        questionText: 'What is Solidity?',
+        correctAnswer: 'Programming language for smart contracts',
+        options: ['Programming language for smart contracts', 'A database', 'A server', 'A design tool'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is a DApp?',
+        correctAnswer: 'Decentralized application',
+        options: ['Decentralized application', 'Desktop application', 'Mobile application', 'Web application'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is gas?',
+        correctAnswer: 'Fee for blockchain transactions',
+        options: ['Fee for blockchain transactions', 'A database', 'A server', 'A file'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is a token?',
+        correctAnswer: 'Digital asset on blockchain',
+        options: ['Digital asset on blockchain', 'A database', 'A server', 'A file'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is DeFi?',
+        correctAnswer: 'Decentralized Finance',
+        options: ['Decentralized Finance', 'Direct Finance', 'Digital Finance', 'Database Finance'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is an NFT?',
+        correctAnswer: 'Non-Fungible Token',
+        options: ['Non-Fungible Token', 'Network File Transfer', 'New File Type', 'Network File Type'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is a blockchain fork?',
+        correctAnswer: 'Split in blockchain network',
+        options: ['Split in blockchain network', 'Combining blockchains', 'Deleting blockchain', 'Creating blockchain'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is a mining pool?',
+        correctAnswer: 'Group of miners working together',
+        options: ['Group of miners working together', 'Individual miner', 'Blockchain node', 'Smart contract'],
+        questionType: 'multiple-choice'
+      },
+      // Professional - 10 questions
+      {
         level: 'Professional',
         questionText: 'What is consensus mechanism?',
         correctAnswer: 'How blockchain nodes agree on transactions',
         options: ['How blockchain nodes agree on transactions', 'How to store data', 'How to design', 'How to code'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is Proof of Work?',
+        correctAnswer: 'Consensus mechanism using computation',
+        options: ['Consensus mechanism using computation', 'Proof of stake', 'Proof of authority', 'Proof of space'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is Proof of Stake?',
+        correctAnswer: 'Consensus mechanism using staking',
+        options: ['Consensus mechanism using staking', 'Proof of work', 'Proof of authority', 'Proof of space'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is a blockchain bridge?',
+        correctAnswer: 'Connecting different blockchains',
+        options: ['Connecting different blockchains', 'Blockchain fork', 'Blockchain node', 'Smart contract'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is layer 2 scaling?',
+        correctAnswer: 'Scaling solutions built on blockchain',
+        options: ['Scaling solutions built on blockchain', 'Layer 1 scaling', 'No scaling', 'Manual scaling'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is blockchain interoperability?',
+        correctAnswer: 'Different blockchains working together',
+        options: ['Different blockchains working together', 'Single blockchain', 'No blockchain', 'Isolated blockchains'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is a blockchain oracle?',
+        correctAnswer: 'Bridge between blockchain and external data',
+        options: ['Bridge between blockchain and external data', 'Blockchain node', 'Smart contract', 'Blockchain fork'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is sharding in blockchain?',
+        correctAnswer: 'Partitioning blockchain into smaller parts',
+        options: ['Partitioning blockchain into smaller parts', 'Combining blockchains', 'Deleting blockchain', 'Creating blockchain'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is blockchain governance?',
+        correctAnswer: 'Decision-making process for blockchain',
+        options: ['Decision-making process for blockchain', 'Blockchain design', 'Blockchain testing', 'Blockchain development'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is a blockchain protocol?',
+        correctAnswer: 'Rules governing blockchain network',
+        options: ['Rules governing blockchain network', 'Blockchain design', 'Blockchain testing', 'Blockchain development'],
         questionType: 'multiple-choice'
       }
     ]
@@ -1431,6 +2677,7 @@ const techSkills = [
     questionGenerator: 'technical',
     questionTemplate: 'What AI technologies and frameworks have you worked with?',
     questions: [
+      // Beginner - 10 questions
       {
         level: 'Beginner',
         questionText: 'What is artificial intelligence?',
@@ -1446,6 +2693,63 @@ const techSkills = [
         questionType: 'multiple-choice'
       },
       {
+        level: 'Beginner',
+        questionText: 'What is a dataset in AI?',
+        correctAnswer: 'Collection of data for training models',
+        options: ['Collection of data for training models', 'A database', 'A file', 'A server'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Beginner',
+        questionText: 'What is Python commonly used for in AI?',
+        correctAnswer: 'Programming AI applications',
+        options: ['Programming AI applications', 'Database management', 'Web design', 'Video editing'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Beginner',
+        questionText: 'What is a model in AI?',
+        correctAnswer: 'Trained algorithm that makes predictions',
+        options: ['Trained algorithm that makes predictions', 'A database', 'A file', 'A server'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Beginner',
+        questionText: 'What is training data?',
+        correctAnswer: 'Data used to teach AI models',
+        options: ['Data used to teach AI models', 'Test data', 'Production data', 'Raw data'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Beginner',
+        questionText: 'What is a neural network?',
+        correctAnswer: 'Computing system inspired by the brain',
+        options: ['Computing system inspired by the brain', 'A database', 'A server', 'A file'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Beginner',
+        questionText: 'What is a prediction in AI?',
+        correctAnswer: 'Model output based on input',
+        options: ['Model output based on input', 'Model input', 'Model training', 'Model testing'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Beginner',
+        questionText: 'What is accuracy in AI?',
+        correctAnswer: 'How correct model predictions are',
+        options: ['How correct model predictions are', 'Model speed', 'Model size', 'Model complexity'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Beginner',
+        questionText: 'What is a feature in AI?',
+        correctAnswer: 'Input variable for a model',
+        options: ['Input variable for a model', 'Model output', 'Model parameter', 'Model result'],
+        questionType: 'multiple-choice'
+      },
+      // Intermediate - 10 questions
+      {
         level: 'Intermediate',
         questionText: 'What is deep learning?',
         correctAnswer: 'Machine learning using neural networks with multiple layers',
@@ -1460,10 +2764,130 @@ const techSkills = [
         questionType: 'multiple-choice'
       },
       {
+        level: 'Intermediate',
+        questionText: 'What is TensorFlow?',
+        correctAnswer: 'AI framework by Google',
+        options: ['AI framework by Google', 'A database', 'A server', 'A design tool'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is PyTorch?',
+        correctAnswer: 'AI framework by Facebook',
+        options: ['AI framework by Facebook', 'A database', 'A server', 'A design tool'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is overfitting?',
+        correctAnswer: 'Model performs well on training but poorly on new data',
+        options: ['Model performs well on training but poorly on new data', 'Model is too fast', 'Model is too slow', 'Model is too large'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is cross-validation?',
+        correctAnswer: 'Testing model on different data splits',
+        options: ['Testing model on different data splits', 'Training model', 'Deploying model', 'Deleting model'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is feature engineering?',
+        correctAnswer: 'Creating better input features',
+        options: ['Creating better input features', 'Training model', 'Testing model', 'Deploying model'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is regularization?',
+        correctAnswer: 'Preventing overfitting',
+        options: ['Preventing overfitting', 'Speeding up training', 'Slowing down training', 'Deleting data'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is a hyperparameter?',
+        correctAnswer: 'Model configuration setting',
+        options: ['Model configuration setting', 'Model input', 'Model output', 'Model data'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is a loss function?',
+        correctAnswer: 'Measures model prediction error',
+        options: ['Measures model prediction error', 'Measures model speed', 'Measures model size', 'Measures model complexity'],
+        questionType: 'multiple-choice'
+      },
+      // Professional - 10 questions
+      {
         level: 'Professional',
         questionText: 'What is transfer learning?',
         correctAnswer: 'Using pre-trained models for new tasks',
         options: ['Using pre-trained models for new tasks', 'Moving data between servers', 'Transferring files', 'Learning to transfer'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is backpropagation?',
+        correctAnswer: 'Training neural networks algorithm',
+        options: ['Training neural networks algorithm', 'Forward propagation', 'Data processing', 'Model deployment'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is a convolutional neural network?',
+        correctAnswer: 'Neural network for image processing',
+        options: ['Neural network for image processing', 'Text processing network', 'Audio processing network', 'Data processing network'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is reinforcement learning?',
+        correctAnswer: 'Learning through rewards and penalties',
+        options: ['Learning through rewards and penalties', 'Learning from labels', 'Learning from data', 'Learning from code'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is model deployment?',
+        correctAnswer: 'Making model available for use',
+        options: ['Making model available for use', 'Training model', 'Testing model', 'Deleting model'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is A/B testing for ML?',
+        correctAnswer: 'Comparing model versions',
+        options: ['Comparing model versions', 'Training models', 'Testing models', 'Deleting models'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is model versioning?',
+        correctAnswer: 'Tracking different model versions',
+        options: ['Tracking different model versions', 'Training models', 'Deleting models', 'Testing models'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is MLOps?',
+        correctAnswer: 'ML operations and deployment',
+        options: ['ML operations and deployment', 'ML training', 'ML testing', 'ML data'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is model drift?',
+        correctAnswer: 'Model performance degradation over time',
+        options: ['Model performance degradation over time', 'Model improvement', 'Model training', 'Model testing'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is gradient descent?',
+        correctAnswer: 'An optimization algorithm',
+        options: ['An optimization algorithm', 'A database query', 'A design pattern', 'A server protocol'],
         questionType: 'multiple-choice'
       }
     ]
@@ -1475,6 +2899,7 @@ const techSkills = [
     questionGenerator: 'technical',
     questionTemplate: 'What testing methodologies and tools are you experienced with?',
     questions: [
+      // Beginner - 10 questions
       {
         level: 'Beginner',
         questionText: 'What is software testing?',
@@ -1490,6 +2915,63 @@ const techSkills = [
         questionType: 'multiple-choice'
       },
       {
+        level: 'Beginner',
+        questionText: 'What is a bug?',
+        correctAnswer: 'Error or defect in software',
+        options: ['Error or defect in software', 'A feature', 'A file', 'A server'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Beginner',
+        questionText: 'What is a test case?',
+        correctAnswer: 'Set of steps to verify functionality',
+        options: ['Set of steps to verify functionality', 'A bug report', 'A code file', 'A database'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Beginner',
+        questionText: 'What is manual testing?',
+        correctAnswer: 'Testing done by humans',
+        options: ['Testing done by humans', 'Automated testing', 'Unit testing', 'Performance testing'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Beginner',
+        questionText: 'What is a test plan?',
+        correctAnswer: 'Document outlining testing strategy',
+        options: ['Document outlining testing strategy', 'A bug list', 'A code file', 'A database'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Beginner',
+        questionText: 'What is QA?',
+        correctAnswer: 'Quality Assurance',
+        options: ['Quality Assurance', 'Question Answering', 'Quick Access', 'Quality Analysis'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Beginner',
+        questionText: 'What is a test environment?',
+        correctAnswer: 'Setup for running tests',
+        options: ['Setup for running tests', 'Production environment', 'Development environment', 'Server environment'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Beginner',
+        questionText: 'What is functional testing?',
+        correctAnswer: 'Testing software features work correctly',
+        options: ['Testing software features work correctly', 'Testing performance', 'Testing security', 'Testing design'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Beginner',
+        questionText: 'What is a test report?',
+        correctAnswer: 'Document showing test results',
+        options: ['Document showing test results', 'A bug report', 'A code file', 'A database'],
+        questionType: 'multiple-choice'
+      },
+      // Intermediate - 10 questions
+      {
         level: 'Intermediate',
         questionText: 'What is test automation?',
         correctAnswer: 'Using tools to execute tests automatically',
@@ -1504,10 +2986,130 @@ const techSkills = [
         questionType: 'multiple-choice'
       },
       {
+        level: 'Intermediate',
+        questionText: 'What is Selenium?',
+        correctAnswer: 'Web automation testing tool',
+        options: ['Web automation testing tool', 'A database', 'A server', 'A design tool'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is integration testing?',
+        correctAnswer: 'Testing combined components',
+        options: ['Testing combined components', 'Unit testing', 'System testing', 'Performance testing'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is system testing?',
+        correctAnswer: 'Testing complete system',
+        options: ['Testing complete system', 'Unit testing', 'Integration testing', 'Performance testing'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is performance testing?',
+        correctAnswer: 'Testing system speed and efficiency',
+        options: ['Testing system speed and efficiency', 'Functional testing', 'Security testing', 'Unit testing'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is load testing?',
+        correctAnswer: 'Testing under expected load',
+        options: ['Testing under expected load', 'Testing with no load', 'Testing security', 'Testing design'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is a test framework?',
+        correctAnswer: 'Structure for organizing tests',
+        options: ['Structure for organizing tests', 'A bug tracker', 'A code editor', 'A database'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is API testing?',
+        correctAnswer: 'Testing application interfaces',
+        options: ['Testing application interfaces', 'Testing UI', 'Testing databases', 'Testing servers'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Intermediate',
+        questionText: 'What is a test script?',
+        correctAnswer: 'Automated test instructions',
+        options: ['Automated test instructions', 'Manual test steps', 'Bug report', 'Code file'],
+        questionType: 'multiple-choice'
+      },
+      // Professional - 10 questions
+      {
         level: 'Professional',
         questionText: 'What is CI/CD in testing?',
         correctAnswer: 'Continuous Integration/Continuous Deployment with automated testing',
         options: ['Continuous Integration/Continuous Deployment with automated testing', 'Code Integration', 'Client Interface', 'Computer Interface'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is test-driven development?',
+        correctAnswer: 'Writing tests before code',
+        options: ['Writing tests before code', 'Writing code before tests', 'No testing', 'Manual testing only'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is behavior-driven development?',
+        correctAnswer: 'Testing based on user behavior',
+        options: ['Testing based on user behavior', 'Testing code only', 'Manual testing', 'No testing'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is security testing?',
+        correctAnswer: 'Testing for vulnerabilities',
+        options: ['Testing for vulnerabilities', 'Testing performance', 'Testing functionality', 'Testing design'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is penetration testing?',
+        correctAnswer: 'Simulating attacks to test security',
+        options: ['Simulating attacks to test security', 'Testing performance', 'Testing functionality', 'Testing design'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is test coverage?',
+        correctAnswer: 'Percentage of code tested',
+        options: ['Percentage of code tested', 'Number of bugs found', 'Number of tests', 'Test execution time'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is mutation testing?',
+        correctAnswer: 'Testing by introducing faults',
+        options: ['Testing by introducing faults', 'Testing mutations', 'Testing changes', 'Testing bugs'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is test orchestration?',
+        correctAnswer: 'Coordinating multiple test executions',
+        options: ['Coordinating multiple test executions', 'Running one test', 'Writing tests', 'Reporting bugs'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is a test pyramid?',
+        correctAnswer: 'Testing strategy with different test levels',
+        options: ['Testing strategy with different test levels', 'A test tool', 'A test report', 'A test case'],
+        questionType: 'multiple-choice'
+      },
+      {
+        level: 'Professional',
+        questionText: 'What is shift-left testing?',
+        correctAnswer: 'Testing earlier in development',
+        options: ['Testing earlier in development', 'Testing later', 'Testing only at end', 'No testing'],
         questionType: 'multiple-choice'
       }
     ]
@@ -1555,12 +3157,17 @@ const seedTechSkills = async () => {
     }
 
     // Create rooms for each tech skill
+    const Room = require('./models/Room');
     for (const skill of createdSkills) {
-      // Check if room already exists
-      const existingRoom = await Room.findOne({ techSkillId: skill._id });
+      // Check if main group room already exists
+      const existingMainRoom = await Room.findOne({ 
+        techSkillId: skill._id, 
+        roomType: 'main' 
+      });
       
-      if (!existingRoom) {
-        const room = await Room.create({
+      if (!existingMainRoom) {
+        // Create main group room
+        const mainRoom = await Room.create({
           name: `${skill.name} Group`,
           description: skill.description,
           createdBy: adminUser._id,
@@ -1568,9 +3175,31 @@ const seedTechSkills = async () => {
           isPrivate: false,
           techSkillId: skill._id,
           requiresApproval: true,
-          admins: [adminUser._id]
+          admins: [adminUser._id],
+          roomType: 'main'
         });
-        console.log(`✅ Created room for ${skill.name}`);
+        console.log(`✅ Created main room for ${skill.name}`);
+      }
+
+      // Create General Tech Info room
+      const existingInfoRoom = await Room.findOne({ 
+        techSkillId: skill._id, 
+        roomType: 'general-info' 
+      });
+      
+      if (!existingInfoRoom) {
+        const infoRoom = await Room.create({
+          name: `${skill.name} - General Info`,
+          description: `General information, discussions, and resources about ${skill.name}`,
+          createdBy: adminUser._id,
+          members: [adminUser._id],
+          isPrivate: false,
+          techSkillId: skill._id,
+          requiresApproval: false,
+          admins: [adminUser._id],
+          roomType: 'general-info'
+        });
+        console.log(`✅ Created General Info room for ${skill.name}`);
       }
     }
 

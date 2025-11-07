@@ -151,13 +151,13 @@ const ChatHeaderMenu = ({
   return (
     <div className="relative" ref={menuRef}>
       <motion.button
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.9 }}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
         onClick={() => setIsOpen(!isOpen)}
-        className="p-2.5 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 transition text-gray-300 hover:text-white shadow-lg"
+        className="p-1.5 sm:p-2 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 transition text-gray-300 hover:text-white shadow-lg flex-shrink-0"
         title="More options"
       >
-        <MoreVertical className="w-5 h-5" />
+        <MoreVertical className="w-4 h-4 sm:w-5 sm:h-5" />
       </motion.button>
 
       <AnimatePresence>
@@ -174,7 +174,7 @@ const ChatHeaderMenu = ({
               initial={{ opacity: 0, y: -10, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -10, scale: 0.95 }}
-              className="absolute right-0 top-full mt-2 z-20 min-w-[220px] bg-gradient-to-br from-slate-900/95 via-purple-900/30 to-slate-900/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl shadow-black/50 overflow-hidden"
+              className="absolute right-0 top-full mt-2 z-20 min-w-[200px] sm:min-w-[220px] max-w-[90vw] bg-gradient-to-br from-slate-900/95 via-purple-900/30 to-slate-900/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl shadow-black/50 overflow-hidden"
             >
               {menuItems.map((item, index) => {
                 const Icon = item.icon;

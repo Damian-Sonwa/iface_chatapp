@@ -53,9 +53,10 @@ const ChatArea = ({ messages, typingUsers, currentUser, activeChat, chatType, on
   return (
     <div 
       ref={containerRef}
-      className="flex-1 overflow-y-auto relative"
+      className="flex-1 overflow-y-auto relative min-h-0"
       style={{
-        background: 'linear-gradient(180deg, rgba(15, 23, 42, 0.98) 0%, rgba(30, 41, 59, 0.95) 50%, rgba(15, 23, 42, 0.98) 100%)'
+        background: 'linear-gradient(180deg, rgba(15, 23, 42, 0.98) 0%, rgba(30, 41, 59, 0.95) 50%, rgba(15, 23, 42, 0.98) 100%)',
+        WebkitOverflowScrolling: 'touch'
       }}
     >
       {/* Animated gradient overlay */}

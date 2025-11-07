@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '../context/AuthContext';
 import { getSocket } from '../utils/socket';
 import api from '../utils/api';
@@ -89,9 +90,9 @@ const Chat = () => {
   }, [darkMode, user?.theme, user?.vibe, user?.autoVibe]);
 
   useEffect(() => {
-    if (!socket) return;
+    if (!socket || !user) return;
 
-    fetchRooms();
+    // Rooms are now fetched via React Query
     fetchPrivateChats();
     fetchUsers();
     fetchFriends();
@@ -280,27 +281,36 @@ const Chat = () => {
             }
           } else if (location.state.chatType === 'room') {
             // Handle room navigation (e.g., from tech skill join)
-            const response = await api.get('/rooms');
-            const allRooms = response.data.rooms || [];
-            const room = allRooms.find(r => r._id === location.state.chatId);
+            // First refresh rooms via React Query
+            await refetchRooms();
             
-            if (room) {
-              handleChatSelect(room, 'room');
-            } else {
-              // If room not found, refresh rooms list and try again
-              await fetchRooms();
-              const refreshedRooms = await api.get('/rooms');
-              const refreshedRoom = refreshedRooms.data.rooms.find(r => r._id === location.state.chatId);
-              if (refreshedRoom) {
-                handleChatSelect(refreshedRoom, 'room');
+            // Wait a bit for state to update
+            setTimeout(async () => {
+              try {
+                // Try to find room in current rooms state
+                let room = rooms.find(r => r._id === location.state.chatId);
+                
+                if (!room) {
+                  // If still not found, fetch directly from API
+                  const response = await api.get(`/rooms/${location.state.chatId}`);
+                  room = response.data.room;
+                }
+                
+                if (room) {
+                  handleChatSelect(room, 'room');
+                } else {
+                  console.error('Room not found after refresh');
+                }
+              } catch (error) {
+                console.error('Error loading room:', error);
               }
-            }
+            }, 300);
           }
         } catch (error) {
           console.error('Error loading chat from navigation:', error);
         } finally {
-          // Clear location state
-          navigate(location.pathname, { replace: true, state: {} });
+          // Don't clear location state immediately - let it persist for navigation
+          // navigate(location.pathname, { replace: true, state: {} });
         }
       };
 
@@ -336,14 +346,39 @@ const Chat = () => {
     }
   }, [location.state, location.search, user, navigate, activeChat]);
 
-  const fetchRooms = async () => {
-    try {
+  const queryClient = useQueryClient();
+
+  // Use React Query for rooms - only fetch user's rooms
+  const { data: roomsData, refetch: refetchRooms } = useQuery({
+    queryKey: ['userRooms', user?._id || user?.id],
+    queryFn: async () => {
       const response = await api.get('/rooms');
-      setRooms(response.data.rooms);
-    } catch (error) {
-      console.error('Fetch rooms error:', error);
-    }
+      const allRooms = response.data.rooms || [];
+      const currentUserId = (user?._id || user?.id)?.toString();
+      
+      // Filter to only include rooms where user is a member
+      const userRooms = allRooms.filter(room => {
+        return room.members?.some(m => {
+          const memberId = (m._id?.toString() || m.id?.toString() || m?.toString());
+          return memberId === currentUserId;
+        });
+      });
+      
+      return userRooms;
+    },
+    enabled: !!user,
+    staleTime: 30000, // 30 seconds
+  });
+
+  const fetchRooms = async () => {
+    await refetchRooms();
   };
+
+  useEffect(() => {
+    if (roomsData) {
+      setRooms(roomsData);
+    }
+  }, [roomsData]);
 
   const fetchPrivateChats = async () => {
     try {
@@ -620,24 +655,35 @@ const Chat = () => {
     setSelectedTechSkillRoom(null);
     
     // Refresh rooms to update membership status
-    await fetchRooms();
+    await refetchRooms();
     
-    // If we have room info, try to open the chat
-    if (skillRoom?.roomId) {
-      try {
-        const roomResponse = await api.get(`/rooms/${skillRoom.roomId}`);
-        const room = roomResponse.data.room;
-        if (room) {
-          handleChatSelect(room, 'room');
+    // Wait for rooms to update
+    setTimeout(async () => {
+      // If we have room info, try to open the chat
+      if (skillRoom?.roomId) {
+        try {
+          const roomResponse = await api.get(`/rooms/${skillRoom.roomId}`);
+          const room = roomResponse.data.room;
+          if (room) {
+            handleChatSelect(room, 'room');
+            // Also navigate to ensure it's in the URL
+            navigate('/chat', {
+              replace: true,
+              state: {
+                chatId: room._id,
+                chatType: 'room'
+              }
+            });
+          }
+        } catch (error) {
+          console.error('Error loading room after join:', error);
         }
-      } catch (error) {
-        console.error('Error loading room after join:', error);
       }
-    }
+    }, 500);
   };
 
   return (
-    <div className="flex h-screen relative overflow-hidden">
+    <div className="flex h-screen max-h-screen relative overflow-hidden safe-area-inset pt-[64px]">
       {darkMode ? <StarryBackground /> : <FloralBackground />}
       {/* Desktop Sidebar */}
       <Sidebar
@@ -696,7 +742,7 @@ const Chat = () => {
         </button>
       )}
 
-      <div className="flex-1 flex flex-col relative z-10">
+      <div className="flex-1 flex flex-col relative z-10 min-h-0 overflow-hidden">
         <MomentsBar onOpenComposer={() => setShowMomentsComposer(true)} onOpenViewer={(moments, id) => setViewer({ open: true, moments, id })} />
         {friends.length > 0 && <FlippingAvatars />}
         {activePanel === 'moments' ? (
@@ -731,12 +777,12 @@ const Chat = () => {
               <motion.div 
                 initial={{ y: -20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
-                className="h-16 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between px-4 md:px-6 bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl relative z-10"
+                className="h-14 sm:h-16 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between px-3 sm:px-4 md:px-6 bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl relative z-10 flex-shrink-0"
               >
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
                   <motion.div 
                     whileHover={{ scale: 1.1 }}
-                    className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500/30 to-purple-400/30 backdrop-blur-sm border border-purple-400/50 flex items-center justify-center text-purple-200 font-semibold relative overflow-hidden shadow-lg shadow-purple-500/20"
+                    className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-purple-500/30 to-purple-400/30 backdrop-blur-sm border border-purple-400/50 flex items-center justify-center text-purple-200 font-semibold relative overflow-hidden shadow-lg shadow-purple-500/20 flex-shrink-0"
                   >
                     <div className="absolute inset-0 bg-gradient-to-br from-purple-400/20 to-purple-300/20 animate-pulse" />
                     <span className="relative z-10">
@@ -749,8 +795,8 @@ const Chat = () => {
                       }
                     </span>
                   </motion.div>
-                  <div>
-                    <h3 className="font-semibold text-gray-900 dark:text-gray-100">
+                  <div className="min-w-0 flex-1">
+                    <h3 className="font-semibold text-gray-900 dark:text-gray-100 text-sm sm:text-base truncate">
                       {chatType === 'room' 
                         ? (activeChat.techSkillId?.name ? `${activeChat.techSkillId.name} Group` : (activeChat.name || 'Group Chat'))
                         : (() => {
@@ -778,20 +824,23 @@ const Chat = () => {
                     )}
                   </div>
                 </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
                     {/* Poll button (rooms only) - keep visible for quick access */}
                     {chatType === 'room' && activeChat && (
                       <motion.button
                         onClick={() => setShowPoll(true)}
-                        whileHover={{ scale: 1.1 }}
+                        whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
-                        className="p-2.5 rounded-xl bg-white/10 dark:bg-gray-800/50 backdrop-blur-sm border border-gray-200 dark:border-gray-700 hover:border-purple-500 transition text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 shadow-lg"
+                        className="p-1.5 sm:p-2 rounded-xl bg-white/10 dark:bg-gray-800/50 backdrop-blur-sm border border-gray-200 dark:border-gray-700 hover:border-purple-500 transition text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 shadow-lg text-xs sm:text-sm flex-shrink-0"
                         title="Create Poll"
                       >
-                        + Poll
+                        <span className="hidden sm:inline">+ Poll</span>
+                        <span className="sm:hidden">+</span>
                       </motion.button>
                     )}
-                    <NotificationBell />
+                    <div className="hidden sm:block">
+                      <NotificationBell />
+                    </div>
                     {/* Chat Header Menu - consolidated dropdown for all actions */}
                     <ChatHeaderMenu
                       conversation={activeChat}
@@ -880,53 +929,54 @@ const Chat = () => {
               </div>
             )}
 
-            <ChatArea
-              messages={messages}
-              typingUsers={typingUsers}
-              currentUser={user}
-              activeChat={activeChat}
-              chatType={chatType}
-              onReply={setReplyingTo}
-              onSuggestReplies={(message) => setShowSuggestions(message)}
-              autoTranslateEnabled={autoTranslateEnabled[activeChat?._id]}
-              translatedMessages={translatedMessages}
-            />
-
-            <MessageInput
-              onSend={handleSendMessage}
-              replyingTo={replyingTo}
-              onCancelReply={() => setReplyingTo(null)}
-              suggestedReply={showSuggestions?.content}
-              onShareMomentFromAI={(text) => {
-                setInitialMomentText(text || '');
-                setShowMomentsComposer(true);
-              }}
-              onTypingStart={() => {
-                if (!socket || !activeChat) return;
-                if (chatType === 'room') {
-                  socket.emit('typing:start', { roomId: activeChat._id });
-                } else {
-                  socket.emit('typing:start', { chatId: activeChat._id });
-                }
-              }}
-              onTypingStop={() => {
-                if (!socket || !activeChat) return;
-                if (chatType === 'room') {
-                  socket.emit('typing:stop', { roomId: activeChat._id });
-                } else {
-                  socket.emit('typing:stop', { chatId: activeChat._id });
-                }
-              }}
-            />
+            <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
+              <ChatArea
+                messages={messages}
+                typingUsers={typingUsers}
+                currentUser={user}
+                activeChat={activeChat}
+                chatType={chatType}
+                onReply={setReplyingTo}
+                onSuggestReplies={(message) => setShowSuggestions(message)}
+                autoTranslateEnabled={autoTranslateEnabled[activeChat?._id]}
+                translatedMessages={translatedMessages}
+              />
+              <MessageInput
+                onSend={handleSendMessage}
+                replyingTo={replyingTo}
+                onCancelReply={() => setReplyingTo(null)}
+                suggestedReply={showSuggestions?.content}
+                onShareMomentFromAI={(text) => {
+                  setInitialMomentText(text || '');
+                  setShowMomentsComposer(true);
+                }}
+                onTypingStart={() => {
+                  if (!socket || !activeChat) return;
+                  if (chatType === 'room') {
+                    socket.emit('typing:start', { roomId: activeChat._id });
+                  } else {
+                    socket.emit('typing:start', { chatId: activeChat._id });
+                  }
+                }}
+                onTypingStop={() => {
+                  if (!socket || !activeChat) return;
+                  if (chatType === 'room') {
+                    socket.emit('typing:stop', { roomId: activeChat._id });
+                  } else {
+                    socket.emit('typing:stop', { chatId: activeChat._id });
+                  }
+                }}
+              />
+            </div>
           </>
         ) : (
-          <div className="flex-1 flex flex-col relative z-10">
+          <div className="flex-1 flex flex-col relative z-10 overflow-y-auto overflow-x-hidden min-h-0 pb-4" style={{ WebkitOverflowScrolling: 'touch' }}>
             {/* Personal Chat Features Dashboard */}
-            <div className="p-6 md:p-8">
+            <div className="p-4 sm:p-6 md:p-8 w-full min-h-full">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="max-w-4xl mx-auto"
+                className="max-w-4xl mx-auto w-full"
               >
                 <div className="text-center mb-8">
                   <motion.div

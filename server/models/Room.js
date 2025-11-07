@@ -46,6 +46,16 @@ const roomSchema = new mongoose.Schema({
   requiresApproval: {
     type: Boolean,
     default: false
+  },
+  roomType: {
+    type: String,
+    enum: ['main', 'general-info', 'classroom'],
+    default: 'main'
+  },
+  classroomId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Classroom',
+    default: null
   }
 }, {
   timestamps: true

@@ -57,3 +57,5 @@ export const compressImage = (file, maxWidth = 1920, quality = 0.8) => {
 
 
 
+
+
