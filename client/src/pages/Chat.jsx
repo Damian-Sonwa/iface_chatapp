@@ -72,6 +72,15 @@ const Chat = () => {
   const [showTechSkills, setShowTechSkills] = useState(false);
   const [pendingHighlightMessageId, setPendingHighlightMessageId] = useState(null);
   const socket = getSocket();
+  const currentUserIdStr = (user?._id || user?.id)?.toString();
+
+  const normalizeId = (value) => {
+    if (!value) return '';
+    if (typeof value === 'string') return value;
+    if (value._id) return value._id.toString();
+    if (value.id) return value.id.toString();
+    return value.toString();
+  };
 
   useEffect(() => {
     if (darkMode) {
@@ -94,7 +103,6 @@ const Chat = () => {
     if (!socket || !user) return;
 
     // Rooms are now fetched via React Query
-    fetchPrivateChats();
     fetchUsers();
     fetchFriends();
 
@@ -395,6 +403,31 @@ const Chat = () => {
     return () => clearTimeout(timer);
   }, [pendingHighlightMessageId, messages]);
 
+  let menuConversation = null;
+  if (activeChat) {
+    if (chatType === 'room') {
+      const ownerId = normalizeId(activeChat.createdBy);
+      const adminIds = (activeChat.admins || []).map(normalizeId);
+      const memberIds = (activeChat.members || []).map(normalizeId);
+      const isMember = memberIds.includes(currentUserIdStr);
+      const isOwner = ownerId === currentUserIdStr;
+      const isAdmin = adminIds.includes(currentUserIdStr);
+
+      menuConversation = {
+        ...activeChat,
+        conversationType: 'room',
+        canLeave: isMember && !isOwner,
+        canDelete: isOwner || isAdmin,
+        canReport: isMember
+      };
+    } else {
+      menuConversation = {
+        ...activeChat,
+        conversationType: 'private'
+      };
+    }
+  }
+
   const queryClient = useQueryClient();
 
   // Use React Query for rooms - only fetch user's rooms
@@ -423,6 +456,22 @@ const Chat = () => {
     await refetchRooms();
   };
 
+  const { data: privateChatsData, refetch: refetchPrivateChats } = useQuery({
+    queryKey: ['privateChats', user?._id || user?.id],
+    queryFn: async () => {
+      const response = await api.get('/private');
+      return response.data.chats || [];
+    },
+    enabled: !!user,
+    staleTime: 30000,
+  });
+
+  useEffect(() => {
+    if (privateChatsData) {
+      setPrivateChats(privateChatsData);
+    }
+  }, [privateChatsData]);
+
   useEffect(() => {
     const handleRoomsRefresh = (event) => {
       const removedRoomId = event.detail?.removedRoomId;
@@ -446,15 +495,6 @@ const Chat = () => {
       setRooms(roomsData);
     }
   }, [roomsData]);
-
-  const fetchPrivateChats = async () => {
-    try {
-      const response = await api.get('/private');
-      setPrivateChats(response.data.chats);
-    } catch (error) {
-      console.error('Fetch chats error:', error);
-    }
-  };
 
   const fetchUsers = async () => {
     try {
@@ -661,11 +701,8 @@ const Chat = () => {
     try {
       const response = await api.get(`/private/${userId}`);
       const chat = response.data.chat;
-      setPrivateChats(prev => {
-        if (prev.find(c => c._id === chat._id)) return prev;
-        return [chat, ...prev];
-      });
       handleChatSelect(chat, 'private');
+      await refetchPrivateChats();
     } catch (error) {
       console.error('Start chat error:', error);
     }
@@ -747,6 +784,70 @@ const Chat = () => {
         }
       }
     }, 500);
+  };
+
+  const handleLeaveGroup = async () => {
+    if (!activeChat?._id || chatType !== 'room') return;
+    const roomId = activeChat._id;
+
+    try {
+      await api.delete(`/rooms/${roomId}/leave`);
+      alert('You left the group.');
+      setActiveChat(null);
+      setChatType('room');
+      setMessages([]);
+      setPinnedMessages([]);
+      setPolls([]);
+      setShowJoinRequests(false);
+      await refetchRooms();
+      window.dispatchEvent(new CustomEvent('rooms:refresh', { detail: { removedRoomId: roomId } }));
+      navigate('/chat', { replace: true });
+    } catch (error) {
+      console.error('Leave group error:', error);
+      alert(error.response?.data?.error || 'Failed to leave group');
+    }
+  };
+
+  const handleDeleteGroup = async () => {
+    if (!activeChat?._id || chatType !== 'room') return;
+    const roomId = activeChat._id;
+
+    try {
+      await api.delete(`/rooms/${roomId}`);
+      alert('Group deleted successfully.');
+      setActiveChat(null);
+      setChatType('room');
+      setMessages([]);
+      setPinnedMessages([]);
+      setPolls([]);
+      setShowJoinRequests(false);
+      await refetchRooms();
+      window.dispatchEvent(new CustomEvent('rooms:refresh', { detail: { removedRoomId: roomId } }));
+      navigate('/chat', { replace: true });
+    } catch (error) {
+      console.error('Delete group error:', error);
+      alert(error.response?.data?.error || 'Failed to delete group');
+    }
+  };
+
+  const handleReportGroup = async () => {
+    if (!activeChat?._id || chatType !== 'room') return;
+    const reason = prompt('Please describe the issue with this group:');
+    if (reason === null) return;
+
+    const trimmedReason = reason.trim();
+    if (!trimmedReason) {
+      alert('Report cancelled. Please provide a reason next time.');
+      return;
+    }
+
+    try {
+      await api.post(`/rooms/${activeChat._id}/report`, { reason: trimmedReason });
+      alert('Thank you. Your report has been submitted.');
+    } catch (error) {
+      console.error('Report group error:', error);
+      alert(error.response?.data?.error || 'Failed to submit report');
+    }
   };
 
   return (
@@ -934,7 +1035,7 @@ const Chat = () => {
                     </div>
                     {/* Chat Header Menu - consolidated dropdown for all actions */}
                     <ChatHeaderMenu
-                      conversation={activeChat}
+                      conversation={menuConversation}
                       onPin={async () => {
                         if (!activeChat) return;
                         const isPinned = activeChat.pinnedBy?.includes(user?._id);
@@ -981,6 +1082,9 @@ const Chat = () => {
                       onShowJoinRequests={() => setShowJoinRequests(true)}
                       pendingJoinRequestsCount={pendingJoinRequestsCount}
                       user={user}
+                      onLeaveGroup={handleLeaveGroup}
+                      onDeleteGroup={handleDeleteGroup}
+                      onReportGroup={handleReportGroup}
                     />
                   </div>
                 </motion.div>

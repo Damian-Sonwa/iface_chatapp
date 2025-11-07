@@ -12,7 +12,7 @@ router.post('/create', authController.verifyToken, async (req, res) => {
     const token = crypto.randomBytes(16).toString('hex');
     const invite = await Invite.create({ token, inviter: req.userId });
     const inviter = await User.findById(req.userId).select('username');
-    const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
+    const clientUrl = process.env.CLIENT_URL || 'https://chaturway001.netlify.app';
     // Use query param for simplicity in client routing
     const link = `${clientUrl}/login?invite=${token}`;
     res.json({ token, link, inviter: inviter?.username || 'Someone' });

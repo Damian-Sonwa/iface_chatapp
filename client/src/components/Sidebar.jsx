@@ -1,10 +1,9 @@
 import { useState } from 'react';
-import { Users, Search, Heart, Trash2, LogOut, Loader2 } from 'lucide-react';
+import { Users, Search, Heart } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import AnimatedBadge from './AnimatedBadge';
 import SidebarQuickSearch from './SidebarQuickSearch';
-import api from '../utils/api';
 
 const Sidebar = ({
   rooms,
@@ -20,7 +19,6 @@ const Sidebar = ({
 }) => {
   const { user: currentUser } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
-  const [processingRoomId, setProcessingRoomId] = useState(null);
 
   // Filter rooms to only show groups the user is a member of
   const currentUserId = (currentUser?._id || currentUser?.id)?.toString();
@@ -77,43 +75,6 @@ const Sidebar = ({
   const containerClasses = isOverlay
     ? 'flex flex-col w-full bg-gradient-to-br from-gray-900/95 via-slate-900/90 to-black/90 border border-white/10 rounded-3xl shadow-xl backdrop-blur-xl p-4 space-y-4'
     : 'hidden md:flex flex-col w-80 xl:w-[22rem] ml-6 my-6 bg-gradient-to-br from-gray-900/95 via-purple-900/40 to-slate-900/95 border border-white/10 rounded-3xl shadow-[0_20px_60px_rgba(8,7,15,0.55)] backdrop-blur-2xl p-6 space-y-6 relative z-10';
-
-  const handleRoomAction = async (room) => {
-    if (!room?._id) return;
-
-    const roomId = room._id;
-    const currentUserId = (currentUser?._id || currentUser?.id)?.toString();
-    const createdById = (room.createdBy?._id || room.createdBy?.id || room.createdBy?.toString?.()) ?? '';
-    const isOwner = createdById === currentUserId;
-
-    const displayName = room.name || room.techSkillId?.name || 'this group';
-
-    const confirmationMessage = isOwner
-      ? `Delete the group "${displayName}"? This action cannot be undone.`
-      : `Leave the group "${displayName}"?`;
-
-    if (!window.confirm(confirmationMessage)) {
-      return;
-    }
-
-    setProcessingRoomId(roomId);
-    try {
-      if (isOwner) {
-        await api.delete(`/rooms/${roomId}`);
-      } else {
-        await api.delete(`/rooms/${roomId}/leave`);
-      }
-
-      window.dispatchEvent(new CustomEvent('rooms:refresh', {
-        detail: { removedRoomId: roomId }
-      }));
-    } catch (error) {
-      console.error('Room action error:', error);
-      alert(error.response?.data?.error || 'Failed to update room. Please try again.');
-    } finally {
-      setProcessingRoomId(null);
-    }
-  };
 
   return (
     <div className={containerClasses}>
@@ -307,17 +268,12 @@ const Sidebar = ({
               if (!roomName || !roomName.trim()) {
                 return null;
               }
-
-              const createdById = (conv.createdBy?._id || conv.createdBy?.id || conv.createdBy?.toString?.()) ?? '';
-              const isOwner = isMember && createdById === currentUserId;
-              const showActionButton = isMember;
-
               return (
                 <motion.button
                   key={conv._id}
                   onClick={handleClick}
                   whileHover={{ scale: 1.02, x: 4 }}
-                  className={`w-full p-4 text-left transition flex items-center gap-3 justify-between rounded-2xl backdrop-blur-sm border ${
+                  className={`w-full p-4 text-left transition flex items-center gap-3 rounded-2xl backdrop-blur-sm border ${
                     isActive
                       ? isClassroom
                         ? 'bg-indigo-500/20 border-indigo-400/50 shadow-lg shadow-indigo-500/20'
@@ -327,56 +283,32 @@ const Sidebar = ({
                       : 'bg-white/5 border-white/10 hover:bg-white/10'
                   }`}
                 >
-                  <div className="flex items-center gap-3 min-w-0 flex-1">
-                    <div className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold relative overflow-hidden ${
-                      isActive
-                        ? isClassroom
-                          ? 'bg-gradient-to-br from-indigo-500/30 to-purple-500/30 border border-indigo-400/50'
-                          : isGeneralInfo
-                          ? 'bg-gradient-to-br from-blue-500/30 to-cyan-500/30 border border-blue-400/50'
-                          : 'bg-gradient-to-br from-purple-500/30 to-pink-500/30 border border-purple-400/50'
-                        : 'bg-white/10 border border-white/20'
-                    }`}>
-                      <div className={`absolute inset-0 animate-pulse ${
-                        isClassroom
-                          ? 'bg-gradient-to-br from-indigo-400/20 to-purple-400/20'
-                          : isGeneralInfo
-                          ? 'bg-gradient-to-br from-blue-400/20 to-cyan-400/20'
-                          : 'bg-gradient-to-br from-purple-400/20 to-pink-400/20'
-                      }`} />
-                      {getRoomIcon()}
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold relative overflow-hidden ${
+                    isActive
+                      ? isClassroom
+                        ? 'bg-gradient-to-br from-indigo-500/30 to-purple-500/30 border border-indigo-400/50'
+                        : isGeneralInfo
+                        ? 'bg-gradient-to-br from-blue-500/30 to-cyan-500/30 border border-blue-400/50'
+                        : 'bg-gradient-to-br from-purple-500/30 to-pink-500/30 border border-purple-400/50'
+                      : 'bg-white/10 border border-white/20'
+                  }`}>
+                    <div className={`absolute inset-0 animate-pulse ${
+                      isClassroom
+                        ? 'bg-gradient-to-br from-indigo-400/20 to-purple-400/20'
+                        : isGeneralInfo
+                        ? 'bg-gradient-to-br from-blue-400/20 to-cyan-400/20'
+                        : 'bg-gradient-to-br from-purple-400/20 to-pink-400/20'
+                    }`} />
+                    {getRoomIcon()}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="font-medium truncate text-gray-100">
+                      {roomName}
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="font-medium truncate text-gray-100">
-                        {getRoomName()}
-                      </div>
-                      <div className="text-xs text-gray-400 truncate">
-                        {conv.lastMessage?.content || conv.description || conv.techSkillId?.description || 'No messages yet'}
-                      </div>
+                    <div className="text-xs text-gray-400 truncate">
+                      {conv.lastMessage?.content || conv.description || conv.techSkillId?.description || 'No messages yet'}
                     </div>
                   </div>
-                  {showActionButton && (
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleRoomAction(conv);
-                      }}
-                      disabled={processingRoomId === conv._id}
-                      className={`p-2 rounded-xl border transition flex items-center justify-center ${
-                        processingRoomId === conv._id
-                          ? 'border-white/20 text-gray-300 bg-white/10'
-                          : 'border-white/15 text-gray-300 hover:bg-white/10 hover:border-white/30'
-                      }`}
-                      title={isOwner ? 'Delete group' : 'Leave group'}
-                    >
-                      {processingRoomId === conv._id ? (
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                      ) : (
-                        isOwner ? <Trash2 className="w-4 h-4 text-red-400" /> : <LogOut className="w-4 h-4 text-amber-400" />
-                      )}
-                    </button>
-                  )}
                 </motion.button>
               );
             }

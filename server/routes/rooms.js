@@ -9,6 +9,7 @@ router.use(authController.verifyToken);
 router.get('/', roomController.getAllRooms);
 router.post('/', roomController.createRoom);
 router.post('/:roomId/join', roomController.joinRoom);
+router.post('/:roomId/report', roomController.reportRoom);
 router.delete('/:roomId/leave', roomController.leaveRoom);
 router.delete('/:roomId', roomController.deleteRoom);
 router.get('/users/all', roomController.getAllUsers);

@@ -11,7 +11,9 @@ import {
   Settings,
   Search,
   X,
-  UserPlus
+  UserPlus,
+  LogOut,
+  AlertTriangle
 } from 'lucide-react';
 import AnimatedBadge from './AnimatedBadge';
 
@@ -32,7 +34,10 @@ const ChatHeaderMenu = ({
   translateEnabled,
   onShowJoinRequests,
   pendingJoinRequestsCount = 0,
-  user
+  user,
+  onLeaveGroup,
+  onDeleteGroup,
+  onReportGroup
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef(null);
@@ -135,6 +140,43 @@ const ChatHeaderMenu = ({
       badge: pendingJoinRequestsCount
     },
     {
+      id: 'report-group',
+      label: 'Report Group',
+      icon: AlertTriangle,
+      action: () => {
+        onReportGroup?.();
+        setIsOpen(false);
+      },
+      show: isGroupChat && conversation?.canReport,
+      danger: true
+    },
+    {
+      id: 'leave-group',
+      label: 'Leave Group',
+      icon: LogOut,
+      action: () => {
+        if (window.confirm('Leave this group? You can rejoin later if it is open.')) {
+          onLeaveGroup?.();
+        }
+        setIsOpen(false);
+      },
+      show: isGroupChat && conversation?.canLeave,
+      danger: true
+    },
+    {
+      id: 'delete-group',
+      label: 'Delete Group',
+      icon: Trash2,
+      action: () => {
+        if (window.confirm('Delete this group? This action cannot be undone.')) {
+          onDeleteGroup?.();
+        }
+        setIsOpen(false);
+      },
+      show: isGroupChat && conversation?.canDelete,
+      danger: true
+    },
+    {
       id: 'delete',
       label: 'Delete Conversation',
       icon: Trash2,
@@ -144,7 +186,8 @@ const ChatHeaderMenu = ({
         }
         setIsOpen(false);
       },
-      danger: true
+      danger: true,
+      show: !isGroupChat
     }
   ].filter(item => item.show !== false);
 

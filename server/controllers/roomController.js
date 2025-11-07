@@ -1,6 +1,7 @@
 const Room = require('../models/Room');
 const Message = require('../models/Message');
 const User = require('../models/User');
+const GroupReport = require('../models/GroupReport');
 
 // Get all rooms
 exports.getAllRooms = async (req, res) => {
@@ -228,6 +229,36 @@ exports.deleteRoom = async (req, res) => {
     res.json({ message: 'Room deleted successfully' });
   } catch (error) {
     console.error('Delete room error:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+};
+
+// Report room
+exports.reportRoom = async (req, res) => {
+  try {
+    const { roomId } = req.params;
+    const userId = req.userId;
+    const { reason, details } = req.body;
+
+    if (!reason || !reason.trim()) {
+      return res.status(400).json({ error: 'Reason is required' });
+    }
+
+    const room = await Room.findById(roomId);
+    if (!room) {
+      return res.status(404).json({ error: 'Room not found' });
+    }
+
+    await GroupReport.create({
+      room: roomId,
+      reportedBy: userId,
+      reason: reason.trim(),
+      details: details?.trim() || ''
+    });
+
+    res.status(201).json({ message: 'Report submitted successfully' });
+  } catch (error) {
+    console.error('Report room error:', error);
     res.status(500).json({ error: 'Server error' });
   }
 };
