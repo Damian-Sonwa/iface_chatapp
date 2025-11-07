@@ -436,27 +436,204 @@ const reinstateUser = async (req, res) => {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    if (user.isAdmin) {
-      return res.status(403).json({ error: 'Cannot reinstate admin users' });
-    }
-
+    user.isBanned = false;
+    user.banReason = null;
     user.isSuspended = false;
     user.suspendedUntil = null;
     user.suspensionReason = null;
-    user.isBanned = false;
-    user.banReason = null;
     user.status = 'offline';
+
     await user.save();
 
     await logAdminAction({
       adminId: req.userId,
       action: 'reinstate',
-      targetUserId: user._id
+      targetUserId: user._id,
+      details: { username: user.username }
     });
 
-    res.json({ success: true, user });
+    res.json({ success: true, message: 'User reinstated successfully' });
   } catch (error) {
     console.error('Reinstate user error:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+};
+
+const getViolations = async (req, res) => {
+  try {
+    const { limit = 100, status, reason } = req.query;
+    const parsedLimit = Math.min(parseInt(limit, 10) || 100, 200);
+
+    const query = {};
+    if (status) query.status = status;
+    if (reason) query.reason = reason;
+
+    const violations = await Violation.find(query)
+      .populate('user', 'username email role isSuspended isBanned')
+      .populate('message', 'content room privateChat createdAt')
+      .sort({ createdAt: -1 })
+      .limit(parsedLimit)
+      .lean();
+
+    const total = await Violation.countDocuments(query);
+
+    const matchStage = Object.keys(query).length ? [{ $match: query }] : [];
+
+    const byReason = await Violation.aggregate([
+      ...matchStage,
+      {
+        $group: {
+          _id: '$reason',
+          count: { $sum: 1 }
+        }
+      },
+      { $sort: { count: -1 } }
+    ]);
+
+    const statusCounts = await Violation.aggregate([
+      ...matchStage,
+      {
+        $group: {
+          _id: '$status',
+          count: { $sum: 1 }
+        }
+      },
+      { $sort: { count: -1 } }
+    ]);
+
+    const suspendedUsers = await User.countDocuments({ isSuspended: true });
+    const bannedUsers = await User.countDocuments({ isBanned: true });
+
+    res.json({
+      violations,
+      summary: {
+        total,
+        byReason: byReason.map(item => ({ reason: item._id, count: item.count })),
+        statusCounts: statusCounts.map(item => ({ status: item._id, count: item.count })),
+        suspendedUsers,
+        bannedUsers
+      }
+    });
+  } catch (error) {
+    console.error('Get violations error:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+};
+
+const getAnalytics = async (req, res) => {
+  try {
+    const days = Math.min(parseInt(req.query.days, 10) || 14, 30);
+    const since = new Date();
+    since.setDate(since.getDate() - (days - 1));
+
+    const formatTrend = (items) =>
+      items.map(item => ({ date: item._id, count: item.count })).sort((a, b) => a.date.localeCompare(b.date));
+
+    const messageTrendRaw = await Message.aggregate([
+      {
+        $match: {
+          createdAt: { $gte: since }
+        }
+      },
+      {
+        $group: {
+          _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' } },
+          count: { $sum: 1 }
+        }
+      },
+      { $sort: { _id: 1 } }
+    ]);
+
+    const newUsersTrendRaw = await User.aggregate([
+      {
+        $match: {
+          createdAt: { $gte: since }
+        }
+      },
+      {
+        $group: {
+          _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' } },
+          count: { $sum: 1 }
+        }
+      },
+      { $sort: { _id: 1 } }
+    ]);
+
+    const topRoomsRaw = await Message.aggregate([
+      {
+        $match: {
+          createdAt: { $gte: since },
+          room: { $exists: true, $ne: null }
+        }
+      },
+      {
+        $group: {
+          _id: '$room',
+          count: { $sum: 1 }
+        }
+      },
+      { $sort: { count: -1 } },
+      { $limit: 5 },
+      {
+        $lookup: {
+          from: 'rooms',
+          localField: '_id',
+          foreignField: '_id',
+          as: 'room'
+        }
+      },
+      {
+        $unwind: {
+          path: '$room',
+          preserveNullAndEmptyArrays: true
+        }
+      },
+      {
+        $project: {
+          roomId: '$_id',
+          name: { $ifNull: ['$room.name', 'Unnamed Room'] },
+          count: 1
+        }
+      }
+    ]);
+
+    const moderationSummaryRaw = await Violation.aggregate([
+      {
+        $match: {
+          createdAt: { $gte: since }
+        }
+      },
+      {
+        $group: {
+          _id: '$reason',
+          count: { $sum: 1 }
+        }
+      },
+      { $sort: { count: -1 } }
+    ]);
+
+    const totals = {
+      totalMessages: await Message.countDocuments(),
+      totalUsers: await User.countDocuments(),
+      activeUsers: await User.countDocuments({ status: 'online' }),
+      suspendedUsers: await User.countDocuments({ isSuspended: true }),
+      bannedUsers: await User.countDocuments({ isBanned: true }),
+      totalViolations: await Violation.countDocuments()
+    };
+
+    res.json({
+      totals,
+      messageTrend: formatTrend(messageTrendRaw),
+      newUsersTrend: formatTrend(newUsersTrendRaw),
+      topRooms: topRoomsRaw.map(item => ({
+        roomId: item.roomId,
+        name: item.name,
+        count: item.count
+      })),
+      moderationSummary: moderationSummaryRaw.map(item => ({ reason: item._id, count: item.count }))
+    });
+  } catch (error) {
+    console.error('Get analytics error:', error);
     res.status(500).json({ error: 'Server error' });
   }
 };
@@ -489,6 +666,8 @@ module.exports = {
   deleteRoom,
   getActivity,
   reinstateUser,
-  listActionLogs
+  listActionLogs,
+  getViolations,
+  getAnalytics
 };
 

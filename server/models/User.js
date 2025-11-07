@@ -76,7 +76,7 @@ const userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ['user', 'admin'],
+    enum: ['user', 'admin', 'instructor'],
     default: 'user'
   },
   isAdmin: {
@@ -224,14 +224,11 @@ userSchema.pre('save', function(next) {
   if (this.role === 'admin' && !this.isAdmin) {
     this.isAdmin = true;
   }
-  if (this.isAdmin && this.role !== 'admin') {
-    this.role = 'admin';
-  }
-  if (!this.isAdmin && this.role === 'admin') {
-    this.role = 'user';
-  }
   if (!this.role) {
     this.role = this.isAdmin ? 'admin' : 'user';
+  }
+  if (this.isAdmin) {
+    this.role = 'admin';
   }
   next();
 });

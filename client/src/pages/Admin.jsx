@@ -5,13 +5,13 @@ import api from '../utils/api';
 import { 
   Users, MessageSquare, Hash, Activity, TrendingUp, 
   Ban, Unlock, Trash2, Search, Calendar, UserCheck, 
-  AlertTriangle, XCircle, Clock, ArchiveRestore
+  AlertTriangle, XCircle, Clock, ArchiveRestore, Loader2, BarChart2
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import ConfirmDialog from '../components/ConfirmDialog';
 import { getSocket } from '../utils/socket';
 
-const Admin = () => {
+const Admin = ({ defaultTab = 'dashboard' }) => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
@@ -21,14 +21,80 @@ const Admin = () => {
   const [activities, setActivities] = useState([]);
   const [actionLogs, setActionLogs] = useState([]);
   const [logsLoading, setLogsLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState('dashboard');
+  const [activeTab, setActiveTab] = useState(defaultTab);
   const [searchTerm, setSearchTerm] = useState('');
   const [confirmDialog, setConfirmDialog] = useState({ open: false });
   const violationThreshold = Number(import.meta.env.VITE_VIOLATION_THRESHOLD || 3);
   const [latestViolation, setLatestViolation] = useState(null);
+  const [violationsData, setViolationsData] = useState({
+    violations: [],
+    summary: {
+      total: 0,
+      byReason: [],
+      statusCounts: [],
+      suspendedUsers: 0,
+      bannedUsers: 0
+    }
+  });
+  const [violationsLoading, setViolationsLoading] = useState(false);
+  const [analytics, setAnalytics] = useState(null);
+  const [analyticsLoading, setAnalyticsLoading] = useState(false);
+
+  useEffect(() => {
+    setActiveTab(defaultTab);
+  }, [defaultTab]);
 
   const openConfirm = (config) => setConfirmDialog({ open: true, ...config });
   const closeConfirm = () => setConfirmDialog(prev => ({ ...prev, open: false }));
+
+  const fetchViolations = async () => {
+     try {
+       setViolationsLoading(true);
+       const response = await api.get('/admin/violations');
+       const payload = response.data || {};
+       const summary = payload.summary || {};
+       setViolationsData({
+         violations: payload.violations || [],
+         summary: {
+           total: summary.total || 0,
+           byReason: summary.byReason || [],
+           statusCounts: summary.statusCounts || [],
+           suspendedUsers: summary.suspendedUsers || 0,
+           bannedUsers: summary.bannedUsers || 0
+         }
+       });
+     } catch (error) {
+       console.error('Violations error:', error);
+     } finally {
+       setViolationsLoading(false);
+     }
+   };
+
+  const fetchAnalytics = async () => {
+     try {
+       setAnalyticsLoading(true);
+       const response = await api.get('/admin/analytics');
+       const payload = response.data || {};
+       setAnalytics({
+         totals: payload.totals || {
+           totalMessages: 0,
+           totalUsers: 0,
+           activeUsers: 0,
+           suspendedUsers: 0,
+           bannedUsers: 0,
+           totalViolations: 0
+         },
+         messageTrend: payload.messageTrend || [],
+         newUsersTrend: payload.newUsersTrend || [],
+         topRooms: payload.topRooms || [],
+         moderationSummary: payload.moderationSummary || []
+       });
+     } catch (error) {
+       console.error('Analytics error:', error);
+     } finally {
+       setAnalyticsLoading(false);
+     }
+   };
 
   useEffect(() => {
     if (!user?.isAdmin) {
@@ -47,7 +113,13 @@ const Admin = () => {
     if (activeTab === 'logs') {
       fetchActionLogs();
     }
-  }, [activeTab]);
+    if (activeTab === 'violations' && violationsData.violations.length === 0 && !violationsLoading) {
+      fetchViolations();
+    }
+    if (activeTab === 'analytics' && !analytics && !analyticsLoading) {
+      fetchAnalytics();
+    }
+  }, [activeTab, analytics, analyticsLoading, violationsData.violations.length, violationsLoading]);
 
   useEffect(() => {
     const socket = getSocket();
@@ -322,6 +394,41 @@ const Admin = () => {
     u.email?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const tabs = [
+    { id: 'dashboard', label: 'Dashboard', icon: Activity },
+    { id: 'users', label: 'Users', icon: Users },
+    { id: 'rooms', label: 'Rooms', icon: Hash },
+    { id: 'violations', label: 'Violations', icon: AlertTriangle },
+    { id: 'analytics', label: 'Analytics', icon: BarChart2 },
+    { id: 'activity', label: 'Activity', icon: Calendar },
+    { id: 'logs', label: 'Action Logs', icon: ArchiveRestore }
+  ];
+
+  const getStatusCount = (status) => {
+    const entry = violationsData.summary.statusCounts.find(item => item.status === status);
+    return entry ? entry.count : 0;
+  };
+
+  const renderStatusBadge = (status) => {
+    const label = (status || 'unknown').replace(/_/g, ' ');
+    const palette = {
+      pending: 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-200',
+      reviewed: 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-200',
+      action_taken: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-200'
+    };
+    const classes = palette[status] || 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-300';
+    return (
+      <span className={`px-2 py-1 rounded-full text-xs font-semibold ${classes}`}>
+        {label}
+      </span>
+    );
+  };
+
+  const formatDateTime = (value) => {
+    if (!value) return '—';
+    return new Date(value).toLocaleString();
+  };
+ 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-4 md:p-8">
       <div className="max-w-7xl mx-auto">
@@ -350,13 +457,7 @@ const Admin = () => {
 
         {/* Tabs */}
         <div className="flex gap-2 mb-6 border-b border-gray-200 dark:border-gray-700">
-          {[
-            { id: 'dashboard', label: 'Dashboard', icon: Activity },
-            { id: 'users', label: 'Users', icon: Users },
-            { id: 'rooms', label: 'Rooms', icon: Hash },
-          { id: 'activity', label: 'Activity', icon: Calendar },
-          { id: 'logs', label: 'Action Logs', icon: TrendingUp }
-          ].map(tab => (
+          {tabs.map(tab => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
@@ -374,6 +475,7 @@ const Admin = () => {
 
         {/* Dashboard Tab */}
         {activeTab === 'dashboard' && dashboard && (
+          <>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -454,22 +556,22 @@ const Admin = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-              className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow"
-            >
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">AI Summaries</p>
-                  <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">
-                    {dashboard.stats.totalSummaries}
-                  </p>
-                </div>
-                <div className="p-3 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
-                  <TrendingUp className="w-6 h-6 text-purple-600 dark:text-purple-400" />
-                </div>
+            className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow"
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600 dark:text-gray-400">AI Summaries</p>
+                <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+                  {dashboard.stats.totalSummaries}
+                </p>
               </div>
-            </motion.div>
-          </div>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+              <div className="p-3 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
+                <TrendingUp className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+              </div>
+            </div>
+          </motion.div>
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow">
               <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
                 <h3 className="font-semibold">Recent Violations</h3>
@@ -521,6 +623,7 @@ const Admin = () => {
               </div>
             </div>
           </div>
+        </>
         )}
 
         {/* Users Tab */}
@@ -757,6 +860,247 @@ const Admin = () => {
                     )}
                   </tbody>
                 </table>
+              </div>
+            )}
+          </div>
+        )}
+
+        {activeTab === 'violations' && (
+          <div className="space-y-6">
+            {violationsLoading ? (
+              <div className="flex items-center justify-center py-12">
+                <Loader2 className="w-8 h-8 animate-spin text-purple-500" />
+              </div>
+            ) : (
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                  <div className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow">
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Total Violations</p>
+                    <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">{violationsData.summary.total || 0}</p>
+                  </div>
+                  <div className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow">
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Pending Review</p>
+                    <p className="text-3xl font-bold text-amber-600 dark:text-amber-300">{getStatusCount('pending')}</p>
+                  </div>
+                  <div className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow">
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Reviewed</p>
+                    <p className="text-3xl font-bold text-blue-600 dark:text-blue-300">{getStatusCount('reviewed')}</p>
+                  </div>
+                  <div className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow">
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Action Taken</p>
+                    <p className="text-3xl font-bold text-emerald-600 dark:text-emerald-300">{getStatusCount('action_taken')}</p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <div className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow">
+                    <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">Top Reasons</h3>
+                    {violationsData.summary.byReason.length > 0 ? (
+                      <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-300">
+                        {violationsData.summary.byReason.slice(0, 6).map(item => (
+                          <li key={item.reason} className="flex items-center justify-between">
+                            <span className="capitalize">{item.reason?.replace(/-/g, ' ') || 'unknown'}</span>
+                            <span className="font-semibold">{item.count}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className="text-sm text-gray-500">No violations recorded yet.</p>
+                    )}
+                  </div>
+                  <div className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow">
+                    <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">Status Breakdown</h3>
+                    <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-300">
+                      {['pending', 'reviewed', 'action_taken'].map(status => (
+                        <li key={status} className="flex items-center justify-between">
+                          <span className="capitalize">{status.replace(/_/g, ' ')}</span>
+                          <span className="font-semibold">{getStatusCount(status)}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow">
+                    <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">Enforcement</h3>
+                    <div className="space-y-3 text-sm text-gray-600 dark:text-gray-300">
+                      <div className="flex items-center justify-between">
+                        <span>Suspended users</span>
+                        <span className="font-semibold">{violationsData.summary.suspendedUsers || 0}</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span>Banned users</span>
+                        <span className="font-semibold">{violationsData.summary.bannedUsers || 0}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-white dark:bg-gray-800 rounded-xl shadow">
+                  <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+                    <h3 className="font-semibold">Recent Violations</h3>
+                    <span className="text-xs text-gray-500 dark:text-gray-400">Showing latest {violationsData.violations.length}</span>
+                  </div>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead className="bg-gray-50 dark:bg-gray-700">
+                        <tr>
+                          <th className="px-4 py-3 text-left font-semibold text-gray-600 dark:text-gray-200">User</th>
+                          <th className="px-4 py-3 text-left font-semibold text-gray-600 dark:text-gray-200">Reason</th>
+                          <th className="px-4 py-3 text-left font-semibold text-gray-600 dark:text-gray-200">Message</th>
+                          <th className="px-4 py-3 text-left font-semibold text-gray-600 dark:text-gray-200">Status</th>
+                          <th className="px-4 py-3 text-left font-semibold text-gray-600 dark:text-gray-200">Timestamp</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                        {violationsData.violations.length === 0 ? (
+                          <tr>
+                            <td colSpan={5} className="px-4 py-6 text-center text-gray-500 dark:text-gray-400">
+                              No violations found for the selected filters.
+                            </td>
+                          </tr>
+                        ) : (
+                          violationsData.violations.map(violation => (
+                            <tr key={violation._id} className="hover:bg-gray-50 dark:hover:bg-gray-800/60">
+                              <td className="px-4 py-3">
+                                <div className="font-semibold text-gray-800 dark:text-gray-100">{violation.user?.username || 'Unknown'}</div>
+                                <div className="text-xs text-gray-500 dark:text-gray-400">{violation.user?.email}</div>
+                              </td>
+                              <td className="px-4 py-3 capitalize text-gray-700 dark:text-gray-200">{violation.reason?.replace(/-/g, ' ') || 'unknown'}</td>
+                              <td className="px-4 py-3 text-gray-600 dark:text-gray-300 max-w-xs">
+                                <p className="line-clamp-2">{violation.message?.content || violation.content || 'No content available'}</p>
+                              </td>
+                              <td className="px-4 py-3">{renderStatusBadge(violation.status)}</td>
+                              <td className="px-4 py-3 text-gray-500 dark:text-gray-400">{formatDateTime(violation.createdAt)}</td>
+                            </tr>
+                          ))
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+        )}
+
+        {activeTab === 'analytics' && (
+          <div className="space-y-6">
+            {analyticsLoading ? (
+              <div className="flex items-center justify-center py-12">
+                <Loader2 className="w-8 h-8 animate-spin text-purple-500" />
+              </div>
+            ) : analytics ? (
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                  <div className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow flex items-center gap-3">
+                    <MessageSquare className="w-8 h-8 text-purple-500" />
+                    <div>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 uppercase">Total Messages</p>
+                      <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{analytics.totals.totalMessages}</p>
+                    </div>
+                  </div>
+                  <div className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow flex items-center gap-3">
+                    <Users className="w-8 h-8 text-blue-500" />
+                    <div>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 uppercase">Total Users</p>
+                      <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{analytics.totals.totalUsers}</p>
+                    </div>
+                  </div>
+                  <div className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow flex items-center gap-3">
+                    <Activity className="w-8 h-8 text-green-500" />
+                    <div>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 uppercase">Active Now</p>
+                      <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{analytics.totals.activeUsers}</p>
+                    </div>
+                  </div>
+                  <div className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow flex items-center gap-3">
+                    <AlertTriangle className="w-8 h-8 text-amber-500" />
+                    <div>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 uppercase">Total Violations</p>
+                      <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{analytics.totals.totalViolations}</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow">
+                    <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">Messages (last {analytics.messageTrend.length} days)</h3>
+                    <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-300">
+                      {analytics.messageTrend.map(item => (
+                        <li key={`messages-${item.date}`} className="flex items-center justify-between">
+                          <span>{item.date}</span>
+                          <span className="font-semibold">{item.count}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow">
+                    <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">New Users (last {analytics.newUsersTrend.length} days)</h3>
+                    <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-300">
+                      {analytics.newUsersTrend.map(item => (
+                        <li key={`users-${item.date}`} className="flex items-center justify-between">
+                          <span>{item.date}</span>
+                          <span className="font-semibold">{item.count}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="bg-white dark:bg-gray-800 rounded-xl shadow">
+                    <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+                      <h3 className="font-semibold">Top Active Rooms</h3>
+                    </div>
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-sm">
+                        <thead className="bg-gray-50 dark:bg-gray-700">
+                          <tr>
+                            <th className="px-4 py-3 text-left font-semibold text-gray-600 dark:text-gray-200">Room</th>
+                            <th className="px-4 py-3 text-left font-semibold text-gray-600 dark:text-gray-200">Messages</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                          {analytics.topRooms.length === 0 ? (
+                            <tr>
+                              <td colSpan={2} className="px-4 py-6 text-center text-gray-500 dark:text-gray-400">
+                                No room activity detected in the selected range.
+                              </td>
+                            </tr>
+                          ) : (
+                            analytics.topRooms.map(room => (
+                              <tr key={room.roomId} className="hover:bg-gray-50 dark:hover:bg-gray-800/60">
+                                <td className="px-4 py-3 text-gray-700 dark:text-gray-200">{room.name}</td>
+                                <td className="px-4 py-3 text-gray-700 dark:text-gray-200 font-semibold">{room.count}</td>
+                              </tr>
+                            ))
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                  <div className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow">
+                    <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">Moderation Summary</h3>
+                    {analytics.moderationSummary.length === 0 ? (
+                      <p className="text-sm text-gray-500">No moderation activity in the selected timeframe.</p>
+                    ) : (
+                      <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-300">
+                        {analytics.moderationSummary.map(item => (
+                          <li key={item.reason} className="flex items-center justify-between">
+                            <span className="capitalize">{item.reason?.replace(/-/g, ' ') || 'unknown'}</span>
+                            <span className="font-semibold">{item.count}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                    <div className="mt-4 text-xs text-gray-500 dark:text-gray-400">
+                      Suspended users: {analytics.totals.suspendedUsers || 0} • Banned users: {analytics.totals.bannedUsers || 0}
+                    </div>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <div className="p-6 rounded-xl bg-white dark:bg-gray-800 shadow text-center text-gray-500 dark:text-gray-400">
+                No analytics data available yet.
               </div>
             )}
           </div>

@@ -12,9 +12,11 @@ const Admin = lazy(() => import('./pages/Admin'));
 const Friends = lazy(() => import('./pages/Friends'));
 const Settings = lazy(() => import('./pages/Settings'));
 const TechSkills = lazy(() => import('./pages/TechSkills'));
-const Classrooms = lazy(() => import('./pages/Classrooms'));
-const Onboarding = lazy(() => import('./pages/Onboarding'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
+const ClassroomHome = lazy(() => import('./pages/ClassroomHome'));
+const ClassroomSkill = lazy(() => import('./pages/ClassroomSkill'));
+const ClassroomSession = lazy(() => import('./pages/ClassroomSession'));
+const Onboarding = lazy(() => import('./pages/Onboarding'));
 
 // Loading component
 const PageLoader = () => (
@@ -109,10 +111,25 @@ function AppRoutes() {
               </SideShell>
             </PrivateRoute>
           } />
-          <Route path="/admin" element={
+          <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
+          <Route path="/admin/dashboard" element={
             <PrivateRoute adminOnly>
               <SideShell>
-                <Admin />
+                <Admin defaultTab="dashboard" />
+              </SideShell>
+            </PrivateRoute>
+          } />
+          <Route path="/admin/violations" element={
+            <PrivateRoute adminOnly>
+              <SideShell>
+                <Admin defaultTab="violations" />
+              </SideShell>
+            </PrivateRoute>
+          } />
+          <Route path="/admin/analytics" element={
+            <PrivateRoute adminOnly>
+              <SideShell>
+                <Admin defaultTab="analytics" />
               </SideShell>
             </PrivateRoute>
           } />
@@ -123,10 +140,24 @@ function AppRoutes() {
               </SideShell>
             </PrivateRoute>
           } />
-          <Route path="/classrooms" element={
-            <PrivateRoute>
+          <Route path="/classroom" element={
+            <PrivateRoute onboardingRequired={true}>
               <SideShell>
-                <Classrooms />
+                <ClassroomHome />
+              </SideShell>
+            </PrivateRoute>
+          } />
+          <Route path="/classroom/:skill" element={
+            <PrivateRoute onboardingRequired={true}>
+              <SideShell>
+                <ClassroomSkill />
+              </SideShell>
+            </PrivateRoute>
+          } />
+          <Route path="/classroom/:skill/:classId" element={
+            <PrivateRoute onboardingRequired={true}>
+              <SideShell>
+                <ClassroomSession />
               </SideShell>
             </PrivateRoute>
           } />

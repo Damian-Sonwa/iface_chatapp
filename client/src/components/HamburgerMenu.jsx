@@ -3,68 +3,63 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Menu,
   X,
+  Home,
   MessageCircle,
+  Compass,
   Users,
-  UserPlus,
+  Star,
+  Layers,
+  GraduationCap,
+  Megaphone,
   Settings,
+  HelpCircle,
   LogOut,
   Moon,
   Sun,
-  Bell,
-  Archive,
-  Ban,
-  Shield,
-  Sparkles,
-  FileText,
-  Heart,
-  Camera,
-  Search,
-  Plus,
   ChevronRight,
-  Languages,
-  Bot,
-  BarChart2,
-  GraduationCap
+  ChevronDown,
+  Shield,
+  Ban,
+  BarChart2
 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import StatusSelector from './StatusSelector';
-import UserSearchDropdown from './UserSearchDropdown';
-import TechSkillsMenu from './TechSkillsMenu';
-import ClassroomList from './ClassroomList';
-import AllClassroomsView from './AllClassroomsView';
 import api from '../utils/api';
 
-/**
- * HamburgerMenu Component
- * Organized menu for all app features with glassmorphism design
- */
+const slugify = (value = '') => value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+
+const getLevelBadge = (skillLevel) => {
+  if (!skillLevel) return { label: 'Member', color: 'bg-gray-500/20 text-gray-200 border-gray-400/40' };
+  switch (skillLevel) {
+    case 'Beginner':
+      return { label: 'Beginner', color: 'bg-green-500/10 text-green-300 border-green-400/40' };
+    case 'Intermediate':
+      return { label: 'Intermediate', color: 'bg-amber-500/10 text-amber-300 border-amber-400/40' };
+    case 'Professional':
+      return { label: 'Professional', color: 'bg-purple-500/10 text-purple-300 border-purple-400/40' };
+    default:
+      return { label: skillLevel, color: 'bg-gray-500/20 text-gray-200 border-gray-400/40' };
+  }
+};
+
 const HamburgerMenu = ({ darkMode, onToggleDarkMode, user }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [activeSubmenu, setActiveSubmenu] = useState(null);
-  const [showUserSearch, setShowUserSearch] = useState(false);
-  const [showTechSkills, setShowTechSkills] = useState(false);
-  const [showAllClassrooms, setShowAllClassrooms] = useState(false);
+  const [isTechExpanded, setIsTechExpanded] = useState(true);
+  const [techSkills, setTechSkills] = useState([]);
+  const [loadingSkills, setLoadingSkills] = useState(false);
   const menuRef = useRef(null);
   const navigate = useNavigate();
+  const location = useLocation();
   const { logout } = useAuth();
+
+  const isAdmin = user?.role === 'admin' || user?.isAdmin;
 
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
-        // Don't close if clicking on hamburger button
-        if (event.target.closest('[data-hamburger-button]')) {
-          return;
-        }
+        if (event.target.closest('[data-hamburger-button]')) return;
         setIsOpen(false);
-        setActiveSubmenu(null);
-      }
-    };
-
-    // Listen for custom event to open tech skills
-    const handleOpenTechSkills = () => {
-      if (isOpen) {
-        setShowTechSkills(true);
       }
     };
 
@@ -72,7 +67,6 @@ const HamburgerMenu = ({ darkMode, onToggleDarkMode, user }) => {
       document.addEventListener('mousedown', handleClickOutside);
       document.addEventListener('touchstart', handleClickOutside);
       document.body.style.overflow = 'hidden';
-      window.addEventListener('openTechSkills', handleOpenTechSkills);
     } else {
       document.body.style.overflow = 'unset';
     }
@@ -81,143 +75,67 @@ const HamburgerMenu = ({ darkMode, onToggleDarkMode, user }) => {
       document.removeEventListener('mousedown', handleClickOutside);
       document.removeEventListener('touchstart', handleClickOutside);
       document.body.style.overflow = 'unset';
-      window.removeEventListener('openTechSkills', handleOpenTechSkills);
     };
   }, [isOpen]);
 
-  const menuSections = [
-    {
-      id: 'chat',
-      title: 'Chat',
-      icon: MessageCircle,
-      items: [
-        { id: 'new-dm', label: 'New Direct Message', icon: UserPlus, action: () => navigate('/chat?panel=friends') },
-        { id: 'archived', label: 'Archived Chats', icon: Archive, action: () => navigate('/chat?filter=archived') },
-        { id: 'search', label: 'Search Messages', icon: Search, action: () => navigate('/chat?action=search') },
-      ]
-    },
-    {
-      id: 'community',
-      title: 'Community',
-      icon: Users,
-      items: [
-        { id: 'new-group', label: 'New Group', icon: Plus, action: null },
-        { id: 'invite-user', label: 'Invite User', icon: UserPlus, action: () => navigate('/invites') },
-      ]
-    },
-    {
-      id: 'tech-skills',
-      title: 'Tech / Digital Skills',
-      icon: Sparkles,
-      items: [
-        { 
-          id: 'explore-tech-skills', 
-          label: 'Explore Tech Skills', 
-          icon: Sparkles, 
-          action: () => {
-            console.log('Opening Tech Skills Menu');
-            setShowTechSkills(true);
-          }
-        },
-        { 
-          id: 'select-group', 
-          label: 'Select Group', 
-          icon: Users, 
-          action: () => {
-            console.log('Opening Tech Skills Menu (Select Group)');
-            setShowTechSkills(true);
-          }
-        },
-        { 
-          id: 'classrooms', 
-          label: 'Classrooms', 
-          icon: GraduationCap, 
-          action: () => navigate('/classrooms')
-        },
-      ]
-    },
-    {
-      id: 'social',
-      title: 'Social',
-      icon: Heart,
-      items: [
-        { id: 'moments', label: 'Moments', icon: Camera, action: () => navigate('/moments') },
-        { id: 'blocked', label: 'Blocked Users', icon: Ban, action: () => navigate('/chat?filter=blocked') },
-      ]
-    },
-    {
-      id: 'features',
-      title: 'Features',
-      icon: Sparkles,
-      items: [
-        { id: 'ai-assistant', label: 'AI Assistant', icon: Bot, action: () => navigate('/chat?panel=assistant') },
-        { id: 'polls', label: 'Polls', icon: BarChart2, action: () => navigate('/chat?action=poll') },
-        { id: 'summarize', label: 'Summarize Chat', icon: FileText, action: () => navigate('/chat?action=summarize') },
-        { id: 'translate', label: 'Translation', icon: Languages, action: () => navigate('/chat?action=translate') },
-      ]
-    },
-    {
-      id: 'account',
-      title: 'Account',
-      icon: Settings,
-      items: [
-        { id: 'profile', label: 'My Profile', icon: Users, action: () => navigate('/settings?tab=profile') },
-        { id: 'settings', label: 'Settings', icon: Settings, action: () => navigate('/settings') },
-        { id: 'notifications', label: 'Notifications', icon: Bell, action: () => navigate('/settings?tab=notifications') },
-        { id: 'admin', label: 'Admin Panel', icon: Shield, action: () => navigate('/admin'), adminOnly: true },
-      ].filter(item => !item.adminOnly || user?.isAdmin)
+  useEffect(() => {
+    const fetchTechSkills = async () => {
+      try {
+        setLoadingSkills(true);
+        const response = await api.get('/tech-skills');
+        setTechSkills(response.data.skills || []);
+      } catch (err) {
+        console.error('Tech skills menu load error:', err);
+      } finally {
+        setLoadingSkills(false);
+      }
+    };
+
+    fetchTechSkills();
+  }, []);
+
+  const closeAfterNavigation = () => {
+    if (window.innerWidth < 768) {
+      setIsOpen(false);
     }
+  };
+
+  const handleNavigate = (path) => {
+    navigate(path);
+    closeAfterNavigation();
+  };
+
+  const profileBadge = getLevelBadge(user?.skillLevel);
+
+  const mainNavigation = [
+    { id: 'dashboard', label: 'Dashboard', icon: Home, onClick: () => handleNavigate('/dashboard'), pathMatch: '/dashboard' },
+    { id: 'messages', label: 'Messages / Chats', icon: MessageCircle, onClick: () => handleNavigate('/chat'), pathMatch: '/chat' },
+    { id: 'explore', label: 'Explore Tech Skills', icon: Compass, onClick: () => handleNavigate('/tech-skills') },
+    { id: 'my-groups', label: 'My Groups', icon: Users, onClick: () => handleNavigate('/friends?tab=groups'), pathMatch: '/friends' },
+    { id: 'suggested', label: 'Suggested Groups', icon: Star, onClick: () => handleNavigate('/friends?tab=suggested'), pathMatch: '/friends' }
   ];
 
-  const handleMenuClick = async (item) => {
-    if (item.action) {
-      item.action();
-      // Don't close menu if it's opening TechSkillsMenu - let it handle its own state
-      if (item.id !== 'tech-skills') {
-        setIsOpen(false);
-        setActiveSubmenu(null);
-      }
-    } else if (item.id === 'new-group') {
-      // Create new group - prompt for name
-      const groupName = prompt('Enter group name:');
-      if (groupName && groupName.trim()) {
-        try {
-          const response = await api.post('/rooms', { name: groupName.trim() });
-          navigate('/chat', { state: { chatId: response.data.room._id, chatType: 'room' } });
-        } catch (error) {
-          console.error('Create group error:', error);
-          alert('Failed to create group');
-        }
-      }
-      setIsOpen(false);
-      setActiveSubmenu(null);
-    } else if (item.id === 'groups') {
-      // Navigate to chat and filter to show groups
-      navigate('/chat?view=groups');
-      setIsOpen(false);
-      setActiveSubmenu(null);
-    } else {
-      // Default: close menu for other items
-      setIsOpen(false);
-      setActiveSubmenu(null);
-    }
-  };
+  const communityNavigation = [
+    { id: 'classroom', label: 'Classroom', icon: GraduationCap, onClick: () => handleNavigate('/classroom'), pathMatch: '/classroom' },
+    { id: 'announcements', label: 'Announcements', icon: Megaphone, onClick: () => handleNavigate('/announcements'), pathMatch: '/announcements' },
+    { id: 'settings', label: 'Settings', icon: Settings, onClick: () => handleNavigate('/settings'), pathMatch: '/settings' },
+    { id: 'help', label: 'Help / Support', icon: HelpCircle, onClick: () => handleNavigate('/help'), pathMatch: '/help' }
+  ];
 
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
-    setIsOpen(false);
-  };
+  const adminNavigation = [
+    { id: 'admin-dashboard', label: 'Admin Dashboard', icon: Shield, onClick: () => handleNavigate('/admin/dashboard'), pathMatch: '/admin/dashboard' },
+    { id: 'violations', label: 'User Violations', icon: Ban, onClick: () => handleNavigate('/admin/violations'), pathMatch: '/admin/violations' },
+    { id: 'analytics', label: 'Analytics / Logs', icon: BarChart2, onClick: () => handleNavigate('/admin/analytics'), pathMatch: '/admin/analytics' }
+  ];
 
   return (
     <>
-      {/* Hamburger Button */}
       <motion.button
         data-hamburger-button
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.9 }}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
         onClick={() => setIsOpen(!isOpen)}
-        className="relative z-[10001] p-2 sm:p-3 rounded-lg bg-white/10 dark:bg-black/20 backdrop-blur-xl border border-white/30 dark:border-white/10 hover:bg-white/20 dark:hover:bg-black/30 transition-all min-h-[44px] min-w-[44px] flex items-center justify-center touch-manipulation"
+        className="relative z-[10001] p-2 sm:p-3 rounded-lg bg-white/10 dark:bg-black/20 backdrop-blur-xl border border-white/30 dark:border-white/10 hover:bg-white/20 dark:hover:bg-black/30 transition-all"
         aria-label="Menu"
       >
         <AnimatePresence mode="wait">
@@ -245,7 +163,6 @@ const HamburgerMenu = ({ darkMode, onToggleDarkMode, user }) => {
         </AnimatePresence>
       </motion.button>
 
-              {/* Overlay */}
       <AnimatePresence>
         {isOpen && (
           <>
@@ -257,198 +174,198 @@ const HamburgerMenu = ({ darkMode, onToggleDarkMode, user }) => {
               className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[10008]"
             />
 
-            {/* Menu Panel */}
             <motion.div
               ref={menuRef}
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed right-0 top-0 bottom-0 w-80 max-w-[85vw] z-[10009] bg-gradient-to-br from-slate-900 via-purple-900/40 to-slate-900 backdrop-blur-xl border-l border-white/20 shadow-2xl flex flex-col h-screen max-h-screen overflow-hidden"
+              className="fixed right-0 top-0 bottom-0 w-80 max-w-[85vw] z-[10009] bg-gradient-to-br from-slate-900 via-purple-900/40 to-slate-900 backdrop-blur-xl border-l border-white/20 shadow-2xl flex flex-col"
             >
-              {/* Header */}
               <div className="p-6 border-b border-white/10">
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-xl font-bold bg-gradient-to-r from-primaryFrom to-primaryTo bg-clip-text text-transparent">
-                    Menu
-                  </h2>
+                  <h2 className="text-xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">Navigation</h2>
                   <button
                     onClick={() => setIsOpen(false)}
-                    className="p-3 rounded-lg hover:bg-white/10 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center touch-manipulation"
+                    className="p-2 rounded-lg hover:bg-white/10 transition-colors"
                   >
                     <X className="w-5 h-5 text-gray-400" />
                   </button>
                 </div>
-
-                {/* User Info */}
-                <div className="flex items-center gap-3 p-3 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primaryFrom to-primaryTo flex items-center justify-center text-white font-semibold">
-                    {user?.username?.charAt(0).toUpperCase() || 'U'}
+                <div className="flex items-center gap-3 p-3 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white font-semibold overflow-hidden">
+                    {user?.avatarUrl ? (
+                      <img src={user.avatarUrl} alt={user.username} className="w-full h-full object-cover" />
+                    ) : (
+                      user?.username?.charAt(0).toUpperCase() || 'U'
+                    )}
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="font-semibold text-white truncate">{user?.username || 'User'}</p>
                     <p className="text-xs text-gray-400 truncate">{user?.email}</p>
+                    <span className={`inline-flex items-center mt-1 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide border rounded-full ${profileBadge.color}`}>
+                      {profileBadge.label}
+                    </span>
                   </div>
                 </div>
-
-                {/* Status Selector */}
                 <div className="mt-4">
                   <StatusSelector
                     currentStatus={user?.status || 'offline'}
-                    onStatusChange={(status) => {
-                      // Status updated via StatusSelector component
-                    }}
+                    onStatusChange={() => {}}
                     className="w-full"
                   />
                 </div>
               </div>
 
-              {/* Menu Sections - Scrollable */}
-              <div className="flex-1 overflow-y-auto p-4 space-y-2 pb-4">
-                {menuSections.map((section, sectionIndex) => {
-                  const SectionIcon = section.icon;
-                  return (
-                    <div key={section.id} className="mb-4">
-                      {/* Section Header */}
-                      <div className="flex items-center gap-2 px-3 py-2 mb-2">
-                        <SectionIcon className="w-4 h-4 text-primaryFrom" />
-                        <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                          {section.title}
-                        </h3>
-                      </div>
+              <div className="flex-1 overflow-y-auto p-4 space-y-6 pb-6">
+                <nav className="space-y-1">
+                  <p className="px-3 text-xs font-semibold uppercase tracking-wide text-gray-500">Main Navigation</p>
+                  {mainNavigation.map(item => {
+                    const Icon = item.icon;
+                    const isActive = item.pathMatch ? location.pathname.startsWith(item.pathMatch) : false;
+                    return (
+                      <button
+                        key={item.id}
+                        onClick={item.onClick}
+                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-sm font-medium ${
+                          isActive ? 'bg-gradient-to-r from-indigo-600/20 to-purple-600/20 border border-indigo-500/40 text-white' : 'bg-white/5 hover:bg-white/10 border border-white/5 text-gray-200'
+                        }`}
+                      >
+                        <Icon className="w-5 h-5" />
+                        <span className="flex-1 text-left">{item.label}</span>
+                        <ChevronRight className="w-4 h-4 text-gray-400" />
+                      </button>
+                    );
+                  })}
+                </nav>
 
-                      {/* Section Items */}
-                      {section.items.map((item, itemIndex) => {
-                        const ItemIcon = item.icon;
-                        return (
-                          <motion.button
-                            key={item.id}
-                            initial={{ opacity: 0, x: -20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: sectionIndex * 0.1 + itemIndex * 0.05 }}
-                            whileHover={{ scale: 1.02, x: 4 }}
-                            whileTap={{ scale: 0.98 }}
-                            onClick={() => handleMenuClick(item)}
-                            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-white/5 hover:bg-white/10 backdrop-blur-sm border border-white/10 hover:border-primaryFrom/30 transition-all group mb-2 relative z-10 min-h-[48px] touch-manipulation"
-                          >
-                            <div className="p-2 rounded-lg bg-white/5 group-hover:bg-primaryFrom/20 transition-colors">
-                              <ItemIcon className="w-5 h-5 text-gray-300 group-hover:text-primaryFrom transition-colors" />
-                            </div>
-                            <span className="flex-1 text-left text-white font-medium">{item.label}</span>
-                            <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-primaryFrom transition-colors" />
-                          </motion.button>
-                        );
-                      })}
-                    </div>
-                  );
-                })}
+                <div>
+                  <button
+                    onClick={() => setIsTechExpanded(prev => !prev)}
+                    className="w-full flex items-center justify-between px-3 text-xs font-semibold uppercase tracking-wide text-gray-500"
+                  >
+                    <span>Tech Skills</span>
+                    {isTechExpanded ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+                  </button>
+                  <AnimatePresence initial={false}>
+                    {isTechExpanded && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.25 }}
+                        className="mt-2 space-y-1"
+                      >
+                        {loadingSkills && (
+                          <div className="px-4 py-2 text-xs text-gray-400">Loading...</div>
+                        )}
+                        {!loadingSkills && techSkills.length === 0 && (
+                          <div className="px-4 py-2 text-xs text-gray-500">No skills available yet.</div>
+                        )}
+                        {!loadingSkills && techSkills.map(skill => {
+                          const path = `/classroom/${slugify(skill.name)}`;
+                          return (
+                            <button
+                              key={skill._id}
+                              onClick={() => handleNavigate(path)}
+                              className={`w-full flex items-center gap-3 px-4 py-2 rounded-xl text-sm transition ${
+                                location.pathname.startsWith(path)
+                                  ? 'bg-indigo-500/20 text-white border border-indigo-400/40'
+                                  : 'bg-white/5 hover:bg-white/10 text-gray-200 border border-white/5'
+                              }`}
+                            >
+                              <Layers className="w-4 h-4" />
+                              <span className="flex-1 text-left">{skill.name}</span>
+                            </button>
+                          );
+                        })}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
 
+                <nav className="space-y-1">
+                  <p className="px-3 text-xs font-semibold uppercase tracking-wide text-gray-500">Community & Learning</p>
+                  {communityNavigation.map(item => {
+                    const Icon = item.icon;
+                    const isActive = item.pathMatch ? location.pathname.startsWith(item.pathMatch) : false;
+                    return (
+                      <button
+                        key={item.id}
+                        onClick={item.onClick}
+                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-sm font-medium ${
+                          isActive ? 'bg-gradient-to-r from-indigo-600/20 to-purple-600/20 border border-indigo-500/40 text-white' : 'bg-white/5 hover:bg-white/10 border border-white/5 text-gray-200'
+                        }`}
+                      >
+                        <Icon className="w-5 h-5" />
+                        <span className="flex-1 text-left">{item.label}</span>
+                        <ChevronRight className="w-4 h-4 text-gray-400" />
+                      </button>
+                    );
+                  })}
+                </nav>
+
+                {isAdmin && (
+                  <nav className="space-y-1">
+                    <p className="px-3 text-xs font-semibold uppercase tracking-wide text-gray-500">Admin</p>
+                    {adminNavigation.map(item => {
+                      const Icon = item.icon;
+                      const isActive = item.pathMatch ? location.pathname.startsWith(item.pathMatch) : false;
+                      return (
+                        <button
+                          key={item.id}
+                          onClick={item.onClick}
+                          className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-sm font-medium ${
+                            isActive ? 'bg-gradient-to-r from-pink-600/20 to-purple-600/20 border border-pink-500/40 text-white' : 'bg-white/5 hover:bg-white/10 border border-white/5 text-gray-200'
+                          }`}
+                        >
+                          <Icon className="w-5 h-5" />
+                          <span className="flex-1 text-left">{item.label}</span>
+                          <ChevronRight className="w-4 h-4 text-gray-400" />
+                        </button>
+                      );
+                    })}
+                  </nav>
+                )}
               </div>
 
-              {/* Fixed Bottom Section */}
-              <div className="flex-shrink-0 p-4 border-t border-white/20 bg-gradient-to-br from-slate-900 via-purple-900/40 to-slate-900 relative z-10">
-                {/* Theme Toggle */}
+              <div className="p-4 border-t border-white/20 space-y-2 bg-gradient-to-br from-slate-900 via-purple-900/40 to-slate-900">
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={onToggleDarkMode}
-                  className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-white/5 hover:bg-white/10 backdrop-blur-sm border border-white/10 hover:border-primaryFrom/30 transition-all mb-2 min-h-[48px] touch-manipulation"
+                  className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-white/5 hover:bg-white/10 backdrop-blur-sm border border-white/10 text-white"
                 >
-                  <div className="p-2 rounded-lg bg-white/5">
-                    {darkMode ? (
-                      <Sun className="w-5 h-5 text-yellow-400" />
-                    ) : (
-                      <Moon className="w-5 h-5 text-gray-300" />
-                    )}
+                  <div className="p-2 rounded-lg bg-white/10">
+                    {darkMode ? <Sun className="w-5 h-5 text-yellow-400" /> : <Moon className="w-5 h-5 text-gray-300" />}
                   </div>
-                  <span className="flex-1 text-left text-white font-medium">
+                  <span className="flex-1 text-left text-sm font-medium">
                     {darkMode ? 'Light Mode' : 'Dark Mode'}
                   </span>
                 </motion.button>
 
-                {/* Logout */}
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  onClick={handleLogout}
-                  className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-red-500/10 hover:bg-red-500/20 backdrop-blur-sm border border-red-500/30 hover:border-red-500/50 transition-all min-h-[48px] touch-manipulation"
+                  onClick={() => {
+                    logout();
+                    closeAfterNavigation();
+                    navigate('/login');
+                  }}
+                  className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-300"
                 >
                   <div className="p-2 rounded-lg bg-red-500/20">
-                    <LogOut className="w-5 h-5 text-red-400" />
+                    <LogOut className="w-5 h-5" />
                   </div>
-                  <span className="flex-1 text-left text-white font-medium">Logout</span>
+                  <span className="flex-1 text-left text-sm font-semibold">Logout</span>
                 </motion.button>
 
-                {/* Footer */}
-                <div className="mt-4 pt-4 border-t border-white/10">
-                  <p className="text-xs text-center text-gray-400">
-                    Chaturway v1.0
-                  </p>
-                </div>
+                <p className="text-[10px] text-center text-gray-500 mt-3">Chaturway · Learn. Build. Collaborate.</p>
               </div>
-
             </motion.div>
           </>
         )}
       </AnimatePresence>
-
-      {/* User Search Dropdown - Higher z-index to appear above menu */}
-      {showUserSearch && (
-        <UserSearchDropdown
-          onSelectUser={(selectedUser) => {
-            // Handle user selection - start conversation
-            setShowUserSearch(false);
-            setIsOpen(false);
-            // Emit custom event that Chat.jsx can listen to
-            window.dispatchEvent(new CustomEvent('startConversation', { 
-              detail: { user: selectedUser } 
-            }));
-          }}
-          onClose={() => setShowUserSearch(false)}
-          currentUserId={user?._id || user?.id}
-        />
-      )}
-
-          {/* Tech Skills Menu - Overlay when showing tech skills */}
-          <AnimatePresence>
-            {showTechSkills && (
-              <TechSkillsMenu
-                onClose={() => {
-                  console.log('🚪 Closing Tech Skills Menu');
-                  setShowTechSkills(false);
-                  setIsOpen(false); // Also close hamburger menu when closing tech skills
-                }}
-                onJoinSuccess={(room) => {
-                  console.log('✅ Join success, room:', room);
-                  setShowTechSkills(false);
-                  setIsOpen(false);
-                  // Navigate directly to the joined room
-                  if (room && room._id) {
-                    // Use replace to avoid back button issues
-                    navigate('/chat', { 
-                      replace: true,
-                      state: { 
-                        chatId: room._id, 
-                        chatType: 'room',
-                        forceRefresh: true
-                      } 
-                    });
-                    // Rooms will be refetched automatically via React Query
-                  } else {
-                    // Fallback: navigate to chat page
-                    navigate('/chat', { replace: true });
-                  }
-                }}
-              />
-            )}
-
-            {/* All Classrooms View */}
-            {showAllClassrooms && (
-              <AllClassroomsView
-                onClose={() => setShowAllClassrooms(false)}
-              />
-            )}
-          </AnimatePresence>
     </>
   );
 };

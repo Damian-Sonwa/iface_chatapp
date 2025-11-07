@@ -6,20 +6,32 @@ const authController = require('../controllers/authController');
 // All routes require authentication
 router.use(authController.verifyToken);
 
-// Get all classrooms for a tech skill
+// Skill-wide data
 router.get('/skill/:skillId', classroomController.getClassrooms);
+router.get('/skill/:skillKey/sessions', classroomController.getSkillSessions);
 
-// Get single classroom
+// Classroom specific
 router.get('/:classroomId', classroomController.getClassroom);
-
-// Subscribe to classroom
-router.post('/:classroomId/subscribe', classroomController.subscribeToClassroom);
-
-// Unsubscribe from classroom
-router.delete('/:classroomId/subscribe', classroomController.unsubscribeFromClassroom);
-
-// Create classroom (admin/instructor)
 router.post('/', classroomController.createClassroom);
+
+// Sessions
+router.get('/:classroomId/sessions', classroomController.getClassroomSessions);
+router.get('/:classroomId/sessions/:sessionId', classroomController.getClassroomSessionDetail);
+router.post('/:classroomId/sessions', classroomController.createClassroomSession);
+router.patch('/:classroomId/sessions/:sessionId', classroomController.updateClassroomSession);
+router.delete('/:classroomId/sessions/:sessionId', classroomController.deleteClassroomSession);
+router.post('/:classroomId/sessions/:sessionId/comments', classroomController.addSessionComment);
+
+// Materials
+router.get('/:classroomId/materials', classroomController.getClassroomMaterials);
+router.post('/:classroomId/materials', classroomController.createClassroomMaterial);
+router.patch('/:classroomId/materials/:materialId', classroomController.updateClassroomMaterial);
+router.delete('/:classroomId/materials/:materialId', classroomController.deleteClassroomMaterial);
+router.post('/:classroomId/materials/:materialId/comments', classroomController.addMaterialComment);
+
+// Subscription
+router.post('/:classroomId/subscribe', classroomController.subscribeToClassroom);
+router.delete('/:classroomId/subscribe', classroomController.unsubscribeFromClassroom);
 
 module.exports = router;
 

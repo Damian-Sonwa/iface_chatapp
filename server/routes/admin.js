@@ -27,6 +27,8 @@ router.delete('/rooms/:roomId', adminController.deleteRoom);
 // Activity logs
 router.get('/activity', adminController.getActivity);
 router.get('/logs', adminController.listActionLogs);
+router.get('/violations', adminController.getViolations);
+router.get('/analytics', adminController.getAnalytics);
 
 module.exports = router;
 
