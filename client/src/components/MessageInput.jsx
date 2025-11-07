@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Send, Smile, Paperclip, X, Image, File, Loader2, Mic, Square, Reply, X as XIcon, Clock, Bot } from 'lucide-react';
+import { Send, Smile, Paperclip, X, Image, File as FileIcon, Loader2, Mic, Square, Reply, X as XIcon, Clock, Bot } from 'lucide-react';
 import { EmojiButton } from '@joeattardi/emoji-button';
 import { getSocket } from '../utils/socket';
 import api from '../utils/api';
@@ -499,7 +499,7 @@ const MessageInput = ({ onSend, onTypingStart, onTypingStop, replyingTo, onCance
                   </div>
                 ) : (
                   <div className="relative w-20 h-20 rounded-lg border-2 border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700 flex flex-col items-center justify-center p-2">
-                    <File className="w-6 h-6 text-gray-400 mb-1" />
+                    <FileIcon className="w-6 h-6 text-gray-400 mb-1" />
                     <p className="text-xs text-gray-500 dark:text-gray-400 truncate w-full text-center">
                       {fileObj.file.name.length > 8 ? fileObj.file.name.substring(0, 8) + '...' : fileObj.file.name}
                     </p>
