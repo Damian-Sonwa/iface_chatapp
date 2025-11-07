@@ -166,4 +166,70 @@ exports.getRoomById = async (req, res) => {
   }
 };
 
+// Leave room
+exports.leaveRoom = async (req, res) => {
+  try {
+    const { roomId } = req.params;
+    const userId = req.userId;
+
+    const room = await Room.findById(roomId);
+    if (!room) {
+      return res.status(404).json({ error: 'Room not found' });
+    }
+
+    const isMember = room.members.some(member => member.toString() === userId);
+    if (!isMember) {
+      return res.status(400).json({ error: 'You are not a member of this room' });
+    }
+
+    if (room.createdBy.toString() === userId) {
+      return res.status(400).json({ error: 'Room owners must delete the room instead of leaving it' });
+    }
+
+    room.members = room.members.filter(member => member.toString() !== userId);
+    room.admins = (room.admins || []).filter(admin => admin.toString() !== userId);
+    await room.save();
+
+    // If there are no members left, delete the room automatically
+    if (room.members.length === 0) {
+      await Message.deleteMany({ room: roomId });
+      await Room.findByIdAndDelete(roomId);
+      return res.json({ message: 'You left the room. The room was removed because it no longer had members.' });
+    }
+
+    res.json({ message: 'Left room successfully' });
+  } catch (error) {
+    console.error('Leave room error:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+};
+
+// Delete room (owner/admin only)
+exports.deleteRoom = async (req, res) => {
+  try {
+    const { roomId } = req.params;
+    const userId = req.userId;
+
+    const room = await Room.findById(roomId);
+    if (!room) {
+      return res.status(404).json({ error: 'Room not found' });
+    }
+
+    const isOwner = room.createdBy.toString() === userId;
+    const isRoomAdmin = (room.admins || []).some(admin => admin.toString() === userId);
+
+    if (!isOwner && !isRoomAdmin) {
+      return res.status(403).json({ error: 'Only room owners or admins can delete this room' });
+    }
+
+    await Message.deleteMany({ room: roomId });
+    await Room.findByIdAndDelete(roomId);
+
+    res.json({ message: 'Room deleted successfully' });
+  } catch (error) {
+    console.error('Delete room error:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+};
+
 

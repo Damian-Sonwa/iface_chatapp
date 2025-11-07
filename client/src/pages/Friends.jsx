@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { Search, UserPlus, Check, X, Phone, MessageSquare, Loader2, Users } from 'lucide-react';
+import { Search, UserPlus, Check, X, Phone, MessageSquare, Loader2, Users, Copy, Share2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import api from '../utils/api';
 import { useNavigate } from 'react-router-dom';
@@ -14,6 +14,9 @@ const Friends = () => {
   const [friendRequests, setFriendRequests] = useState([]);
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('friends'); // 'friends', 'requests', 'add'
+  const [inviteLink, setInviteLink] = useState('');
+  const [inviteGenerating, setInviteGenerating] = useState(false);
+  const [inviteError, setInviteError] = useState('');
 
   useEffect(() => {
     fetchFriends();
@@ -104,10 +107,116 @@ const Friends = () => {
     }
   };
 
+  const generateInviteLink = async () => {
+    if (inviteGenerating) return;
+    try {
+      setInviteGenerating(true);
+      setInviteError('');
+      const response = await api.post('/invite/create');
+      const link = response.data?.link;
+      if (link) {
+        setInviteLink(link);
+        try {
+          await navigator.clipboard.writeText(link);
+          alert('Invite link copied to clipboard!');
+        } catch (err) {
+          console.error('Clipboard copy failed:', err);
+          alert(`Invite link ready: ${link}`);
+        }
+      }
+    } catch (error) {
+      console.error('Invite link error:', error);
+      const message = error.response?.data?.error || 'Failed to generate invite link';
+      setInviteError(message);
+      alert(message);
+    } finally {
+      setInviteGenerating(false);
+    }
+  };
+
+  const shareInviteLink = async () => {
+    try {
+      if (!inviteLink) {
+        await generateInviteLink();
+        return;
+      }
+
+      if (navigator.share) {
+        await navigator.share({
+          title: 'Join me on Chaturway',
+          text: 'Let’s chat together on Chaturway! Use this invite link to join:',
+          url: inviteLink
+        });
+      } else {
+        const shareText = `Join me on Chaturway! ${inviteLink}`;
+        const encoded = encodeURIComponent(shareText);
+        window.open(`https://wa.me/?text=${encoded}`, '_blank');
+      }
+    } catch (error) {
+      console.error('Share invite error:', error);
+      alert('Unable to open share dialog. The link has been copied instead.');
+      try {
+        await navigator.clipboard.writeText(inviteLink);
+      } catch (err) {
+        console.error('Clipboard fallback failed:', err);
+      }
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="max-w-4xl mx-auto p-4 md:p-8">
-        <h1 className="text-3xl font-bold mb-6">Friends</h1>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
+          <h1 className="text-3xl font-bold">Friends</h1>
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              onClick={generateInviteLink}
+              disabled={inviteGenerating}
+              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-purple-600 text-white text-sm font-semibold hover:bg-purple-500 transition disabled:opacity-60"
+            >
+              {inviteGenerating ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" /> Generating...
+                </>
+              ) : (
+                <>
+                  <UserPlus className="w-4 h-4" /> Generate Invite Link
+                </>
+              )}
+            </button>
+            <button
+              onClick={shareInviteLink}
+              className="flex items-center gap-2 px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-700 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+            >
+              <Share2 className="w-4 h-4" /> Share Invite
+            </button>
+          </div>
+        </div>
+
+        {inviteLink && (
+          <div className="mb-6 p-4 rounded-xl border border-purple-200 dark:border-purple-800 bg-purple-50/60 dark:bg-purple-950/40 flex flex-wrap items-center gap-3 text-sm text-purple-700 dark:text-purple-200">
+            <span className="font-semibold">Invite Link:</span>
+            <span className="break-all text-purple-800 dark:text-purple-50">{inviteLink}</span>
+            <button
+              onClick={async () => {
+                try {
+                  await navigator.clipboard.writeText(inviteLink);
+                  alert('Invite link copied to clipboard');
+                } catch (error) {
+                  console.error('Copy invite error:', error);
+                  alert('Unable to copy link automatically');
+                }
+              }}
+              className="ml-auto flex items-center gap-2 px-3 py-1.5 rounded-lg bg-purple-600 text-white hover:bg-purple-500 transition"
+            >
+              <Copy className="w-4 h-4" /> Copy
+            </button>
+          </div>
+        )}
+
+        {inviteError && (
+          <div className="mb-4 text-sm text-red-500">{inviteError}</div>
+        )}
 
         {/* Tabs */}
         <div className="flex gap-2 mb-6 border-b border-gray-200 dark:border-gray-700">
@@ -139,9 +248,27 @@ const Friends = () => {
         {activeTab === 'friends' && (
           <div className="space-y-2">
             {friends.length === 0 ? (
-              <div className="text-center py-12 text-gray-500 dark:text-gray-400">
-                <Users className="w-16 h-16 mx-auto mb-4 opacity-50" />
-                <p>No friends yet. Add friends to get started!</p>
+              <div className="text-center py-12 text-gray-500 dark:text-gray-400 flex flex-col items-center gap-4">
+                <Users className="w-16 h-16 mx-auto opacity-50" />
+                <div>
+                  <p className="text-lg font-semibold text-gray-700 dark:text-gray-200">No friends yet</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Add friends to start messaging instantly.</p>
+                </div>
+                <div className="flex flex-wrap justify-center gap-3 mt-2">
+                  <button
+                    onClick={() => setActiveTab('add')}
+                    className="px-4 py-2 rounded-xl bg-purple-600 text-white text-sm font-semibold hover:bg-purple-500 transition"
+                  >
+                    Add Friend
+                  </button>
+                  <button
+                    onClick={shareInviteLink}
+                    className="px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 text-sm text-gray-600 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+                  >
+                    Share Invite Link
+                  </button>
+                </div>
+                <p className="text-xs text-gray-400 dark:text-gray-500">You can search by phone number or username under the “Add Friend” tab.</p>
               </div>
             ) : (
               friends.map((friend) => (

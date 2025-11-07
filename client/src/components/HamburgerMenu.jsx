@@ -91,7 +91,7 @@ const HamburgerMenu = ({ darkMode, onToggleDarkMode, user }) => {
       title: 'Chat',
       icon: MessageCircle,
       items: [
-        { id: 'new-dm', label: 'New Direct Message', icon: UserPlus, action: () => setShowUserSearch(true) },
+        { id: 'new-dm', label: 'New Direct Message', icon: UserPlus, action: () => navigate('/chat?panel=friends') },
         { id: 'archived', label: 'Archived Chats', icon: Archive, action: () => navigate('/chat?filter=archived') },
         { id: 'search', label: 'Search Messages', icon: Search, action: () => navigate('/chat?action=search') },
       ]

@@ -344,6 +344,9 @@ const Chat = () => {
       setActivePanel('assistant');
       // Clear query params
       navigate(location.pathname, { replace: true });
+    } else if (panel === 'friends') {
+      setActivePanel('friends');
+      navigate(location.pathname, { replace: true });
     } else if (action === 'poll' && activeChat) {
       setShowPoll(true);
       navigate(location.pathname, { replace: true });
@@ -419,6 +422,24 @@ const Chat = () => {
   const fetchRooms = async () => {
     await refetchRooms();
   };
+
+  useEffect(() => {
+    const handleRoomsRefresh = (event) => {
+      const removedRoomId = event.detail?.removedRoomId;
+      refetchRooms();
+
+      if (removedRoomId && chatType === 'room' && activeChat?._id === removedRoomId) {
+        setActiveChat(null);
+        setChatType('room');
+        setMessages([]);
+        setPinnedMessages([]);
+        setPolls([]);
+      }
+    };
+
+    window.addEventListener('rooms:refresh', handleRoomsRefresh);
+    return () => window.removeEventListener('rooms:refresh', handleRoomsRefresh);
+  }, [refetchRooms, chatType, activeChat?._id]);
 
   useEffect(() => {
     if (roomsData) {
@@ -787,7 +808,7 @@ const Chat = () => {
         </button>
       )}
 
-      <div className="flex-1 flex flex-col relative z-10 min-h-0 overflow-hidden">
+      <div className="flex-1 flex flex-col relative z-10 min-h-0 overflow-hidden mx-4 md:mx-6 my-6 rounded-3xl border border-white/10 bg-white/70 dark:bg-gray-900/80 backdrop-blur-xl shadow-[0_25px_50px_rgba(8,7,15,0.35)]">
         <MomentsBar onOpenComposer={() => setShowMomentsComposer(true)} onOpenViewer={(moments, id) => setViewer({ open: true, moments, id })} />
         {friends.length > 0 && <FlippingAvatars />}
         {activePanel === 'moments' ? (
@@ -847,7 +868,7 @@ const Chat = () => {
               <motion.div 
                 initial={{ y: -20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
-                className="h-14 sm:h-16 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between px-3 sm:px-4 md:px-6 bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl relative z-10 flex-shrink-0"
+                className="h-14 sm:h-16 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between px-3 sm:px-4 md:px-6 bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl relative z-10 flex-shrink-0 rounded-t-3xl"
               >
                 <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
                   <motion.div 
