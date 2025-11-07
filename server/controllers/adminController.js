@@ -131,22 +131,101 @@ const listUsers = async (req, res) => {
 const banUser = async (req, res) => {
   try {
     const { userId } = req.params;
-    const { banned } = req.body;
+    const { banned, reason } = req.body;
 
     const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    // Update user status to offline if banned
-    if (banned) {
-      user.status = 'offline';
-      await user.save();
+    if (user.isAdmin) {
+      return res.status(403).json({ error: 'Cannot ban admin users' });
     }
 
+    user.isBanned = banned || false;
+    user.banReason = banned ? (reason || 'Banned by administrator') : null;
+    user.status = banned ? 'offline' : user.status;
+    
+    await user.save();
+
+    console.log(`🚫 User ${user.username} ${banned ? 'banned' : 'unbanned'} by admin`);
     res.json({ success: true, user });
   } catch (error) {
     console.error('Ban user error:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+};
+
+/**
+ * POST /api/admin/users/:userId/suspend
+ * Suspend a user temporarily
+ */
+const suspendUser = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { suspended, days, reason } = req.body;
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    if (user.isAdmin) {
+      return res.status(403).json({ error: 'Cannot suspend admin users' });
+    }
+
+    user.isSuspended = suspended || false;
+    
+    if (suspended && days) {
+      const suspendUntil = new Date();
+      suspendUntil.setDate(suspendUntil.getDate() + parseInt(days));
+      user.suspendedUntil = suspendUntil;
+      user.suspensionReason = reason || `Suspended for ${days} day(s)`;
+    } else {
+      user.suspendedUntil = null;
+      user.suspensionReason = null;
+    }
+    
+    user.status = suspended ? 'offline' : user.status;
+    await user.save();
+
+    console.log(`⏸️  User ${user.username} ${suspended ? `suspended until ${user.suspendedUntil}` : 'unsuspended'} by admin`);
+    res.json({ success: true, user });
+  } catch (error) {
+    console.error('Suspend user error:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+};
+
+/**
+ * DELETE /api/admin/users/:userId
+ * Delete a user permanently
+ */
+const deleteUser = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    if (user.isAdmin) {
+      return res.status(403).json({ error: 'Cannot delete admin users' });
+    }
+
+    // Delete user and related data
+    await User.findByIdAndDelete(userId);
+    
+    // Clean up related data (optional - you may want to keep messages for audit)
+    // await Message.deleteMany({ sender: userId });
+    // await PrivateChat.deleteMany({ participants: userId });
+    // await Room.updateMany({ members: userId }, { $pull: { members: userId } });
+
+    console.log(`🗑️  User ${user.username} deleted by admin`);
+    res.json({ success: true, message: 'User deleted successfully' });
+  } catch (error) {
+    console.error('Delete user error:', error);
     res.status(500).json({ error: 'Server error' });
   }
 };
@@ -297,6 +376,8 @@ module.exports = {
   getDashboard,
   listUsers,
   banUser,
+  suspendUser,
+  deleteUser,
   resetPassword,
   listRooms,
   deleteRoom,

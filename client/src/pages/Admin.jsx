@@ -4,7 +4,8 @@ import { useAuth } from '../context/AuthContext';
 import api from '../utils/api';
 import { 
   Users, MessageSquare, Hash, Activity, TrendingUp, 
-  Ban, Unlock, Trash2, Search, Calendar, UserCheck 
+  Ban, Unlock, Trash2, Search, Calendar, UserCheck, 
+  AlertTriangle, XCircle, Clock
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -70,11 +71,79 @@ const Admin = () => {
   };
 
   const handleBanUser = async (userId, banned) => {
+    if (banned) {
+      const reason = prompt('Enter ban reason (optional):');
+      if (reason === null) return; // User cancelled
+      try {
+        await api.post(`/admin/users/${userId}/ban`, { banned: true, reason });
+        fetchUsers();
+        alert('User banned successfully');
+      } catch (error) {
+        console.error('Ban error:', error);
+        alert(error.response?.data?.error || 'Failed to ban user');
+      }
+    } else {
+      try {
+        await api.post(`/admin/users/${userId}/ban`, { banned: false });
+        fetchUsers();
+        alert('User unbanned successfully');
+      } catch (error) {
+        console.error('Unban error:', error);
+        alert(error.response?.data?.error || 'Failed to unban user');
+      }
+    }
+  };
+
+  const handleSuspendUser = async (userId, suspended) => {
+    if (suspended) {
+      const days = prompt('Enter suspension duration in days:');
+      if (!days || isNaN(days) || parseInt(days) <= 0) {
+        alert('Please enter a valid number of days');
+        return;
+      }
+      const reason = prompt('Enter suspension reason (optional):');
+      if (reason === null) return; // User cancelled
+      try {
+        await api.post(`/admin/users/${userId}/suspend`, { 
+          suspended: true, 
+          days: parseInt(days),
+          reason 
+        });
+        fetchUsers();
+        alert(`User suspended for ${days} day(s)`);
+      } catch (error) {
+        console.error('Suspend error:', error);
+        alert(error.response?.data?.error || 'Failed to suspend user');
+      }
+    } else {
+      try {
+        await api.post(`/admin/users/${userId}/suspend`, { suspended: false });
+        fetchUsers();
+        alert('User unsuspended successfully');
+      } catch (error) {
+        console.error('Unsuspend error:', error);
+        alert(error.response?.data?.error || 'Failed to unsuspend user');
+      }
+    }
+  };
+
+  const handleDeleteUser = async (userId) => {
+    const username = users.find(u => (u._id || u.id) === userId)?.username;
+    if (!confirm(`Are you sure you want to permanently delete user "${username}"? This action cannot be undone.`)) {
+      return;
+    }
+    
+    if (!confirm('This will permanently delete the user and all their data. Are you absolutely sure?')) {
+      return;
+    }
+
     try {
-      await api.post(`/admin/users/${userId}/ban`, { banned });
+      await api.delete(`/admin/users/${userId}`);
       fetchUsers();
+      alert('User deleted successfully');
     } catch (error) {
-      console.error('Ban error:', error);
+      console.error('Delete error:', error);
+      alert(error.response?.data?.error || 'Failed to delete user');
     }
   };
 
@@ -254,6 +323,7 @@ const Admin = () => {
                     <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300">User</th>
                     <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300">Email</th>
                     <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300">Status</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300">Account</th>
                     <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300">Role</th>
                     <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300">Actions</th>
                   </tr>
@@ -280,6 +350,28 @@ const Admin = () => {
                         </span>
                       </td>
                       <td className="px-4 py-3">
+                        <div className="flex flex-col gap-1">
+                          {u.isBanned && (
+                            <span className="px-2 py-1 bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 rounded-full text-xs flex items-center gap-1">
+                              <XCircle className="w-3 h-3" />
+                              Banned
+                            </span>
+                          )}
+                          {u.isSuspended && (
+                            <span className="px-2 py-1 bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400 rounded-full text-xs flex items-center gap-1">
+                              <Clock className="w-3 h-3" />
+                              Suspended
+                              {u.suspendedUntil && new Date(u.suspendedUntil) > new Date() && (
+                                <span className="text-xs">({Math.ceil((new Date(u.suspendedUntil) - new Date()) / (1000 * 60 * 60 * 24))}d)</span>
+                              )}
+                            </span>
+                          )}
+                          {!u.isBanned && !u.isSuspended && (
+                            <span className="text-xs text-gray-500">Active</span>
+                          )}
+                        </div>
+                      </td>
+                      <td className="px-4 py-3">
                         {u.isAdmin ? (
                           <span className="px-2 py-1 bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 rounded-full text-xs">
                             Admin
@@ -289,17 +381,31 @@ const Admin = () => {
                         )}
                       </td>
                       <td className="px-4 py-3">
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 flex-wrap">
                           <button
-                            onClick={() => handleBanUser(u._id || u.id, u.status !== 'offline')}
+                            onClick={() => handleBanUser(u._id || u.id, !u.isBanned)}
                             className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition"
-                            title={u.status === 'offline' ? 'Unban' : 'Ban'}
+                            title={u.isBanned ? 'Unban' : 'Ban'}
                           >
-                            {u.status === 'offline' ? (
+                            {u.isBanned ? (
                               <Unlock className="w-4 h-4 text-green-600" />
                             ) : (
                               <Ban className="w-4 h-4 text-red-600" />
                             )}
+                          </button>
+                          <button
+                            onClick={() => handleSuspendUser(u._id || u.id, !u.isSuspended)}
+                            className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition"
+                            title={u.isSuspended ? 'Unsuspend' : 'Suspend'}
+                          >
+                            <AlertTriangle className={`w-4 h-4 ${u.isSuspended ? 'text-green-600' : 'text-yellow-600'}`} />
+                          </button>
+                          <button
+                            onClick={() => handleDeleteUser(u._id || u.id)}
+                            className="p-1.5 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition text-red-600"
+                            title="Delete User"
+                          >
+                            <Trash2 className="w-4 h-4" />
                           </button>
                           <button
                             onClick={() => handleResetPassword(u._id || u.id)}

@@ -15,6 +15,8 @@ router.get('/dashboard', adminController.getDashboard);
 // Users
 router.get('/users', adminController.listUsers);
 router.post('/users/:userId/ban', adminController.banUser);
+router.post('/users/:userId/suspend', adminController.suspendUser);
+router.delete('/users/:userId', adminController.deleteUser);
 router.post('/users/:userId/reset-password', adminController.resetPassword);
 
 // Rooms

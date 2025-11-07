@@ -132,10 +132,7 @@ const HamburgerMenu = ({ darkMode, onToggleDarkMode, user }) => {
           id: 'classrooms', 
           label: 'Classrooms', 
           icon: GraduationCap, 
-          action: () => {
-            console.log('Opening All Classrooms');
-            setShowAllClassrooms(true);
-          }
+          action: () => navigate('/classrooms')
         },
       ]
     },

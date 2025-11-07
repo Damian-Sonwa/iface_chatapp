@@ -12,6 +12,7 @@ const Admin = lazy(() => import('./pages/Admin'));
 const Friends = lazy(() => import('./pages/Friends'));
 const Settings = lazy(() => import('./pages/Settings'));
 const TechSkills = lazy(() => import('./pages/TechSkills'));
+const Classrooms = lazy(() => import('./pages/Classrooms'));
 
 // Loading component
 const PageLoader = () => (
@@ -94,6 +95,13 @@ function AppRoutes() {
             <PrivateRoute>
               <SideShell>
                 <TechSkills />
+              </SideShell>
+            </PrivateRoute>
+          } />
+          <Route path="/classrooms" element={
+            <PrivateRoute>
+              <SideShell>
+                <Classrooms />
               </SideShell>
             </PrivateRoute>
           } />

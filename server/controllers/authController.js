@@ -78,6 +78,30 @@ exports.login = async (req, res) => {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
+    // Check if user is banned
+    if (user.isBanned) {
+      return res.status(403).json({ 
+        error: `Your account has been banned. ${user.banReason ? `Reason: ${user.banReason}` : ''}` 
+      });
+    }
+
+    // Check if user is suspended
+    if (user.isSuspended) {
+      const now = new Date();
+      if (user.suspendedUntil && new Date(user.suspendedUntil) > now) {
+        const daysLeft = Math.ceil((new Date(user.suspendedUntil) - now) / (1000 * 60 * 60 * 24));
+        return res.status(403).json({ 
+          error: `Your account is suspended. ${user.suspensionReason ? `Reason: ${user.suspensionReason}. ` : ''}Suspension expires in ${daysLeft} day(s).` 
+        });
+      } else {
+        // Suspension expired, clear it
+        user.isSuspended = false;
+        user.suspendedUntil = null;
+        user.suspensionReason = null;
+        await user.save();
+      }
+    }
+
     // Verify password (check passwordHash first, fallback to password for backward compatibility)
     const passwordToCheck = user.passwordHash || user.password;
     const isValidPassword = await bcrypt.compare(password, passwordToCheck);
@@ -164,7 +188,7 @@ exports.login = async (req, res) => {
 };
 
 // Verify token middleware
-exports.verifyToken = (req, res, next) => {
+exports.verifyToken = async (req, res, next) => {
   const token = req.headers.authorization?.split(' ')[1] || req.cookies?.token;
 
   if (!token) {
@@ -173,6 +197,35 @@ exports.verifyToken = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, JWT_SECRET);
+    
+    // Check if user is banned or suspended
+    const user = await User.findById(decoded.userId);
+    if (!user) {
+      return res.status(401).json({ error: 'User not found' });
+    }
+
+    if (user.isBanned) {
+      return res.status(403).json({ 
+        error: `Your account has been banned. ${user.banReason ? `Reason: ${user.banReason}` : ''}` 
+      });
+    }
+
+    if (user.isSuspended) {
+      const now = new Date();
+      if (user.suspendedUntil && new Date(user.suspendedUntil) > now) {
+        const daysLeft = Math.ceil((new Date(user.suspendedUntil) - now) / (1000 * 60 * 60 * 24));
+        return res.status(403).json({ 
+          error: `Your account is suspended. ${user.suspensionReason ? `Reason: ${user.suspensionReason}. ` : ''}Suspension expires in ${daysLeft} day(s).` 
+        });
+      } else {
+        // Suspension expired, clear it
+        user.isSuspended = false;
+        user.suspendedUntil = null;
+        user.suspensionReason = null;
+        await user.save();
+      }
+    }
+
     req.userId = decoded.userId;
     req.username = decoded.username;
     next();

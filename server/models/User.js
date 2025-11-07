@@ -78,6 +78,26 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
+  isSuspended: {
+    type: Boolean,
+    default: false
+  },
+  suspendedUntil: {
+    type: Date,
+    default: null
+  },
+  suspensionReason: {
+    type: String,
+    default: null
+  },
+  isBanned: {
+    type: Boolean,
+    default: false
+  },
+  banReason: {
+    type: String,
+    default: null
+  },
   blockedUsers: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'

@@ -29,7 +29,7 @@ const UserSearchDropdown = ({ onSelectUser, onClose, currentUserId, excludeUserI
 
       setLoading(true);
       try {
-        const response = await api.get('/api/users', {
+        const response = await api.get('/users', {
           params: { search: searchQuery }
         });
         

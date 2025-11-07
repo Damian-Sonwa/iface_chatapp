@@ -5,6 +5,31 @@ const authController = require('../controllers/authController');
 
 router.use(authController.verifyToken);
 
+// Search users
+router.get('/', async (req, res) => {
+  try {
+    const { search } = req.query;
+    const query = {};
+    
+    if (search) {
+      query.$or = [
+        { username: { $regex: search, $options: 'i' } },
+        { email: { $regex: search, $options: 'i' } }
+      ];
+    }
+
+    const users = await User.find(query)
+      .select('username email avatar avatarUrl status lastSeen bio')
+      .limit(20)
+      .sort({ username: 1 });
+
+    res.json(users);
+  } catch (error) {
+    console.error('Search users error:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 // Get user profile
 router.get('/profile', async (req, res) => {
   try {

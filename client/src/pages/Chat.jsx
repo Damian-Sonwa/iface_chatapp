@@ -97,6 +97,19 @@ const Chat = () => {
     fetchUsers();
     fetchFriends();
 
+    // Listen for startConversation event from UserSearchDropdown
+    const handleStartConversation = async (event) => {
+      const { user: selectedUser } = event.detail;
+      if (selectedUser) {
+        await handleStartChat(selectedUser._id || selectedUser.id);
+      }
+    };
+
+    window.addEventListener('startConversation', handleStartConversation);
+    return () => {
+      window.removeEventListener('startConversation', handleStartConversation);
+    };
+
     const markAsReadHandler = (messageId) => {
       if (!socket || !activeChat) return;
       socket.emit('message:read', { 
@@ -323,6 +336,8 @@ const Chat = () => {
     const searchParams = new URLSearchParams(location.search);
     const panel = searchParams.get('panel');
     const action = searchParams.get('action');
+    const filter = searchParams.get('filter');
+    const view = searchParams.get('view');
 
     if (panel === 'assistant') {
       setActivePanel('assistant');
@@ -342,6 +357,18 @@ const Chat = () => {
       navigate(location.pathname, { replace: true });
     } else if (action === 'search') {
       setShowSearch(true);
+      navigate(location.pathname, { replace: true });
+    } else if (filter === 'archived') {
+      // Show archived chats - could add archived state management here
+      alert('Archived chats feature - coming soon');
+      navigate(location.pathname, { replace: true });
+    } else if (filter === 'blocked') {
+      // Show blocked users - could add blocked users management here
+      alert('Blocked users feature - coming soon');
+      navigate(location.pathname, { replace: true });
+    } else if (view === 'groups') {
+      // Filter to show only groups/rooms
+      // This could be handled by filtering the sidebar
       navigate(location.pathname, { replace: true });
     }
   }, [location.state, location.search, user, navigate, activeChat]);
