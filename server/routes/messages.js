@@ -7,6 +7,50 @@ const authController = require('../controllers/authController');
 // All routes require authentication
 router.use(authController.verifyToken);
 
+// Search messages within a room or private chat
+router.get('/search', async (req, res) => {
+  try {
+    const { roomId, chatId, q, limit = 50 } = req.query;
+
+    if (!q || !q.trim()) {
+      return res.json({ messages: [] });
+    }
+
+    if (!roomId && !chatId) {
+      return res.status(400).json({ error: 'roomId or chatId is required' });
+    }
+
+    const contentRegex = new RegExp(q.trim(), 'i');
+
+    const query = {
+      deletedAt: null,
+      content: contentRegex
+    };
+
+    if (roomId) {
+      query.room = roomId;
+    }
+
+    if (chatId) {
+      query.privateChat = chatId;
+    }
+
+    const messages = await Message.find(query)
+      .where('content').ne('This message was deleted')
+      .where('content').ne('This message has disappeared')
+      .sort({ createdAt: -1 })
+      .limit(Math.min(parseInt(limit, 10) || 50, 100))
+      .populate('sender', 'username avatar')
+      .populate('replyTo', 'content sender')
+      .lean();
+
+    res.json({ messages });
+  } catch (error) {
+    console.error('Search messages error:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 // Edit message
 router.patch('/:messageId/edit', async (req, res) => {
   try {

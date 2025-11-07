@@ -70,6 +70,7 @@ const Chat = () => {
   const [showTechSkillJoinModal, setShowTechSkillJoinModal] = useState(false);
   const [selectedTechSkillRoom, setSelectedTechSkillRoom] = useState(null);
   const [showTechSkills, setShowTechSkills] = useState(false);
+  const [pendingHighlightMessageId, setPendingHighlightMessageId] = useState(null);
   const socket = getSocket();
 
   useEffect(() => {
@@ -372,6 +373,24 @@ const Chat = () => {
       navigate(location.pathname, { replace: true });
     }
   }, [location.state, location.search, user, navigate, activeChat]);
+
+  useEffect(() => {
+    if (!pendingHighlightMessageId) return;
+
+    const timer = setTimeout(() => {
+      const element = document.querySelector(`[data-message-id="${pendingHighlightMessageId}"]`);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        element.classList.add('ring-2', 'ring-purple-500', 'ring-offset-2');
+        setTimeout(() => {
+          element.classList.remove('ring-2', 'ring-purple-500', 'ring-offset-2');
+        }, 2500);
+      }
+      setPendingHighlightMessageId(null);
+    }, 150);
+
+    return () => clearTimeout(timer);
+  }, [pendingHighlightMessageId, messages]);
 
   const queryClient = useQueryClient();
 
@@ -728,33 +747,32 @@ const Chat = () => {
       {/* Mobile Sidebar Overlay */}
       {showMobileSidebar && (
         <div className="md:hidden fixed inset-0 z-50 flex">
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowMobileSidebar(false)} />
-          <div className="relative z-10 w-64 border-r border-white/10 bg-gradient-to-b from-[#FFF4E5] to-white dark:from-gray-900 dark:to-gray-900 flex flex-col">
-            <div className="p-4 border-b border-white/10 flex items-center justify-between">
-              <h2 className="text-lg font-bold text-purple-600 dark:text-purple-400">Chaturway</h2>
-              <button onClick={() => setShowMobileSidebar(false)} className="p-2 rounded-lg hover:bg-white/20 text-gray-900 dark:text-gray-100">
+          <div className="absolute inset-0 bg-black/70 backdrop-blur-md" onClick={() => setShowMobileSidebar(false)} />
+          <div className="relative z-10 w-full max-w-[22rem] p-4 flex flex-col gap-4">
+            <div className="flex items-center justify-between bg-white/10 dark:bg-gray-900/60 border border-white/10 rounded-2xl px-4 py-3 backdrop-blur-xl shadow-lg">
+              <h2 className="text-base font-semibold text-purple-600 dark:text-purple-300">Chaturway</h2>
+              <button onClick={() => setShowMobileSidebar(false)} className="p-2 rounded-xl hover:bg-white/10 text-gray-900 dark:text-gray-100 transition">
                 <X className="w-5 h-5" />
               </button>
             </div>
-            <div className="flex-1 overflow-y-auto">
-              <Sidebar
-                rooms={rooms}
-                privateChats={privateChats}
-                activeChat={activeChat}
-                chatType={chatType}
-                onChatSelect={(chat, type) => {
-                  handleChatSelect(chat, type);
-                  setShowMobileSidebar(false);
-                }}
-                onOpenPanel={(panel) => {
-                  setActivePanel(panel);
-                  setShowMobileSidebar(false);
-                }}
-                activePanel={activePanel}
-                friendRequestsCount={0}
-                onTechSkillJoin={handleTechSkillJoin}
-              />
-            </div>
+            <Sidebar
+              rooms={rooms}
+              privateChats={privateChats}
+              activeChat={activeChat}
+              chatType={chatType}
+              onChatSelect={(chat, type) => {
+                handleChatSelect(chat, type);
+                setShowMobileSidebar(false);
+              }}
+              onOpenPanel={(panel) => {
+                setActivePanel(panel);
+                setShowMobileSidebar(false);
+              }}
+              activePanel={activePanel}
+              friendRequestsCount={0}
+              onTechSkillJoin={handleTechSkillJoin}
+              isOverlay
+            />
           </div>
         </div>
       )}
@@ -799,7 +817,31 @@ const Chat = () => {
         ) : activeChat ? (
           <>
             {showSearch && (
-              <MessageSearch messages={messages} onClose={() => setShowSearch(false)} />
+              <MessageSearch
+                activeChat={activeChat}
+                chatType={chatType}
+                onClose={() => setShowSearch(false)}
+                onSelectMessage={(message) => {
+                  if (!message) return;
+                  setShowSearch(false);
+                  const messageId = message._id || message.id;
+
+                  setMessages(prev => {
+                    const exists = prev.some(m => (m._id || m.id) === messageId);
+                    if (exists) {
+                      return prev;
+                    }
+                    const merged = [...prev, message];
+                    return merged.sort((a, b) => {
+                      const aTime = new Date(a.createdAt || 0);
+                      const bTime = new Date(b.createdAt || 0);
+                      return aTime - bTime;
+                    });
+                  });
+
+                  setPendingHighlightMessageId(messageId);
+                }}
+              />
             )}
             {!showSearch && (
               <motion.div 

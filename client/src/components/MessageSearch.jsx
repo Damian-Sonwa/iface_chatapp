@@ -1,84 +1,87 @@
 import { useState, useEffect, useRef } from 'react';
-import { Search, X, ArrowUp, ArrowDown } from 'lucide-react';
+import { Search, X, ArrowUp, ArrowDown, Loader2, AlertCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import api from '../utils/api';
 
-const MessageSearch = ({ messages, onClose }) => {
+const MessageSearch = ({ activeChat, chatType, onClose, onSelectMessage }) => {
   const [query, setQuery] = useState('');
+  const [results, setResults] = useState([]);
   const [selectedIndex, setSelectedIndex] = useState(-1);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const inputRef = useRef(null);
 
   useEffect(() => {
     inputRef.current?.focus();
   }, []);
 
-  // Filter messages: exclude deleted messages and filter by content
-  const filteredMessages = messages.filter(msg => {
-    // Skip deleted messages
-    if (msg.deleted || msg.deletedAt) return false;
-    
-    // Skip messages without content
-    if (!msg.content || msg.content.trim() === '') return false;
-    
-    // Search in content
-    if (query.trim()) {
-      return msg.content.toLowerCase().includes(query.toLowerCase());
+  useEffect(() => {
+    if (!query.trim()) {
+      setResults([]);
+      setLoading(false);
+      setError('');
+      return;
     }
-    
-    return false;
-  });
 
-  const scrollToMessage = (message) => {
-    const msgId = message._id || message.id;
-    if (!msgId) return;
-    
-    // Try to find the message element
-    const element = document.querySelector(`[data-message-id="${msgId}"]`);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      // Highlight the message
-      element.classList.add('ring-2', 'ring-purple-500', 'ring-offset-2');
-      setTimeout(() => {
-        element.classList.remove('ring-2', 'ring-purple-500', 'ring-offset-2');
-      }, 3000);
-    } else {
-      // If element not found, try scrolling the chat area
-      const chatArea = document.querySelector('[class*="overflow-y-auto"]');
-      if (chatArea) {
-        chatArea.scrollTo({ top: 0, behavior: 'smooth' });
-        // Retry after a short delay
-        setTimeout(() => {
-          const retryElement = document.querySelector(`[data-message-id="${msgId}"]`);
-          if (retryElement) {
-            retryElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            retryElement.classList.add('ring-2', 'ring-purple-500', 'ring-offset-2');
-            setTimeout(() => {
-              retryElement.classList.remove('ring-2', 'ring-purple-500', 'ring-offset-2');
-            }, 3000);
-          }
-        }, 500);
+    if (!activeChat?._id) return;
+
+    const controller = new AbortController();
+    const timer = setTimeout(async () => {
+      try {
+        setLoading(true);
+        setError('');
+        const params = { q: query.trim(), limit: 50 };
+        if (chatType === 'room') {
+          params.roomId = activeChat._id;
+        } else if (chatType === 'private') {
+          params.chatId = activeChat._id;
+        }
+
+        const response = await api.get('/messages/search', {
+          params,
+          signal: controller.signal
+        });
+
+        const fetched = response.data.messages || [];
+        setResults(fetched);
+        setSelectedIndex(fetched.length > 0 ? 0 : -1);
+      } catch (err) {
+        if (!controller.signal.aborted) {
+          console.error('Message search error:', err);
+          setError(err.response?.data?.error || 'Failed to search messages');
+        }
+      } finally {
+        if (!controller.signal.aborted) {
+          setLoading(false);
+        }
       }
-    }
-  };
+    }, 300);
+
+    return () => {
+      clearTimeout(timer);
+      controller.abort();
+    };
+  }, [query, chatType, activeChat?._id]);
 
   const handleKeyDown = (e) => {
     if (e.key === 'Escape') {
       onClose();
-    } else if (e.key === 'Enter' && filteredMessages.length > 0) {
+    } else if (e.key === 'Enter' && results.length > 0) {
       e.preventDefault();
-      const message = filteredMessages[selectedIndex >= 0 ? selectedIndex : 0];
-      scrollToMessage(message);
-    } else if (e.key === 'ArrowDown' && filteredMessages.length > 0) {
+      const message = results[selectedIndex >= 0 ? selectedIndex : 0];
+      onSelectMessage?.(message);
+    } else if (e.key === 'ArrowDown' && results.length > 0) {
       e.preventDefault();
-      setSelectedIndex(prev => (prev + 1) % filteredMessages.length);
-    } else if (e.key === 'ArrowUp' && filteredMessages.length > 0) {
+      setSelectedIndex(prev => (prev + 1) % results.length);
+    } else if (e.key === 'ArrowUp' && results.length > 0) {
       e.preventDefault();
-      setSelectedIndex(prev => prev > 0 ? prev - 1 : filteredMessages.length - 1);
+      setSelectedIndex(prev => prev > 0 ? prev - 1 : results.length - 1);
     }
   };
 
   const handleSelectMessage = (message, index) => {
     setSelectedIndex(index);
-    scrollToMessage(message);
+    onSelectMessage?.(message);
   };
 
   const formatMessagePreview = (content, maxLength = 60) => {
@@ -126,16 +129,31 @@ const MessageSearch = ({ messages, onClose }) => {
           
           {query && (
             <div className="space-y-2 max-h-64 overflow-y-auto">
-              {filteredMessages.length === 0 ? (
+              {loading && (
+                <div className="flex items-center justify-center py-6 text-sm text-gray-400 gap-2">
+                  <Loader2 className="w-4 h-4 animate-spin" /> Searching...
+                </div>
+              )}
+
+              {!loading && error && (
+                <div className="flex items-center justify-center py-4 text-sm text-red-400 gap-2">
+                  <AlertCircle className="w-4 h-4" />
+                  {error}
+                </div>
+              )}
+
+              {!loading && !error && results.length === 0 && (
                 <div className="text-center py-4 text-gray-400 text-sm">
                   No messages found matching "{query}"
                 </div>
-              ) : (
+              )}
+
+              {!loading && !error && results.length > 0 && (
                 <>
                   <div className="text-xs text-gray-400 mb-2 px-2">
-                    Found {filteredMessages.length} {filteredMessages.length === 1 ? 'message' : 'messages'}
+                    Found {results.length} {results.length === 1 ? 'message' : 'messages'}
                   </div>
-                  {filteredMessages.map((message, index) => {
+                  {results.map((message, index) => {
                     const sender = message.sender?.username || 'Unknown';
                     const isSelected = selectedIndex === index;
                     const messageId = message._id || message.id;

@@ -5,7 +5,18 @@ import { useAuth } from '../context/AuthContext';
 import AnimatedBadge from './AnimatedBadge';
 import SidebarQuickSearch from './SidebarQuickSearch';
 
-const Sidebar = ({ rooms, privateChats, activeChat, chatType, onChatSelect, onOpenPanel, activePanel, friendRequestsCount = 0, onTechSkillJoin }) => {
+const Sidebar = ({
+  rooms,
+  privateChats,
+  activeChat,
+  chatType,
+  onChatSelect,
+  onOpenPanel,
+  activePanel,
+  friendRequestsCount = 0,
+  onTechSkillJoin,
+  isOverlay = false
+}) => {
   const { user: currentUser } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -61,17 +72,21 @@ const Sidebar = ({ rooms, privateChats, activeChat, chatType, onChatSelect, onOp
     }
   });
 
+  const containerClasses = isOverlay
+    ? 'flex flex-col w-full bg-gradient-to-br from-gray-900/95 via-slate-900/90 to-black/90 border border-white/10 rounded-3xl shadow-xl backdrop-blur-xl p-4 space-y-4'
+    : 'hidden md:flex flex-col w-80 xl:w-[22rem] ml-6 my-6 bg-gradient-to-br from-gray-900/95 via-purple-900/40 to-slate-900/95 border border-white/10 rounded-3xl shadow-[0_20px_60px_rgba(8,7,15,0.55)] backdrop-blur-2xl p-6 space-y-6 relative z-10';
+
   return (
-    <div className="hidden md:flex w-64 border-r border-white/10 bg-gradient-to-b from-purple-50/30 to-white dark:from-gray-900 dark:to-gray-900 flex flex-col relative z-10">
-      <div className="p-4 border-b border-white/10">
+    <div className={containerClasses}>
+      <div className="pb-5 border-b border-white/10">
         {/* Header with Friends button */}
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold text-gray-100">Chats</h2>
+          <h2 className="text-lg font-semibold text-white tracking-tight">Chats</h2>
           <motion.button
             onClick={() => onOpenPanel?.('friends')}
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
-            className={`p-2 rounded-xl backdrop-blur-sm border transition relative ${
+            className={`p-2 rounded-2xl backdrop-blur-md border transition relative ${
               activePanel === 'friends'
                 ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white border-purple-400/50 shadow-lg shadow-purple-500/30'
                 : 'bg-white/10 border-white/20 text-gray-300 hover:bg-white/20'
@@ -87,13 +102,13 @@ const Sidebar = ({ rooms, privateChats, activeChat, chatType, onChatSelect, onOp
 
         {/* Search */}
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
           <input
             type="text"
             placeholder="Search chats..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 transition-all"
+            className="w-full pl-12 pr-5 py-3 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 transition-all"
           />
           {/* Feature quick search results */}
           <div className="absolute left-0 right-0 mt-1">
@@ -114,7 +129,7 @@ const Sidebar = ({ rooms, privateChats, activeChat, chatType, onChatSelect, onOp
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto pr-1">
         {filteredConversations.length === 0 ? (
           <div className="p-4 text-center text-gray-400 text-sm">
             {searchQuery ? 'No conversations found' : 'No conversations yet'}
@@ -135,7 +150,7 @@ const Sidebar = ({ rooms, privateChats, activeChat, chatType, onChatSelect, onOp
                   key={conv._id}
                   onClick={() => onChatSelect(conv, 'private')}
                   whileHover={{ scale: 1.02, x: 4 }}
-                  className={`group relative w-full p-3 text-left transition flex items-center gap-3 rounded-xl backdrop-blur-sm border ${
+                  className={`group relative w-full p-4 text-left transition flex items-center gap-3 rounded-2xl backdrop-blur-sm border ${
                     isActive
                       ? 'bg-purple-500/20 border-purple-400/50 shadow-lg shadow-purple-500/20'
                       : 'bg-white/5 border-white/10 hover:bg-white/10'
@@ -228,7 +243,7 @@ const Sidebar = ({ rooms, privateChats, activeChat, chatType, onChatSelect, onOp
                   key={conv._id}
                   onClick={handleClick}
                   whileHover={{ scale: 1.02, x: 4 }}
-                  className={`w-full p-3 text-left transition flex items-center gap-3 rounded-xl backdrop-blur-sm border ${
+                  className={`w-full p-4 text-left transition flex items-center gap-3 rounded-2xl backdrop-blur-sm border ${
                     isActive
                       ? isClassroom
                         ? 'bg-indigo-500/20 border-indigo-400/50 shadow-lg shadow-indigo-500/20'
